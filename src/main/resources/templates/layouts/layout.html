@@ -73,13 +73,9 @@
 	           <i class="far fa-id-badge mr-2"></i> Ver perfil
 	          </a>
 	          <div class="dropdown-divider"></div>
-	          <a href="#" class="dropdown-item">
-	           <i class="fas fa-sign-out-alt mr-2"></i> Logout
-	          </a>
-	          <div class="dropdown-divider"></div>
-	          <a href="#" class="dropdown-item">
-	           <i class="fas fa-sign-in-alt mr-2"></i> Login
-	          </a>
+	          <form th:action="@{/logout}" method="POST">
+	           		<button class="dropdown-item" type="submit"><i class="fas fa-sign-out-alt mr-2"></i> Logout</button>
+	           </form>
 	          <div class="dropdown-divider"></div>
 	          <a href="#" class="dropdown-item dropdown-footer"> </a>
 	        </div>
