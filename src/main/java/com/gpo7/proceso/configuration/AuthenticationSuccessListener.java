@@ -17,7 +17,6 @@ public class AuthenticationSuccessListener implements ApplicationListener<Authen
 	@Override
 	public void onApplicationEvent(AuthenticationSuccessEvent evt) {
 		// TODO Auto-generated method stub
-	
 		String username = evt.getAuthentication().getName();
 		Usuario usuario  = userJpaRepository.findByUsername(username);
 		usuario.setIntentos(0);
