@@ -11,7 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+
 
 @Entity
 @Table(name = "recursos")
@@ -66,4 +72,8 @@ public class Recurso {
 	public void setRolesRecursosPrivilegios(List<RolRecursoPrivilegio> rolesRecursosPrivilegios) {
 		this.rolesRecursosPrivilegios = rolesRecursosPrivilegios;
 	}
+	
+	
+	
+	
 }
