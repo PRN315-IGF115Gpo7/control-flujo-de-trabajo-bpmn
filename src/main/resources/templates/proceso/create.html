@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+</head>
+
+<body>
+
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Crear proceso automatizado</h1>
+
+	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active">nuevo proceso</li>
+    </ol>
+
+	<div layout:fragment="content">
+
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+
+          <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="form-group">
+                        <label for="nombreProceso">Nombre del proceso</label>
+                        <input type="text" class="form-control" id="nombreProceso" placeholder="Nombre del proceso">
+                      </div>
+                      <div class="form-group">
+                        <label for="descripcionProceso">Descripción del proceso</label>
+                        <textarea class="form-control" id="descripcionProceso" rows="3" placeholder="Descripción del proceso"></textarea>
+                      </div>
+                    </div>
+
+                    <hr class="mx-2">
+                    <div class="row mx-2">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="nombreVariable">Nombre de la variable</label>
+                          <input type="text" class="form-control" id="nombreVariable" placeholder="Nombre de la variable">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Seleccione el tipo de dato</label>
+                            <select class="form-control" id="idTipoDato">
+                              <option>Seleccione una opción</option>
+                              <option th:each="dato : ${tiposDato}" th:text="${dato.tipoDatoNombre}" th:value="${dato.idTipoDato}"></option>
+                            </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="form-group mx-3 text-right">
+                      <button id="btnAgregar" type="button" class="btn btn-primary btn-sm">Agregar variable</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card -->
+
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-striped table-valign-middle">
+                        <thead>
+                        <tr>
+                          <th>Variable</th>
+                          <th>Tipo de dato</th>
+                          <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tVariables">
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card -->
+
+              <!-- /.col-md-6 -->
+            </div>
+          </div>
+
+          <div class="card-footer text-right">
+            <button type="submit" name="button" class="btn btn-primary">Continuar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+	</div>
+
+	<section layout:fragment="scripts">
+    <script type="text/javascript">
+      $('#btnAgregar').on('click', function(){
+        var id_tipo = $('#idTipoDato').val();
+        var nombre = $('#nombreVariable').val();
+
+        $.get(`/proceso/agregar-variable/${nombre}/${id_tipo}`, function(data){
+            obtenerVariables();
+        });
+      });
+
+      function obtenerVariables(){
+        $.get('/proceso/obtener-variables', function(data){
+          cargarVariales(data);
+        })
+      }
+
+      function cargarVariales(data){
+        var html = '';
+
+        for (var i = 0; i < data.length; i++) {
+          html += `<tr>
+                      <td>${data[i].variableNombre}</td>
+                      <td>${data[i].tipoDato.tipoDatoNombre}</td>
+                      <td>
+                        <buntton class="btn btn-danger btn-sm" data-id-tipo="${data[i].tipoDato.idTipoDato}">
+                          <i class="fas fa-minus-circle"></i>
+                        </buntton>
+                      </td>
+                    </tr>`
+        }
+        $('#tVariables').html(html);
+      }
+
+      $(document).ready(function(){
+        obtenerVariables();
+      });
+
+      $('[data-id-tipo]').on('click', function(){
+        console.log($(this).data('id-tipo'));
+      })
+
+    </script>
+	</section>
+
+</body>
+</html>
