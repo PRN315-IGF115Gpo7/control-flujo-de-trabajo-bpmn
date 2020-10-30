@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.repository.CargoJpaRepository;
 import com.gpo7.proceso.servicio.CargoService;
+import com.gpo7.proceso.entity.Cargo;
 
 @Service("cargoServiceImpl")
 public class CargoServiceImpl implements CargoService {
@@ -27,6 +27,17 @@ public class CargoServiceImpl implements CargoService {
 	public List<Cargo> getAll() {
 		// TODO Auto-generated method stub
 		return cargoJpaRepository.findAll();
+	}
+	@Override
+	public void destroy(Cargo cargo) {
+		// TODO Auto-generated method stub
+		cargoJpaRepository.delete(cargo);
+	}
+	
+	@Override
+	public Cargo findById(int id_cargo) {
+		// TODO Auto-generated method stub
+		return cargoJpaRepository.getOne(id_cargo);
 	}
 
 }
