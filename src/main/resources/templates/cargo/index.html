@@ -46,7 +46,7 @@
 				  <tr th:each="cargo : ${cargos}">
                   <td class="nombre" th:text="${cargo.nombreCargo}"></td>
                   <td class="descripcion" th:text="${cargo.descripcionCargo}"></td>
-                  
+
                   <td>
                     <a class="btn btn-sm btn-primary" th:href="@{/cargo/edit/{id_cargo}(id_cargo=${cargo.idCargo})}">
                       <i class="fas fa-pencil-alt"></i>
@@ -64,7 +64,7 @@
                     <th>Nombre</th>
                     <th>Descripcion</th>
                   </tr>
-                
+
 							</tfoot>
 						</table>
 					</div>
@@ -73,14 +73,14 @@
 				<!-- /.card -->
 			</div>
 		</div>
-	
-		
-		
-		
-		
+
+
+
+
+
 
 		 <!--Modal para crear un producto-->
-		 
+
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -117,7 +117,7 @@
   </div>
 
 
-	
+
 	<!--Modal para ELIMINAR UN CARGO-->
 
   <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
@@ -146,11 +146,11 @@
     </div>
   </div>
   </div>
-		
 
-   
-  
-  
+
+
+
+
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
@@ -160,9 +160,9 @@
       $('#modalAgregar').modal('show');
     })
     //FIN-Crear un cargo
-    
 
-    
+
+
       $('[data-eliminar]').on('click', function(){
 
         var idCargo = $(this).data('eliminar');
@@ -173,7 +173,7 @@
       })
     </script>
 	</section>
-		
+
 
 
 

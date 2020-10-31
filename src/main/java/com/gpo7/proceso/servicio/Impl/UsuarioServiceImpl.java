@@ -32,5 +32,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 			return false;
 		}
 	}
+
+	@Override
+	public Usuario findByUsername(String username) {
+		// TODO Auto-generated method stub
+		return userJpaRepository.findByUsername(username);
+	}
+	
+	
 		
 }
