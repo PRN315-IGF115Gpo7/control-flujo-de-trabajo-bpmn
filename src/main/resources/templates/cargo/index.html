@@ -39,23 +39,20 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Descripcion</th>
+                    <th>Acciones</th>
                   </tr>
 							</thead>
 							<tbody>
 
-				  <tr th:each="cargo : ${cargos}">
+								<tr th:each="cargo : ${cargos}">
                   <td class="nombre" th:text="${cargo.nombreCargo}"></td>
                   <td class="descripcion" th:text="${cargo.descripcionCargo}"></td>
-
                   <td>
-                    <a class="btn btn-sm btn-primary" th:href="@{/cargo/edit/{id_cargo}(id_cargo=${cargo.idCargo})}">
-                      <i class="fas fa-pencil-alt"></i>
-                    </a>
-                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${cargo.idCargo}">
-                      <i class="fas fa-trash"></i>
-                    </button>
+                  <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${cargo.idCargo}">
+                    <i class="fas fa-trash"></i>
+                  </button>
                   </td>
-				  </tr>
+								</tr>
 
 							</tbody>
 							<tfoot>
@@ -63,6 +60,7 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Descripcion</th>
+                    <th>Acciones</th>
                   </tr>
                 </tr>
 							</tfoot>
@@ -72,39 +70,36 @@
 				</div>
 				<!-- /.card -->
 			</div>
-		</div>
+    </div>
 
-			<!--Modal para ELIMINAR UN CARGO-->
+    <!--Modal para eliminar un cargo-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Eliminar Cargo</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
 
-  <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Eliminar Cargo</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <form method="POST" th:action="@{/cargo/destroy}">
+          <div class="modal-body">
+            <input type="hidden" id="idCargo" name="idCargo" value>
+            <p>¿Desea eliminar el cargo?</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-danger">Confirmar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          </div>
+          </form>
+
         </div>
-
-        <form method="POST" th:action="@{/cargo/destroy}">
-        <div class="modal-body">
-          <input type="hidden" id="idCargo" name="idCargo" value>
-          <p>¿Desea eliminar el Cargo?</p>
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Confirmar</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        </div>
-        </form>
-
       </div>
     </div>
-  </div>
 
-	</div>
-
-    <!--Modal para crear un producto-->
+    <!--Modal para crear un cargo-->
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -139,31 +134,26 @@
       </div>
     </div>
   </div>
+	</div>
+
+
 	<section layout:fragment="scripts">
     <script>
-    //Para Crear un cargo
-    $('#btnAgregar').on('click', function(){
 
-      //Lanzar modal
-      $('#modalAgregar').modal('show');
-    })
-    //FIN-Crear un cargo
+      //Para Crear un cargo
+      $('#btnAgregar').on('click', function(){
 
-
-
+        //Lanzar modal
+        $('#modalAgregar').modal('show');
+      })
+      //FIN-Crear un cargo
       $('[data-eliminar]').on('click', function(){
-
         var idCargo = $(this).data('eliminar');
-
-
         $('#idCargo').val(idCargo);
         $('#modalEliminar').modal('show');
-      })
+        })
     </script>
 	</section>
-
-
-
 
 </body>
 </html>

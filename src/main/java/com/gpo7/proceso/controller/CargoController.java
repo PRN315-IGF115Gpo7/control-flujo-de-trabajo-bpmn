@@ -45,7 +45,7 @@ public class CargoController {
 		Cargo cargo = cargoService.findById(id_cargo);
 		
 		cargoService.destroy(cargo);
-		return "redirect:/recurso/index";
+		return "redirect:/cargo/index";
 	}
 
 }
