@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,22 +25,24 @@ public class Proceso {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "proceso_id")
-	Integer idProceso;
+	private Integer idProceso;
 	
+	@NotEmpty(message = "Debe ingresar el nombre del proceso")
 	@Column(name = "proceso_nombre")
-	String procesoNombre;
+	private String procesoNombre;
 	
+	@NotEmpty(message = "Debe ingresar una descripción para el proceso")
 	@Column(name = "proceso_descripcion")
-	String procesoDescripción;
+	private String procesoDescripcion;
 	
 	@Column(name = "proceso_activo")
-	Boolean procesoActivo;
+	private Boolean procesoActivo;
 	
 	@Column(name = "proceso_xml")
-	String proceoXml;
+	private String proceoXml;
 	
 	@Column(name = "es_automatizado")
-	Boolean esAutomatizado;
+	private Boolean esAutomatizado;
 	
 	@ManyToOne
 	@JoinColumn(name = "usuario_id")
@@ -52,12 +55,12 @@ public class Proceso {
 	public Proceso() {
 	}
 
-	public Proceso(Integer idProceso, String procesoNombre, String procesoDescripción, Boolean procesoActivo,
+	public Proceso(Integer idProceso, String procesoNombre, String procesoDescripcion, Boolean procesoActivo,
 			String proceoXml, Boolean esAutomatizado, Usuario usuario) {
 		super();
 		this.idProceso = idProceso;
 		this.procesoNombre = procesoNombre;
-		this.procesoDescripción = procesoDescripción;
+		this.procesoDescripcion = procesoDescripcion;
 		this.procesoActivo = procesoActivo;
 		this.proceoXml = proceoXml;
 		this.esAutomatizado = esAutomatizado;
@@ -80,12 +83,12 @@ public class Proceso {
 		this.procesoNombre = procesoNombre;
 	}
 
-	public String getProcesoDescripción() {
-		return procesoDescripción;
+	public String getProcesoDescripcion() {
+		return procesoDescripcion;
 	}
 
-	public void setProcesoDescripción(String procesoDescripción) {
-		this.procesoDescripción = procesoDescripción;
+	public void setProcesoDescripcion(String procesoDescripcion) {
+		this.procesoDescripcion = procesoDescripcion;
 	}
 
 	public Boolean getProcesoActivo() {

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+</head>
+
+<body>
+
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Recurso</h1>
+
+	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active">Recurso</li>
+    </ol>
+
+	<div layout:fragment="content">
+
+    <div class="row ml-3 mr-3">
+			<div class="col-md-2"></div>
+			<div class="col-md-8 ">
+				<div class="card">
+	         <div class="card-header text-right">
+
+						<a th:href="@{/recurso/create}" class="btn btn-sm btn-primary" title="Agregar Rango de Renta" id="add-tipo-unidad">
+							<i class="fas fa-plus-circle mr-1 text-white"></i>
+							<span class="text-white">Agregar Recurso</span>
+						</a>
+	              <h3 class="card-title"></h3>
+	          </div>
+
+					<div class="card-body">
+						<table id="example1" class="table table-bordered table-striped">
+							<thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Recursos</th>
+                    
+                  </tr>
+							</thead>
+							<tbody>
+
+				  <tr th:each="recurso : ${recursos}">
+                  <td th:text="${recurso.recurso}"></td>
+                  
+                  
+                  <td>
+                    <a class="btn btn-sm btn-primary" th:href="@{/recurso/edit/{id_recurso}(id_recurso=${recurso.idRecurso})}">
+                      <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${recurso.idRecurso}">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+								</tr>
+
+							</tbody>
+							<tfoot>
+								<tr>
+                 
+							</tfoot>
+						</table>
+					</div>
+					<!-- /.card-body -->
+				</div>
+				<!-- /.card -->
+			</div>
+		</div>
+
+    <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Eliminar Recursos</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/recurso/destroy}">
+        <div class="modal-body">
+          <input type="hidden" id="idRecurso" name="idRecurso" value>
+          <p>¿Desea eliminar el Recurso?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Confirmar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+	</div>
+
+
+	<section layout:fragment="scripts">
+    <script>
+      $('[data-eliminar]').on('click', function(){
+
+        var idRecurso = $(this).data('eliminar');
+
+
+        $('#idRecurso').val(idRecurso);
+        $('#modalEliminar').modal('show');
+      })
+    </script>
+	</section>
+
+
+</body>
+</html>

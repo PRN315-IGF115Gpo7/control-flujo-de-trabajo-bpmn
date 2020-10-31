@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
+<body>
+	
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Rol</h1>
+
+	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active">Rol</li>
+    </ol>
+
+	<div layout:fragment="content">
+		<h5>Bienvenidos</h5>
+	</div>
+	
+	<div layout:fragment="content">
+		<div class="row ml-3 mr-3">
+			<div class="col-md-2"></div>
+			<div class="col-md-8 ">
+				<div class="card">
+	         <div class="card-header text-right">
+
+	              <h3 class="card-title"></h3>
+	          </div>
+
+					<div class="card-body">
+						<table id="example1" class="table table-bordered table-striped">
+							<thead>
+                
+			                  <tr>
+			                  	<th>Autoridad</th>	
+			                  	<th>Acciones</th>		                  	
+			                  </tr>
+
+							</thead>
+							<tbody>
+
+								<tr th:each="rol: ${roles}">
+									<td th:text="${rol.authority}"></td>
+								</tr>
+							</tbody>
+							<tfoot>
+
+								<tr>
+								<th>Autoridad</th>
+								<th>Acciones</th>
+
+                </tr>
+
+							</tfoot>
+						</table>
+					</div>
+					<!-- /.card-body -->
+				</div>
+				<!-- /.card -->
+			</div>
+		</div>
+	</div>
+	
+	<section layout:fragment="scripts">
+	</section>
+
+</body>
+</html>

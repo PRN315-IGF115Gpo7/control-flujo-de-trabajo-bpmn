@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.gpo7.proceso.entity.Cargo;
@@ -37,6 +38,14 @@ public class CargoController {
 		cargoService.store(cargo);
 		
 		return "redirect:/cargo/index";
+	}
+	
+	@PostMapping("/destroy")
+	public String destroy(@RequestParam("idCargo") int id_cargo) {
+		Cargo cargo = cargoService.findById(id_cargo);
+		
+		cargoService.destroy(cargo);
+		return "redirect:/recurso/index";
 	}
 
 }

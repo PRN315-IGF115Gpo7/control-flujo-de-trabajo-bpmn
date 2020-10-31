@@ -1,5 +1,7 @@
 package com.gpo7.proceso.servicio.Impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,5 @@ public class VariableServiceImpl implements VariableService{
 		// TODO Auto-generated method stub
 		return variableJpaRepository.save(variable);
 	}
-	
 	
 }
