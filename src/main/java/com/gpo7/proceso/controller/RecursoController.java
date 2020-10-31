@@ -47,9 +47,13 @@ public class RecursoController {
 		
 		if(recurso.getRolesRecursosPrivilegios()==null) {
 			recursoService.destroy(recurso);
-
+		}
 		return "redirect:/recurso/index";
+<<<<<<< HEAD
 		}
 	}
 	
+=======
+	}
+>>>>>>> 9fc15e2bcddb19fa1461e71fc11ae123cf74f818
 }
