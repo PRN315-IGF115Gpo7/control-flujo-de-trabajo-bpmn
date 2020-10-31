@@ -49,7 +49,7 @@ public class RecursoController {
 			recursoService.destroy(recurso);
 
 		return "redirect:/recurso/index";
-		
+		}
 	}
-
+	
 }
