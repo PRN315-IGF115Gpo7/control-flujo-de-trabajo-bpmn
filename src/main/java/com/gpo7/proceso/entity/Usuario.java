@@ -34,7 +34,10 @@ public class Usuario {
 
 	@Column(name = "intentos", nullable = false)
 	private int intentos = 0;
-
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="cargo_id")
+    private Cargo cargo;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinTable(name = "usuarios_roles", 
@@ -159,6 +162,14 @@ public class Usuario {
 
 	public void setRoles(List<Rol> roles) {
 		this.roles = roles;
+	}
+
+	public Cargo getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(Cargo cargo) {
+		this.cargo = cargo;
 	}
 
 }
