@@ -39,6 +39,7 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Descripcion</th>
+                    <th>Acciones</th>
                   </tr>
 							</thead>
 							<tbody>
@@ -46,7 +47,6 @@
 				  <tr th:each="cargo : ${cargos}">
                   <td class="nombre" th:text="${cargo.nombreCargo}"></td>
                   <td class="descripcion" th:text="${cargo.descripcionCargo}"></td>
-
                   <td>
                     <a class="btn btn-sm btn-primary" th:href="@{/cargo/edit/{id_cargo}(id_cargo=${cargo.idCargo})}">
                       <i class="fas fa-pencil-alt"></i>
@@ -63,6 +63,7 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Descripcion</th>
+                    <th>Acciones</th>
                   </tr>
 
 							</tfoot>
@@ -73,13 +74,7 @@
 				<!-- /.card -->
 			</div>
 		</div>
-
-
-
-
-
-
-		 <!--Modal para crear un producto-->
+		 <!--Modal para crear un cargo-->
 
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
