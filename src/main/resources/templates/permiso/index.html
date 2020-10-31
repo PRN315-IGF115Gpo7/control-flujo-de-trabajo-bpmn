@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+</head>
+
+<body>
+
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Permiso</h1>
+
+	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active">Permiso</li>
+    </ol>
+
+	<div layout:fragment="content">
+
+    <div class="row ml-3 mr-3">
+			<div class="col-md-9 offset-1">
+				<div class="card">
+	         <div class="card-header text-right">
+
+						<button class="btn btn-sm btn-primary" id="btnAgregar">
+							<i class="fas fa-plus-circle mr-1 text-white"></i>
+							<span class="text-white">Agregar Permiso</span>
+						</button>
+	           <h3 class="card-title"></h3>
+	          </div>
+
+					<div class="card-body">
+						<table id="example1" class="table table-bordered table-striped">
+							<thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                  </tr>
+							</thead>
+							<tbody>
+
+				  <tr th:each="permiso : ${permisos}">
+                  <td class="nombre" th:text="${permiso.nombrePermiso}"></td>
+                  <td class="descripcion" th:text="${permiso.descripcionPermiso}"></td>
+                  
+				  </tr>
+
+							</tbody>
+							<tfoot>
+							</tfoot>
+						</table>
+					</div>
+					<!-- /.card-body -->
+				</div>
+				<!-- /.card -->
+			</div>
+		</div>
+		
+		<!--Modal para ELIMINAR UN PERMISO-->
+
+  
+
+    <!--Modal para crear un producto-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Agregar Permiso</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/permiso/store}" th:object="${permiso}">
+        <div class="modal-body">
+
+          <div class="form-group">
+              <label for="exampleInputPassword1">Nombre</label>
+              <input th:field="*{nombrePermiso}" type="text" class="form-control" placeholder="Nombre del permiso">
+          </div>
+
+            <div class="form-group">
+              <label for="exampleInputPassword1">Descripcion</label>
+              <input th:field="*{descripcionPermiso}" type="text" class="form-control" placeholder="Descripcion del permiso">
+            </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+	</div>
+	<section layout:fragment="scripts">
+    <script>
+    //Para Crear un cargo
+    $('#btnAgregar').on('click', function(){
+
+      //Lanzar modal
+      $('#modalAgregar').modal('show');
+    })
+    //FIN-Crear un cargo
+
+      $('[data-eliminar]').on('click', function(){
+
+        var idPermiso = $(this).data('eliminar');
+
+
+        $('#idCargo').val(idCargo);
+        $('#modalEliminar').modal('show');
+      })
+    </script>
+	</section>
+		
+
+
+
+</body>
+</html>
