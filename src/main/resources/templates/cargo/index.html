@@ -64,7 +64,7 @@
                     <th>Nombre</th>
                     <th>Descripcion</th>
                   </tr>
-                </tr>
+                
 							</tfoot>
 						</table>
 					</div>
@@ -73,38 +73,14 @@
 				<!-- /.card -->
 			</div>
 		</div>
+	
 		
-			<!--Modal para ELIMINAR UN CARGO-->
+		
+		
+		
 
-  <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Eliminar Cargo</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <form method="POST" th:action="@{/cargo/destroy}">
-        <div class="modal-body">
-          <input type="hidden" id="idCargo" name="idCargo" value>
-          <p>¿Desea eliminar el Cargo?</p>
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Confirmar</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        </div>
-        </form>
-
-      </div>
-    </div>
-  </div>
-
-	</div>
-
-    <!--Modal para crear un producto-->
+		 <!--Modal para crear un producto-->
+		 
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -139,6 +115,42 @@
       </div>
     </div>
   </div>
+
+
+	
+	<!--Modal para ELIMINAR UN CARGO-->
+
+  <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Eliminar Cargo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/cargo/destroy}">
+        <div class="modal-body">
+          <input type="hidden" id="idCargo" name="idCargo" value>
+          <p>¿Desea eliminar el Cargo?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Confirmar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  </div>
+		
+
+   
+  
+  
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
