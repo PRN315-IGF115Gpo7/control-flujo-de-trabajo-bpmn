@@ -45,8 +45,11 @@ public class RecursoController {
 	public String destroy(@RequestParam("idRecurso") int id_recurso) {
 		Recurso recurso = recursoService.findById(id_recurso);
 		
-		recursoService.destroy(recurso);
+		if(recurso.getRolesRecursosPrivilegios()==null) {
+			recursoService.destroy(recurso);
+
 		return "redirect:/recurso/index";
+		
 	}
 
 }
