@@ -45,7 +45,7 @@
 
 				  <tr th:each="permiso : ${permisos}">
                   <td class="nombre" th:text="${permiso.nombrePermiso}"></td>
-                  <td class="descripcion" th:text="${permiso.nombrePermiso}"></td>
+                  <td class="descripcion" th:text="${permiso.descripcionPermiso}"></td>
                   
 				  </tr>
 
@@ -99,6 +99,7 @@
       </div>
     </div>
   </div>
+	</div>
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
