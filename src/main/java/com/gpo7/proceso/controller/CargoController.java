@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.servicio.CargoService;
@@ -41,10 +42,15 @@ public class CargoController {
 	}
 	
 	@PostMapping("/destroy")
-	public String destroy(@RequestParam("idCargo") int id_cargo) {
+	public String destroy(@RequestParam("idCargo") int id_cargo, RedirectAttributes redirAttrs) {
 		Cargo cargo = cargoService.findById(id_cargo);
 		
-		cargoService.destroy(cargo);
+		if(cargo.getUsuarios().isEmpty()) {
+			cargoService.destroy(cargo);
+		}else {
+			redirAttrs.addFlashAttribute("mensaje", "Este cargo no puede eliminado porque ya fue asignado");
+		}
+		
 		return "redirect:/cargo/index";
 	}
 

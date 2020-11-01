@@ -19,7 +19,6 @@ import com.gpo7.proceso.servicio.RecursoService;
 
 
 @Controller
-//@RequestMapping("/recurso")
 @RequestMapping("/recurso")
 public class RecursoController {
 	
@@ -45,7 +44,7 @@ public class RecursoController {
 	public String destroy(@RequestParam("idRecurso") int id_recurso) {
 		Recurso recurso = recursoService.findById(id_recurso);
 		
-		if(recurso.getRolesRecursosPrivilegios()==null) {
+		if(recurso.getRolesRecursosPrivilegios().isEmpty()) {
 			recursoService.destroy(recurso);
 		}
 		return "redirect:/recurso/index";
