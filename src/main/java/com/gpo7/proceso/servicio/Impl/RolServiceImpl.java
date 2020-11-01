@@ -20,6 +20,6 @@ public class RolServiceImpl implements RolService{
 	@Override
 	public List<Rol> getAll() {
 		// TODO Auto-generated method stub
-		return null;
+		return rolJpaRepository.findAll();
 	}
 }
