@@ -58,7 +58,7 @@ public class RecursoController {
 		recursoService.store(recurso);
 		return "redirect:/recurso/index";
 	}
-	
+	//falta el view de editar
 	@GetMapping("/edit/id_recurso")
 	public ModelAndView edit(@PathVariable int id_recurso) {
 		ModelAndView mav = new ModelAndView(EDIT_VIEW);
