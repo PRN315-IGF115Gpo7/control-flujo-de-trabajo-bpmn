@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.repository.UserJpaRepository;
 import com.gpo7.proceso.servicio.UsuarioService;
@@ -38,7 +39,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 		// TODO Auto-generated method stub
 		return userJpaRepository.findByUsername(username);
 	}
-	
+	public List<Usuario> getAll() {
+		// TODO Auto-generated method stub
+		return userJpaRepository.findAll();
+	}
 	
 		
 }

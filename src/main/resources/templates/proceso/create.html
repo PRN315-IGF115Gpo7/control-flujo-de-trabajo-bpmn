@@ -40,6 +40,9 @@
                 <div class="col-md-6">
                   <div class="card">
                     <div class="card-body">
+                      <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+            						<li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+            					</ul>
                       <div class="form-group">
                         <label for="nombreProceso">Nombre del proceso</label>
                         <input th:field="*{procesoNombre}" type="text" class="form-control" id="nombreProceso" placeholder="Nombre del proceso">
