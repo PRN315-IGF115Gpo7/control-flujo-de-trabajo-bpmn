@@ -9,4 +9,5 @@ public interface UsuarioService {
 	public abstract List<Usuario> getAdminUsers();
 	public abstract Boolean isAdminUser(String username);
 	public abstract Usuario findByUsername(String username);
+	public List<Usuario> getAll();
 }

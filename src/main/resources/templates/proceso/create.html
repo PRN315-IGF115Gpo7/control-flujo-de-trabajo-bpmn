@@ -40,6 +40,9 @@
                 <div class="col-md-6">
                   <div class="card">
                     <div class="card-body">
+                      <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+            						<li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+            					</ul>
                       <div class="form-group">
                         <label for="nombreProceso">Nombre del proceso</label>
                         <input th:field="*{procesoNombre}" type="text" class="form-control" id="nombreProceso" placeholder="Nombre del proceso">
@@ -101,7 +104,7 @@
           </div>
 
           <div class="card-footer text-right">
-            <button type="submit" name="button" class="btn btn-primary">Continuar</button>
+            <button onClick="this.form.submit(); this.disabled=true;" id="btnContinuar" type="submit" name="button" class="btn btn-primary">Continuar</button>
           </div>
         </form>
         </div>
@@ -116,6 +119,7 @@
       $('#btnAgregar').on('click', agregarVariables);
       $('#nombreVariable').on('keyup', validarVariables);
       $('#idTipoDato').on('change', validarVariables);
+      $('#btnContinuar').on('click', continuarSpinner);
       $(document).ready(obtenerVariables());
 
       function agregarVariables(){
@@ -170,8 +174,13 @@
         }else{
           $('#btnAgregar').prop('disabled', false);
         }
-
       }
+
+      function continuarSpinner(){
+		      $(this).html(
+		        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creando proceso...`
+		      );
+		    }
     </script>
 	</section>
 

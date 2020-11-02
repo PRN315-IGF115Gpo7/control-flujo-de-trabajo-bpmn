@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.TipoDato;
@@ -64,18 +65,23 @@ public class ProcesoController {
 	}
 	
 	@PostMapping("/store")
-	public ModelAndView store(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult bindingResult, 
-			HttpServletRequest request) {
+	public String store(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult results, 
+			HttpServletRequest request, RedirectAttributes redirAttrs) {
 		HttpSession session = request.getSession(true);
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName(DIAGRAM_VIEW);
-		
-		if(bindingResult.hasErrors()) {
-			mav.setViewName(CREATE_VIEW);
-			return mav;
-		}
 		
 		List<Variable> variables = (ArrayList<Variable>) session.getAttribute("variables");
+				
+		if(variables == null) {
+			variables = new ArrayList<Variable>();
+		}
+		
+		if(results.hasErrors() || variables.isEmpty()) {
+			if(variables.isEmpty()) {
+				results.reject("variable", "Debe asginar variables al proceso para continuar");
+			}
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/proceso/create";
+		}
 		session.setAttribute("variables", new ArrayList<Variable>());
 		
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -90,7 +96,7 @@ public class ProcesoController {
 			variableService.store(variable);
 		}
 		
-		return mav;
+		return "redirect:/proceso/diagram";
 	}
 	
 	@GetMapping("/diagram")
@@ -113,12 +119,10 @@ public class ProcesoController {
 		List<Variable> variablesSession = (ArrayList<Variable>) session.getAttribute("variables");
 		Integer variableId = (Integer) session.getAttribute("variableId");
 		
-		if(variablesSession == null) {
+		if(variablesSession == null || variableId == null) {
 			variablesSession = new ArrayList<Variable>();
 			variableId = 1;
-		}/*else {
-			variableId = variablesSession.size()+1;
-		}*/
+		}
 		
 		variable.setIdVariable(variableId++);
 		variablesSession.add(variable);

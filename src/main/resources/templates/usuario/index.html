@@ -2,11 +2,11 @@
 <html xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
 <body>
 
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Rol</h1>
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Usuario</h1>
 
 	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
-        <li class="breadcrumb-item active">Rol</li>
+        <li class="breadcrumb-item active">Usuario</li>
     </ol>
 
 	<div layout:fragment="content">
@@ -24,22 +24,20 @@
 							<thead>
 
 			                  <tr>
-			                  	<th>Autoridad</th>
-			                  	<th>Acciones</th>
+			                  	<th>Usuario</th>
 			                  </tr>
 
 							</thead>
 							<tbody>
 
-								<tr th:each="rol: ${roles}">
-									<td th:text="${rol.authority}"></td>
+								<tr th:each="usuario: ${usuarios}">
+									<td th:text="${usuario.username}"></td>
 								</tr>
 							</tbody>
 							<tfoot>
 
 								<tr>
-								<th>Autoridad</th>
-								<th>Acciones</th>
+								<th>Usuario</th> 
 
                 </tr>
 
