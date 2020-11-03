@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,4 +32,17 @@ private static final String INDEX_VIEW="usuario/index";
 		mav.addObject("usuarios", usuarios );
 		return mav;
 	}
+	@PostMapping("/update")
+    public String updateBaja(@ModelAttribute("usuario")Usuario usuario) {
+    	Usuario usuarioModificado = usuarioService.findById(usuario.getIdUsuario());
+    	
+    	usuarioModificado.setEnabled(false);
+    	
+    	
+    	usuarioService.update(usuarioModificado);
+    	
+    	return "redirect:/usuario/index";
+    }
+	
+	
 }

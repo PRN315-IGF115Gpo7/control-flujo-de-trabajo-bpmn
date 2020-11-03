@@ -26,18 +26,28 @@
 			                  <tr>
 			                  	<th>Usuario</th>
 			                  </tr>
+			                  <tr>
+			                  	<th>Acciones</th>
+			                  </tr>
 
 							</thead>
 							<tbody>
 
 								<tr th:each="usuario: ${usuarios}">
 									<td th:text="${usuario.username}"></td>
+									<td> 
+									<button class="btn btn-sm btn-info" th:attr="data-darBaja=${usuario.idUsuario}">
+                     				 <i class="fas fa-down-circle mr-1 text-white"></i>
+                     				 <span class="text-white">Dar de baja</span>
+                   					 </button>
+                   					 </td>
 								</tr>
 							</tbody>
 							<tfoot>
 
 								<tr>
 								<th>Usuario</th> 
+								<th>Acciones</th>
 
                 </tr>
 
