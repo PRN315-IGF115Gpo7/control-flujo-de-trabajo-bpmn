@@ -8,6 +8,7 @@ import com.gpo7.proceso.entity.Rol;
 
 public interface RolService {
 	
+	public Rol store(Rol rol);
 	public List<Rol> getAll();
 	
 }

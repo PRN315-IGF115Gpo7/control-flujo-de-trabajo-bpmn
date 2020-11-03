@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  
+</head>
+
+<body>
+	
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Ver perfil</h1>
+
+	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active">Flujo de Trabajo</li>
+    </ol>
+
+	<div layout:fragment="content">
+		<div class="container-fluid">
+
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <form method="POST" th:action="@{/proceso/usuario}" th:object="${username}">
+          <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-body">
+       
+                      <div class="form-group">
+                        <label for="nombreProceso">Nombre de usuario</label>
+                        <input th:field="{userNombre}" type="text" class="form-control" id="nombreUser" disabled>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="nombreProceso">Nombre del proceso</label>
+                        <input th:field="{procesoNombre}" type="text" class="form-control" id="nombreProceso" disabled>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="descripcionProceso">Descripción del proceso</label>
+                        <input th:field="{procesoDescripcion}" class="form-control" id="descripcionProceso" rows="3" disabled>
+                      
+                      
+                      <div class="form-group">
+                        <label for="nombreProceso">Nombre del proceso</label>
+                        <input th:field="{procesoNombre}" type="text" class="form-control" id="nombreProceso" disabled>
+                      </div>
+                      
+                      <div class="form-group">
+                          <label for="nombreVariable">Nombre de la variable</label>
+                          <input th:field="{nombreVariable}" type="text" class="form-control" id="nombreVariable" disabled>
+                        </div>
+		
+		
+		
+		
+		
+		
+	</div>
+	
+	
+	<section layout:fragment="scripts">
+	</section>
+
+</body>
+</html>
+</body>
+</html>
