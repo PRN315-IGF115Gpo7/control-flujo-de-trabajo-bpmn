@@ -22,4 +22,8 @@ public class RolServiceImpl implements RolService{
 		// TODO Auto-generated method stub
 		return rolJpaRepository.findAll();
 	}
+	
+	public Rol store(Rol rol) {
+		return rolJpaRepository.save(rol);
+	}
 }

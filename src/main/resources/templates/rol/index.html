@@ -1,5 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+</head>
+
 <body>
 
 	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Rol</h1>
@@ -10,39 +20,39 @@
     </ol>
 
 	<div layout:fragment="content">
-		<div class="row ml-3 mr-3">
-			<div class="col-md-2"></div>
-			<div class="col-md-8 ">
+
+    <div class="row ml-3 mr-3">
+			<div class="col-md-9 offset-1">
 				<div class="card">
 	         <div class="card-header text-right">
 
-	              <h3 class="card-title"></h3>
+						<button class="btn btn-sm btn-primary" id="btnAgregar">
+							<i class="fas fa-plus-circle mr-1 text-white"></i>
+							<span class="text-white">Agregar Rol</span>
+						</button>
+	           <h3 class="card-title"></h3>
 	          </div>
 
 					<div class="card-body">
 						<table id="example1" class="table table-bordered table-striped">
 							<thead>
-
-			                  <tr>
-			                  	<th>Autoridad</th>
-			                  	<th>Acciones</th>
-			                  </tr>
-
+                  <tr>
+                    <th>Autoridad</th>
+                    <th>Acciones</th>
+                  </tr>
 							</thead>
 							<tbody>
 
-								<tr th:each="rol: ${roles}">
-									<td th:text="${rol.authority}"></td>
-								</tr>
+				  <tr th:each="rol : ${roles}">
+                  <td class="autoridad" th:text="${rol.authority}"></td>
+				  </tr>
+
 							</tbody>
 							<tfoot>
-
-								<tr>
-								<th>Autoridad</th>
-								<th>Acciones</th>
-
-                </tr>
-
+								   <tr>
+					                    <th>Autoridad</th>
+					                    <th>Acciones</th>
+					               </tr>
 							</tfoot>
 						</table>
 					</div>
@@ -51,10 +61,56 @@
 				<!-- /.card -->
 			</div>
 		</div>
-	</div>
+		
+		<!--Modal para ELIMINAR UN PERMISO-->
 
+  
+
+    <!--Modal para crear un producto-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Agregar Rol</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/rol/store}" th:object="${rol}">
+        <div class="modal-body">
+
+          <div class="form-group">
+              <label for="exampleInputPassword1">Autoridad</label>
+              <input th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+	</div>
 	<section layout:fragment="scripts">
+    <script>
+    //Para Crear un cargo
+    $('#btnAgregar').on('click', function(){
+
+      //Lanzar modal
+      $('#modalAgregar').modal('show');
+    })
+    //FIN-Crear un cargo
+    </script>
 	</section>
+		
+
+
 
 </body>
 </html>
