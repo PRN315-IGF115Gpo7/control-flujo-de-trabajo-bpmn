@@ -8,4 +8,6 @@ public interface PermisoService {
 	public Permiso store(Permiso permiso);
 	public List<Permiso> getAll();
 	public void destroy(Permiso permiso);
+	public Permiso findById(int id_permiso);
+
 }

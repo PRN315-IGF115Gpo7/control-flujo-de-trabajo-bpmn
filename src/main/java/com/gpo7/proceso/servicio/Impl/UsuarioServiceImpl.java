@@ -43,6 +43,18 @@ public class UsuarioServiceImpl implements UsuarioService {
 		// TODO Auto-generated method stub
 		return userJpaRepository.findAll();
 	}
+
+	@Override
+	public Usuario update(Usuario usuario) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Usuario findById(int idUsuario) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 		
 }

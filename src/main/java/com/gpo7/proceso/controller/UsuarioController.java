@@ -6,12 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.servicio.UsuarioService;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 @Controller
 @RequestMapping("/usuario")
@@ -30,4 +36,19 @@ private static final String INDEX_VIEW="usuario/index";
 		mav.addObject("usuarios", usuarios );
 		return mav;
 	}
+	@PostMapping("/updateBaja")
+    public String updateBaja() {
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		Usuario usuarioModificado= usuarioService.findByUsername(user.getUsername());
+    	
+    	usuarioModificado.setEnabled(false);
+    	
+    	
+    	usuarioService.update(usuarioModificado);
+    	
+    	return "redirect:/usuario/index";
+    }
+	
+	
 }

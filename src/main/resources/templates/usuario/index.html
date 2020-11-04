@@ -25,6 +25,8 @@
 
 			                  <tr>
 			                  	<th>Usuario</th>
+			                
+			                  	<th>Acciones</th>
 			                  </tr>
 
 							</thead>
@@ -32,12 +34,19 @@
 
 								<tr th:each="usuario: ${usuarios}">
 									<td th:text="${usuario.username}"></td>
+									<td> 
+									<button class="btn btn-sm btn-info" th:attr="data-darBaja=${usuario.idUsuario}">
+                     				 <i class="fas fa-down-circle mr-1 text-white"></i>
+                     				 <span class="text-white">Dar de baja</span>
+                   					 </button>
+                   					 </td>
 								</tr>
 							</tbody>
 							<tfoot>
 
 								<tr>
 								<th>Usuario</th> 
+								<th>Acciones</th>
 
                 </tr>
 
@@ -49,9 +58,49 @@
 				<!-- /.card -->
 			</div>
 		</div>
+		 <!--Modal para preguntar si dar de baja-->
+		<div class="modal" tabindex="-1" role="dialog" id="modalPreguntar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Atencion!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/usuario/updateBaja}">
+        <div class="modal-body">
+          <p>¿Desea dar de baja el usuario?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Confirmar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+		
 	</div>
 
 	<section layout:fragment="scripts">
+	    <script>
+
+
+      $('[data-darBaja]').on('click', function(){
+    	  var idUsuario = $(this).data('eliminar');
+
+
+          $('#idUsuario').val(idUsuario);
+
+        $('#modalPreguntar').modal('show');
+      })
+    </script>
+	
+	
 	</section>
 
 </body>

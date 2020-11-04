@@ -39,6 +39,7 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Descripcion</th>
+                    <th>Acciones</th>
                   </tr>
 							</thead>
 							<tbody>
@@ -46,6 +47,14 @@
 				  <tr th:each="permiso : ${permisos}">
                   <td class="nombre" th:text="${permiso.nombrePermiso}"></td>
                   <td class="descripcion" th:text="${permiso.descripcionPermiso}"></td>
+                   <td>
+                    <a class="btn btn-sm btn-primary" th:href="@{/permiso/edit/{id_permiso}(id_permiso=${permiso.idPermiso})}">
+                      <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${permiso.idPermiso}">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
                   
 				  </tr>
 
@@ -60,11 +69,12 @@
 			</div>
 		</div>
 		
-		<!--Modal para ELIMINAR UN PERMISO-->
+		
+		
 
   
 
-    <!--Modal para crear un producto-->
+    <!--Modal para crear un permiso-->
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -99,24 +109,53 @@
       </div>
     </div>
   </div>
-	</div>
+	<!--Modal para ELIMINAR UN PERMISO-->
+		 <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Eliminar Permiso</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/permiso/destroy}">
+        <div class="modal-body">
+          <input type="hidden" id="idPermiso" name="idPermiso" value>
+          <p>¿Desea eliminar el Permiso?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Confirmar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  </div>
 	<section layout:fragment="scripts">
     <script>
-    //Para Crear un cargo
+    //Para Crear un permiso
     $('#btnAgregar').on('click', function(){
 
       //Lanzar modal
       $('#modalAgregar').modal('show');
     })
-    //FIN-Crear un cargo
+    //FIN-Crear un permiso
 
+    
+    //---Eliminar un permiso---//
       $('[data-eliminar]').on('click', function(){
 
         var idPermiso = $(this).data('eliminar');
 
 
-        $('#idCargo').val(idCargo);
+        $('#idPermiso').val(idPermiso);
         $('#modalEliminar').modal('show');
+    //------------------------//
       })
     </script>
 	</section>

@@ -34,6 +34,12 @@ public class PermisoServiceImpl implements PermisoService{
 		// TODO Auto-generated method stub
 		permisoJpaRepository.delete(permiso);
 	}
+
+	@Override
+	public Permiso findById(int id_permiso) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }

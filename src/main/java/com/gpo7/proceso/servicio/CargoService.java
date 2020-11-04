@@ -10,5 +10,4 @@ public interface CargoService {
 	public void destroy(Cargo cargo);
 	public Cargo findById(int idCargo);
 	public Cargo update(Cargo cargo);
-
 }
