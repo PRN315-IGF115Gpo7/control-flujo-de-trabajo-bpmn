@@ -20,7 +20,6 @@ import com.gpo7.proceso.entity.Rol;
 @RequestMapping("/rol")
 public class RolController {
 	private static final String INDEX_VIEW="rol/index";
-	private static final String CREATE_VIEW="rol/create";
 	
 	@Autowired
 	@Qualifier("rolServiceImpl")
@@ -44,5 +43,14 @@ public class RolController {
     	return "redirect:/rol/index";
     }
     
-	
+	@PostMapping("/update")
+	public String update(@ModelAttribute("rol") Rol rol) {
+		Rol rolModificado = rolService.findById(rol.getIdRol());
+		
+		rolModificado.setAuthority(rol.getAuthority());
+		
+		rolService.update(rolModificado);
+		
+		return "redirect:/rol/index";
+	}
 }

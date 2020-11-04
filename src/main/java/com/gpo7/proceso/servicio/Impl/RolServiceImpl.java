@@ -26,4 +26,12 @@ public class RolServiceImpl implements RolService{
 	public Rol store(Rol rol) {
 		return rolJpaRepository.save(rol);
 	}
+	
+	public Rol update(Rol rol) {
+		return rolJpaRepository.save(rol);
+	}
+	
+	public Rol findById(int idRol) {
+		return rolJpaRepository.getOne(idRol);
+	}
 }

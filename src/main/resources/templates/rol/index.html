@@ -45,6 +45,11 @@
 
 				  <tr th:each="rol : ${roles}">
                   <td class="autoridad" th:text="${rol.authority}"></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${rol.idRol}">
+                      <i class="fas fa-pencil-alt"></i>
+                    </button>
+                  </td>
 				  </tr>
 
 							</tbody>
@@ -61,12 +66,10 @@
 				<!-- /.card -->
 			</div>
 		</div>
-		
-		<!--Modal para ELIMINAR UN PERMISO-->
 
   
 
-    <!--Modal para crear un producto-->
+    <!--Modal para crear un rol-->
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -95,17 +98,62 @@
 
       </div>
     </div>
+  	</div>
+  	  	<!--Modal para editar un rol-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Rol</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/rol/update}" th:object="${rol}">
+        <div class="modal-body">
+          <input id="idRol" type="hidden" th:field="*{idRol}">
+          <div class="form-group">
+              <label>Autoridad</label>
+              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder=" Autoridad">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
   </div>
 	</div>
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
     $('#btnAgregar').on('click', function(){
-
-      //Lanzar modal
-      $('#modalAgregar').modal('show');
+      		$('#modalAgregar').modal('show');
     })
+    
     //FIN-Crear un cargo
+    
+    //Para editar un rol
+      $('[data-editar]').on('click', function(){
+
+        //Obteniendo datos de la tabla
+        var id = $(this).data('editar');
+        var nombre = $(this).parent().siblings('td.authority').text();
+        
+        //Asignando datos a la modal
+        $('#idRol').val(id);
+        $('#authority').val(autoridad);
+
+        //Lanzar modal
+        $('#modalEditar').modal('show');
+      })
+      //FIN-Editar un producto
     </script>
 	</section>
 		
