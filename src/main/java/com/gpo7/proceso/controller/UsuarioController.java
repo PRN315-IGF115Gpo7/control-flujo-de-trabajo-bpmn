@@ -36,7 +36,7 @@ private static final String INDEX_VIEW="usuario/index";
 		mav.addObject("usuarios", usuarios );
 		return mav;
 	}
-	@PostMapping("/updateBaja")
+	@PostMapping("/update-baja")
     public String updateBaja() {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
