@@ -47,7 +47,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public Usuario update(Usuario usuario) {
 		// TODO Auto-generated method stub
-		return null;
+		return userJpaRepository.save(usuario);
 	}
 
 	@Override
