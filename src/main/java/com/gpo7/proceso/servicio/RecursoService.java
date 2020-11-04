@@ -12,4 +12,5 @@ public interface RecursoService {
 	public Recurso store(Recurso recurso);
 	public void destroy(Recurso recurso);
 	public Recurso findById(int id_recurso);
+	public Recurso update(Recurso recurso);
 }

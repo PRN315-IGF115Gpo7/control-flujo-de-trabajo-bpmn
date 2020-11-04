@@ -10,7 +10,7 @@
 
 </head>
 
-<body>
+<body> 
 
 	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Recurso</h1>
 
@@ -22,47 +22,53 @@
 	<div layout:fragment="content">
 
     <div class="row ml-3 mr-3">
-			<div class="col-md-2"></div>
-			<div class="col-md-8 ">
+			<div class="col-md-9 offset-1">
 				<div class="card">
 	         <div class="card-header text-right">
 
-						<a th:href="@{/recurso/create}" class="btn btn-sm btn-primary" title="Agregar Rango de Renta" id="add-tipo-unidad">
+						<button class="btn btn-sm btn-primary" id="btnAgregar">
 							<i class="fas fa-plus-circle mr-1 text-white"></i>
 							<span class="text-white">Agregar Recurso</span>
-						</a>
-	              <h3 class="card-title"></h3>
+						</button>
+	           <h3 class="card-title"></h3>
 	          </div>
 
 					<div class="card-body">
+
+            <div th:if="${mensaje}">
+              <div class="alert alert-danger" th:text="${mensaje}"></div>
+            </div>
+
 						<table id="example1" class="table table-bordered table-striped">
 							<thead>
                   <tr>
-                    <th>Recurso</th>
+                    <th>Recurso</th>                    
                     <th>Acciones</th>
-                    
                   </tr>
 							</thead>
 							<tbody>
 
-				  <tr th:each="recurso : ${recursos}">
-                  <td th:text="${recurso.recurso}"></td>
-                  
+				  <tr th:each="newRecurso : ${recursos}">
+                  <td class="recurso" th:text="${newRecurso.recurso}"></td>
                   
                   <td>
-                    <a class="btn btn-sm btn-primary" th:href="@{/recurso/edit/{id_recurso}(id_recurso=${recurso.idRecurso})}">
+                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${newRecurso.idRecurso}">
                       <i class="fas fa-pencil-alt"></i>
-                    </a>
-                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${recurso.idRecurso}">
+                    </button>
+                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${newRecurso.idRecurso}">
                       <i class="fas fa-trash"></i>
                     </button>
                   </td>
-								</tr>
+				  </tr>
 
 							</tbody>
 							<tfoot>
 								<tr>
-                 
+                  <tr>
+                    <th>Recurso</th>                    
+                    <th>Acciones</th>
+                  </tr>
+
 							</tfoot>
 						</table>
 					</div>
@@ -70,13 +76,48 @@
 				</div>
 				<!-- /.card -->
 			</div>
-		</div>
-
-    <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+    </div>
+    
+		 <!--Modal para crear un recurso-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Eliminar Recursos</h5>
+          <h5 class="modal-title">Agregar Recurso</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/recurso/store}" th:object="${newRecurso}">
+        <div class="modal-body">
+
+          <div class="form-group">
+              <label for="exampleInputPassword1">Recurso</label>
+              <input th:field="*{recurso}" type="text" class="form-control" placeholder="Nombre del recurso">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+
+
+	<!--MODAL PARA ELIMINAR UN RECURSO-->
+
+  <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Eliminar Recurso</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -84,7 +125,7 @@
 
         <form method="POST" th:action="@{/recurso/destroy}">
         <div class="modal-body">
-          <input type="hidden" id="idRecurso" name="idRecurso" value>
+          <input id="idRecurso" type="hidden" name="idRecurso" value>
           <p>¿Desea eliminar el Recurso?</p>
         </div>
 
@@ -98,22 +139,77 @@
     </div>
   </div>
 
-	</div>
+  <!--Modal para editar un recurso-->
+  <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Recurso</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
 
+        <form method="POST" th:action="@{/recurso/update}" th:object="${newRecurso}">
+        <div class="modal-body">
+          <input id="id" type="hidden" th:field="*{idRecurso}">
+          <div class="form-group">
+              <label>Recurso</label>
+              <input id="recurso-c" th:field="*{recurso}" type="text" class="form-control" placeholder="Nombre del cargo">
+          </div>           
 
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+  </div>
+  
 	<section layout:fragment="scripts">
     <script>
+    //Para Crear un Recurso
+    $('#btnAgregar').on('click', function(){
+
+      //Lanzar modal
+      $('#modalAgregar').modal('show');
+    })
+    //FIN-Crear un Recurso
+
+     //Para editar el Recurso
+     $('[data-editar]').on('click', function(){
+ 
+       //Obteniendo datos de la tabla
+       var id = $(this).data('editar');
+       var recurso = $(this).parent().siblings('td.recurso').text();
+       
+       
+       //Asignando datos a la modal
+       $('#id').val(id);
+       $('#recurso-c').val(recurso);
+       
+       
+       //Lanzar modal
+       $('#modalEditar').modal('show');
+       })
+       //FIN-Editar un cargo
+
+       //Para eliminar un cargo
       $('[data-eliminar]').on('click', function(){
 
         var idRecurso = $(this).data('eliminar');
 
 
         $('#idRecurso').val(idRecurso);
+        //Lanzar modal
         $('#modalEliminar').modal('show');
       })
+      //FIN-Eliminar un recurso
     </script>
 	</section>
-
-
 </body>
 </html>

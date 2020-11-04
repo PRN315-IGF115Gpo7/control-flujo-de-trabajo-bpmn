@@ -44,4 +44,10 @@ public class RecursoServiceImpl implements RecursoService{
 		return recursoJpaRepository.save(recurso);
 	}
 
+	@Override
+	public Recurso update(Recurso recurso) {
+		// TODO Auto-generated method stub
+		return recursoJpaRepository.save(recurso);
+	}
+
 }
