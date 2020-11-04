@@ -40,7 +40,17 @@ public class CargoController {
 		
 		return "redirect:/cargo/index";
 	}
-	
+	@PostMapping("/update")
+	public String update(@ModelAttribute("cargo")Cargo cargo) {
+		Cargo cargoModificado = cargoService.findById(cargo.getIdCargo());
+		
+		cargoModificado.setNombreCargo(cargo.getNombreCargo());
+		cargoModificado.setDescripcionCargo(cargo.getDescripcionCargo());
+		
+		cargoService.update(cargoModificado);
+		
+		return "redirect:/cargo/index";
+	}
 	@PostMapping("/destroy")
 	public String destroy(@RequestParam("idCargo") int id_cargo, RedirectAttributes redirAttrs) {
 		Cargo cargo = cargoService.findById(id_cargo);
@@ -53,5 +63,6 @@ public class CargoController {
 		
 		return "redirect:/cargo/index";
 	}
+	
 
 }

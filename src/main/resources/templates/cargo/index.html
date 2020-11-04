@@ -53,9 +53,9 @@
                   <td class="nombre" th:text="${cargo.nombreCargo}"></td>
                   <td class="descripcion" th:text="${cargo.descripcionCargo}"></td>
                   <td>
-                    <a class="btn btn-sm btn-primary" th:href="@{/cargo/edit/{id_cargo}(id_cargo=${cargo.idCargo})}">
+                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${cargo.idCargo}">
                       <i class="fas fa-pencil-alt"></i>
-                    </a>
+                    </button>
                     <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${cargo.idCargo}">
                       <i class="fas fa-trash"></i>
                     </button>
@@ -78,9 +78,9 @@
 				</div>
 				<!-- /.card -->
 			</div>
-		</div>
+    </div>
+    
 		 <!--Modal para crear un cargo-->
-
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -132,7 +132,7 @@
 
         <form method="POST" th:action="@{/cargo/destroy}">
         <div class="modal-body">
-          <input type="hidden" id="idCargo" name="idCargo" value>
+          <input id="idCargo" type="hidden" name="idCargo" value>
           <p>¿Desea eliminar el Cargo?</p>
         </div>
 
@@ -145,12 +145,44 @@
       </div>
     </div>
   </div>
+
+  <!--Modal para editar un cargo-->
+  <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Cargo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/cargo/update}" th:object="${cargo}">
+        <div class="modal-body">
+          <input id="id" type="hidden" th:field="*{idCargo}">
+          <div class="form-group">
+              <label>Nombre</label>
+              <input id="nombre-c" th:field="*{nombreCargo}" type="text" class="form-control" placeholder="Nombre del cargo">
+          </div>
+
+            <div class="form-group">
+              <label for="exampleInputPassword1">Descripcion</label>
+              <textarea th:field="*{descripcionCargo}" class="form-control" id="descripcion-c" rows="3" placeholder="Descripcion del cargo"></textarea>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
   </div>
-
-
-
-
-
+  </div>
+  
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
@@ -161,16 +193,35 @@
     })
     //FIN-Crear un cargo
 
+     //Para editar un cargo
+     $('[data-editar]').on('click', function(){
+ 
+       //Obteniendo datos de la tabla
+       var id = $(this).data('editar');
+       var nombre = $(this).parent().siblings('td.nombre').text();
+       var descripcion = $(this).parent().siblings('td.descripcion').text();
+       
+       //Asignando datos a la modal
+       $('#id').val(id);
+       $('#nombre-c').val(nombre);
+       $('#descripcion-c').val(descripcion);
+       
+       //Lanzar modal
+       $('#modalEditar').modal('show');
+       })
+       //FIN-Editar un cargo
 
-
+       //Para eliminar un cargo
       $('[data-eliminar]').on('click', function(){
 
         var idCargo = $(this).data('eliminar');
 
 
         $('#idCargo').val(idCargo);
+        //Lanzar modal
         $('#modalEliminar').modal('show');
       })
+      //FIN-Eliminar un cargo
     </script>
 	</section>
 
