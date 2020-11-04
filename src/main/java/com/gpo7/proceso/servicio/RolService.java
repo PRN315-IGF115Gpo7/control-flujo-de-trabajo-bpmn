@@ -10,5 +10,6 @@ public interface RolService {
 	
 	public Rol store(Rol rol);
 	public List<Rol> getAll();
-	
+	public Rol update(Rol rol);
+	public Rol findById(int idRol);
 }

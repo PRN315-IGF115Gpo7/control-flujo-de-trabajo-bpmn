@@ -47,7 +47,7 @@ private static final String INDEX_VIEW="usuario/index";
     	
     	usuarioService.update(usuarioModificado);
     	
-    	return "redirect:/usuario/index";
+    	return "redirect:/login";
     }
 	
 	
