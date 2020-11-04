@@ -22,6 +22,11 @@ public class CargoServiceImpl implements CargoService {
 		// TODO Auto-generated method stub
 		return cargoJpaRepository.save(cargo);
 	}
+	@Override
+	public Cargo update(Cargo cargo) {
+		// TODO Auto-generated method stub
+		return cargoJpaRepository.save(cargo);
+	}
 	
 	@Override
 	public List<Cargo> getAll() {
@@ -35,9 +40,9 @@ public class CargoServiceImpl implements CargoService {
 	}
 	
 	@Override
-	public Cargo findById(int id_cargo) {
+	public Cargo findById(int idCargo) {
 		// TODO Auto-generated method stub
-		return cargoJpaRepository.getOne(id_cargo);
+		return cargoJpaRepository.getOne(idCargo);
 	}
 
 }
