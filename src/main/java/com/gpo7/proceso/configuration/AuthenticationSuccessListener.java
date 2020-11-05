@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.stereotype.Component;
 
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.repository.UserJpaRepository;
 
+@Component
 public class AuthenticationSuccessListener implements ApplicationListener<AuthenticationSuccessEvent>{
 
 	@Autowired
