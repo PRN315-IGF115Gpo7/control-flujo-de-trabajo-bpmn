@@ -49,6 +49,17 @@ private static final String INDEX_VIEW="usuario/index";
     	
     	return "redirect:/login";
     }
+
+@PostMapping("/destroy")
+public String destroy(@RequestParam("id_user") int id_user) {
+	
+	Usuario usuario = usuarioService.findById(id_user);
+    usuario.setEnabled(false);
+		
+	usuarioService.update(usuario);
+	
+	return "redirect:/usuario/index";
+}
 	
 	
 }
