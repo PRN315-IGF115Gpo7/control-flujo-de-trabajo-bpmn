@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,8 +23,13 @@ public class Cargo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_cargo", unique = true, nullable = false)
 	private int idCargo;
+	
+	@NotEmpty(message = "Debe ingresar el nombre del cargo")
 	@Column(name = "nombre_cargo", nullable = false)
 	private String nombreCargo;
+	
+	@NotEmpty(message = "Debe ingresar la descripción del cargo")
+	@Size(min = 6, message = "La descripción debe tener al menos seis caracteres")
 	@Column(name = "descripcion_cargo", nullable = false)
 	private String descripcionCargo;
 

@@ -1,8 +1,11 @@
 package com.gpo7.proceso.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,12 +37,19 @@ public class CargoController {
 		return mav;
 	}
 	@PostMapping("/store")
-	public String store(@ModelAttribute("cargo") Cargo cargo) {
+	public String store(@Valid @ModelAttribute("cargo") Cargo cargo, BindingResult results, RedirectAttributes redirAttrs) {
+		
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/cargo/index";
+		}
 		
 		cargoService.store(cargo);
+		redirAttrs.addFlashAttribute("success", "El cargo fue registrado con éxito");
 		
 		return "redirect:/cargo/index";
 	}
+	
 	@PostMapping("/update")
 	public String update(@ModelAttribute("cargo")Cargo cargo) {
 		Cargo cargoModificado = cargoService.findById(cargo.getIdCargo());
