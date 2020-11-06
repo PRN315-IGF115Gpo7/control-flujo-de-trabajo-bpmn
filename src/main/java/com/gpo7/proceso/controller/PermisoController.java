@@ -42,12 +42,24 @@ public class PermisoController {
 		
 		return "redirect:/permiso/index";
 	}
+	
 	@PostMapping("/destroy")
 	public String destroy(@RequestParam("idPermiso") int id_permiso, RedirectAttributes redirAttrs) {
 		Permiso permiso = permisoService.findById(id_permiso);
 		
 		
 			permisoService.destroy(permiso);
+		
+		return "redirect:/permiso/index";
+	}
+	
+	@PostMapping("/update")
+	public String update(@ModelAttribute("permiso") Permiso permiso) {
+		Permiso editarPermiso = permisoService.findById(permiso.getIdPermiso());
+		editarPermiso.setNombrePermiso(permiso.getNombrePermiso());
+		editarPermiso.setDescripcionPermiso(permiso.getDescripcionPermiso());
+		
+		permisoService.update(editarPermiso);
 		
 		return "redirect:/permiso/index";
 	}
