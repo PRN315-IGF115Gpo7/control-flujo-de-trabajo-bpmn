@@ -2,9 +2,12 @@ package com.gpo7.proceso.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,20 +41,31 @@ public class RolController {
 	
 	
 	@PostMapping("/store")
-    public String store(@ModelAttribute("rol")Rol rol){
-    	
+    public String store(@Valid @ModelAttribute("rol")Rol rol, BindingResult results, RedirectAttributes redirAttrs){
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/rol/index";
+		}
     	rolService.store(rol);
+		redirAttrs.addFlashAttribute("success", "El rol fue registrado con éxito");
     	
     	return "redirect:/rol/index";
     }
     
 	@PostMapping("/update")
-	public String update(@ModelAttribute("rol") Rol rol) {
+	public String update(@Valid @ModelAttribute("rol") Rol rol, BindingResult results, RedirectAttributes redirAttrs) {
 		Rol rolModificado = rolService.findById(rol.getIdRol());
 		
 		rolModificado.setAuthority(rol.getAuthority());
 		
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/rol/index";
+		}
+		
 		rolService.update(rolModificado);
+		
+		redirAttrs.addFlashAttribute("success", "El rol fue modificado con éxito");
 		
 		return "redirect:/rol/index";
 	}

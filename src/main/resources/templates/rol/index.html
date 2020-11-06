@@ -36,6 +36,17 @@
 	          </div>
 
 					<div class="card-body">
+					     <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+				               <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+				            </ul>
+				
+				            <div th:if="${success}">
+				              <div class="alert alert-success" th:text="${success}"></div>
+				            </div>
+				
+				            <div th:if="${mensaje}">
+				              <div class="alert alert-danger" th:text="${mensaje}"></div>
+				            </div>
 						<table id="example1" class="table table-bordered table-striped">
 							<thead>
                   <tr>
@@ -90,7 +101,7 @@
 
           <div class="form-group">
               <label for="exampleInputPassword1">Autoridad</label>
-              <input th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
+              <input th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad" required>
           </div>
         </div>
 
@@ -120,7 +131,7 @@
           <input id="idRol" type="hidden" th:field="*{idRol}">
           <div class="form-group">
               <label>Autoridad</label>
-              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder=" Autoridad">
+              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
           </div>
         </div>
 
