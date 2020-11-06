@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gpo7.proceso.servicio.RolService;
-
+import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.Rol;
 
 
@@ -53,4 +55,17 @@ public class RolController {
 		
 		return "redirect:/rol/index";
 	}
+
+@PostMapping("/destroy")
+public String destroy(@RequestParam("id_rol") int idRol, RedirectAttributes redirAttrs) {
+	Rol rol = rolService.findById(idRol);
+	
+	if(rol.getUsuarios().isEmpty() || rol.getRolesRecursosPrivilegios().isEmpty()) {
+		rolService.destroy(rol);
+	}else {
+		redirAttrs.addFlashAttribute("mensaje", "Este rol no puede ser eliminado porque ya fue asignado");
+	}
+	
+	return "redirect:/rol/index";
+}
 }

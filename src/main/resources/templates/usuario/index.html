@@ -39,6 +39,9 @@
                      				 <i class="fas fa-down-circle mr-1 text-white"></i>
                      				 <span class="text-white">Dar de baja</span>
                    					 </button>
+                   					 <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${usuario.idUsuario}">
+                                     <i class="fas fa-trash"></i>
+                                     </button>
                    					 </td>
 								</tr>
 							</tbody>
@@ -84,7 +87,31 @@
     </div>
   </div>
 		
-	</div>
+	
+	<!--Modal para eliminar un usuario-->
+    <div class="modal" tabindex="-1" role="dialog" id="modal-Eliminar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+        </div>
+
+        <form method="POST" th:action="@{/usuario/destroy}">   
+        <div class="modal-body">
+          <input type="hidden" id="id_user" name= "id_user" value>
+          <p>&iquest;Desea eliminar el usuario seleccionado?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Aceptar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+  </div>
 
 	<section layout:fragment="scripts">
 	    <script>
@@ -97,6 +124,14 @@
           $('#idUsuario').val(idUsuario);
 
         $('#modal-preguntar').modal('show');
+      })
+      
+       //Para eliminar un usuario
+      $('[data-eliminar]').on('click', function(){
+    	  
+    	  var id_user = $(this).data('eliminar');
+    	  $('#id_user').val(id_user);
+    	  $('#modal-Eliminar').modal('show');
       })
     </script>
 	

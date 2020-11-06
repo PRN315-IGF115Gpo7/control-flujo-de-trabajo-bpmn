@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.repository.RolJpaRepository;
 import com.gpo7.proceso.servicio.RolService;
@@ -33,5 +34,10 @@ public class RolServiceImpl implements RolService{
 	
 	public Rol findById(int idRol) {
 		return rolJpaRepository.getOne(idRol);
+	}
+	@Override
+	public void destroy(Rol rol) {
+		// TODO Auto-generated method stub
+		rolJpaRepository.delete(rol);
 	}
 }
