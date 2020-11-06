@@ -1,8 +1,11 @@
 package com.gpo7.proceso.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +39,12 @@ public class PermisoController {
 	}
 	
 	@PostMapping("/store")
-	public String store(@ModelAttribute("permiso")Permiso permiso) {
-		
+	public String store(@Valid @ModelAttribute("permiso")Permiso permiso, BindingResult results, RedirectAttributes redirAttrs) {
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/permiso/index";
+		}
+		redirAttrs.addFlashAttribute("success","El cargo fue registrado con exito");
 		permisoService.store(permiso);
 		
 		return "redirect:/permiso/index";
@@ -54,11 +61,17 @@ public class PermisoController {
 	}
 	
 	@PostMapping("/update")
-	public String update(@ModelAttribute("permiso") Permiso permiso) {
+	public String update(@Valid @ModelAttribute("permiso") Permiso permiso, BindingResult results, RedirectAttributes redirAttrs) {
 		Permiso editarPermiso = permisoService.findById(permiso.getIdPermiso());
 		editarPermiso.setNombrePermiso(permiso.getNombrePermiso());
 		editarPermiso.setDescripcionPermiso(permiso.getDescripcionPermiso());
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/permiso/index";
+
+		}
 		
+		redirAttrs.addFlashAttribute("success","El cargo fue editado con exito");
 		permisoService.update(editarPermiso);
 		
 		return "redirect:/permiso/index";
