@@ -49,7 +49,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 		// TODO Auto-generated method stub
 		return userJpaRepository.save(usuario);
 	}
-
+	public Usuario store(Usuario usuario) {
+		return userJpaRepository.save(usuario);
+	}
 	@Override
 	public Usuario findById(int idUsuario) {
 		// TODO Auto-generated method stub

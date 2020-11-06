@@ -15,7 +15,10 @@
 			<div class="col-md-8 ">
 				<div class="card">
 	         <div class="card-header text-right">
-
+					<button class="btn btn-sm btn-primary" id="btnAgregar">
+							<i class="fas fa-plus-circle mr-1 text-white"></i>
+							<span class="text-white">Agregar Usuario</span>
+					</button>
 	              <h3 class="card-title"></h3>
 	          </div>
 
@@ -84,6 +87,37 @@
     </div>
   </div>
 		
+		 <!--Modal para crear un usuario-->
+    <div class="modal" tabindex="-1" role="dialog" id="modal-agregar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Agregar Usuario</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" th:action="@{/usuario/store}" th:object="${usuario}">
+        <div class="modal-body">
+
+          <div class="form-group">
+              <label for="exampleInputPassword1">Usuario</label>
+              <input th:field="*{username}" type="text" class="form-control" placeholder="Ingrese el usuario">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
+  	</div>
+  	
 	</div>
 
 	<section layout:fragment="scripts">
@@ -102,6 +136,14 @@
 	
 	
 	</section>
+	
+	 <script>
+    //Para Crear un Usuario
+    $('#btnAgregar').on('click', function(){
+      		$('#modal-agregar').modal('show');
+    })
+    
+    </script>
 
 </body>
 </html>

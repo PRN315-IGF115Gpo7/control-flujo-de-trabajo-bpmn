@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-
+import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.servicio.UsuarioService;
 
@@ -49,6 +49,12 @@ private static final String INDEX_VIEW="usuario/index";
     	
     	return "redirect:/login";
     }
-	
+	@PostMapping("/store")
+    public String store(@ModelAttribute("usuario")Usuario usuario){
+    	
+    	usuarioService.store(usuario);
+    	
+    	return "redirect:/usuario/index";
+    }
 	
 }
