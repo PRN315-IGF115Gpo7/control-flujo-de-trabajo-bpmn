@@ -51,13 +51,18 @@ public class CargoController {
 	}
 	
 	@PostMapping("/update")
-	public String update(@ModelAttribute("cargo")Cargo cargo) {
+	public String update(@Valid @ModelAttribute("cargo") Cargo cargo, BindingResult results, RedirectAttributes redirAttrs) {
 		Cargo cargoModificado = cargoService.findById(cargo.getIdCargo());
 		
 		cargoModificado.setNombreCargo(cargo.getNombreCargo());
 		cargoModificado.setDescripcionCargo(cargo.getDescripcionCargo());
 		
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/cargo/index";
+		}
 		cargoService.update(cargoModificado);
+		redirAttrs.addFlashAttribute("success", "El cargo fue modificado con éxito");
 		
 		return "redirect:/cargo/index";
 	}
