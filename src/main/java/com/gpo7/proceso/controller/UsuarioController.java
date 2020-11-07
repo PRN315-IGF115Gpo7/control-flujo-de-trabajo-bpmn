@@ -38,8 +38,10 @@ private static final String INDEX_VIEW="usuario/index";
 		ModelAndView mav=new ModelAndView(INDEX_VIEW);
 		List<Usuario> usuarios=usuarioService.getAll();
 		mav.addObject("usuarios", usuarios );
+		mav.addObject("usuario", new Usuario() );
 		return mav;
 	}
+	
 	@PostMapping("/update-baja")
     public String updateBaja() {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
