@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "USUARIOS")
@@ -13,7 +14,8 @@ public class Usuario {
 	@GeneratedValue
 	@Column(name = "id_usuario", unique = true, nullable = false)
 	private int idUsuario;
-
+	
+	@NotEmpty(message="Debe ingresar el Usuario")
 	@Column(name = "username", unique = true, nullable = false)
 	private String username;
 
