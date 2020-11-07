@@ -34,6 +34,17 @@
 	          </div>
 
 					<div class="card-body">
+            <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+              <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+           </ul>
+
+           <div th:if="${success}">
+             <div class="alert alert-success" th:text="${success}"></div>
+           </div>
+
+           <div th:if="${mensaje}">
+             <div class="alert alert-danger" th:text="${mensaje}"></div>
+           </div>
 						<table id="example1" class="table table-bordered table-striped">
 							<thead>
                   <tr>
@@ -48,7 +59,7 @@
                   <td class="nombre" th:text="${permiso.nombrePermiso}"></td>
                   <td class="descripcion" th:text="${permiso.descripcionPermiso}"></td>
                    <td>
-                    <a class="btn btn-sm btn-primary" th:href="@{/permiso/edit/{id_permiso}(id_permiso=${permiso.idPermiso})}">
+                    <a class="btn btn-sm btn-primary" th:attr="data-editar=${permiso.idPermiso}">
                       <i class="fas fa-pencil-alt"></i>
                     </a>
                     <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${permiso.idPermiso}">
@@ -109,33 +120,72 @@
       </div>
     </div>
   </div>
-	<!--Modal para ELIMINAR UN PERMISO-->
-		 <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+
+
+  <!--Modal para Editar un PERMISO-->
+  <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Eliminar Permiso</h5>
+          <h5 class="modal-title">Editar permiso</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
 
-        <form method="POST" th:action="@{/permiso/destroy}">
+        <form method="POST" th:action="@{/permiso/update}" th:object="${permiso}">
         <div class="modal-body">
-          <input type="hidden" id="idPermiso" name="idPermiso" value>
-          <p>¿Desea eliminar el Permiso?</p>
+          <input id="idPer" type="hidden" th:field="*{idPermiso}">
+          <div class="form-group">
+              <label>Nombre</label>
+              <input id="nombre-c" th:field="*{nombrePermiso}" type="text" class="form-control" placeholder="Nombre del Permiso">
+          </div>
+
+            <div class="form-group">
+              <label for="exampleInputPassword1">Descripcion</label>
+              <textarea th:field="*{descripcionPermiso}" class="form-control" id="descripcion-c" rows="3" placeholder="Descripcion del permiso"></textarea>
+            </div>
         </div>
 
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Confirmar</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
+
         </form>
 
       </div>
     </div>
   </div>
+
+	<!--Modal para ELIMINAR UN PERMISO-->
+		 <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Eliminar Permiso</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form method="POST" th:action="@{/permiso/destroy}">
+          <div class="modal-body">
+            <input type="hidden" id="idPermiso" name="idPermiso" value>
+            <p>¿Desea eliminar el Permiso?</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-danger">Confirmar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
   </div>
+
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un permiso
@@ -145,7 +195,24 @@
       $('#modalAgregar').modal('show');
     })
     //FIN-Crear un permiso
-
+    //--Editar un PERMISO---//
+    //Asignando datos a la modal
+    $('[data-editar]').on('click', function(){
+ 
+ //Obteniendo datos de la tabla
+      var id = $(this).data('editar');
+      var nombre = $(this).parent().siblings('td.nombre').text();
+      var descripcion = $(this).parent().siblings('td.descripcion').text();
+      
+      //Asignando datos a la modal
+      $('#idPer').val(id);
+      $('#nombre-c').val(nombre);
+      $('#descripcion-c').val(descripcion);
+      
+      //Lanzar modal
+      $('#modalEditar').modal('show');
+      })
+//FIN-Editar un permiso
     
     //---Eliminar un permiso---//
       $('[data-eliminar]').on('click', function(){
@@ -157,11 +224,9 @@
         $('#modalEliminar').modal('show');
     //------------------------//
       })
+
+    
     </script>
 	</section>
-		
-
-
-
 </body>
 </html>

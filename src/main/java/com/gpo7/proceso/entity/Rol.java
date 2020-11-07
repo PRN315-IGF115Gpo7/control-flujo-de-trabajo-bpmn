@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,6 +26,7 @@ public class Rol {
 	@Column(name = "id_rol", unique = true, nullable = false)
 	private Integer idRol;
 	
+	@NotEmpty(message="Debe ingresar la autoridad")
 	@Column(name = "authority", nullable = false)
 	private String authority;
 	

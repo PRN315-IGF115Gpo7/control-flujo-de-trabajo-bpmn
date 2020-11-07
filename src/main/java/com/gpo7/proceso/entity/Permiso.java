@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "permisos")
@@ -15,9 +17,12 @@ public class Permiso {
 	@Column(name = "id_permiso", unique = true)
 	private int idPermiso;
 	
+	@NotEmpty(message = "Debe ingresar un asunto para el permiso")
 	@Column(name = "nombre_permiso")
 	private String nombrePermiso;
 	
+	@NotEmpty(message = "Debe escribir la descripcion del permiso")
+	@Size(min=10, message = "La descripcion debe tener mínimo 10 caracteres")
 	@Column(name = "descripcion_permiso")
 	private String descripcionPermiso;
 	

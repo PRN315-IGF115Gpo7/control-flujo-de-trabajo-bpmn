@@ -1,6 +1,7 @@
 package com.gpo7.proceso.servicio.Impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,8 +56,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public Usuario findById(int idUsuario) {
 		// TODO Auto-generated method stub
-		return null;
+		return userJpaRepository.findById(idUsuario).orElse(null);
 	}
-	
+
 		
 }

@@ -38,7 +38,13 @@ public class PermisoServiceImpl implements PermisoService{
 	@Override
 	public Permiso findById(int id_permiso) {
 		// TODO Auto-generated method stub
-		return null;
+		return permisoJpaRepository.getOne(id_permiso);
+	}
+
+	@Override
+	public Permiso update(Permiso permiso) {
+		// TODO Auto-generated method stub
+		return permisoJpaRepository.save(permiso);
 	}
 	
 	

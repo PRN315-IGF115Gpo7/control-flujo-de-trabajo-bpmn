@@ -44,12 +44,7 @@ public class BaseController {
 	
 	@GetMapping({"/loginsuccess","/"})
 	public String loginCheck() {
-		
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Usuario usuario  = userJpaRepository.findByUsername(user.getUsername());
-		usuario.setIntentos(0);
-		userJpaRepository.save(usuario);
-		
+	
 		return "redirect:/index";
 	}
 

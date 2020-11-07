@@ -30,10 +30,23 @@
 							<i class="fas fa-plus-circle mr-1 text-white"></i>
 							<span class="text-white">Agregar Rol</span>
 						</button>
+						
+						
 	           <h3 class="card-title"></h3>
 	          </div>
 
 					<div class="card-body">
+					     <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+				               <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+				            </ul>
+				
+				            <div th:if="${success}">
+				              <div class="alert alert-success" th:text="${success}"></div>
+				            </div>
+				
+				            <div th:if="${mensaje}">
+				              <div class="alert alert-danger" th:text="${mensaje}"></div>
+				            </div>
 						<table id="example1" class="table table-bordered table-striped">
 							<thead>
                   <tr>
@@ -48,6 +61,9 @@
                   <td>
                     <button class="btn btn-sm btn-primary" th:attr="data-editar=${rol.idRol}">
                       <i class="fas fa-pencil-alt"></i>
+                    </button>
+                     <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
+                      <i class="fas fa-trash"></i>
                     </button>
                   </td>
 				  </tr>
@@ -85,7 +101,7 @@
 
           <div class="form-group">
               <label for="exampleInputPassword1">Autoridad</label>
-              <input th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
+              <input th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad" required>
           </div>
         </div>
 
@@ -115,7 +131,7 @@
           <input id="idRol" type="hidden" th:field="*{idRol}">
           <div class="form-group">
               <label>Autoridad</label>
-              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder=" Autoridad">
+              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
           </div>
         </div>
 
@@ -125,11 +141,37 @@
         </div>
 
         </form>
+         </div>
+    </div>
+  </div>
+	
+ 
+     
+  	  	<!--Modal para eliminar un rol-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+        </div>
+
+        <form method="POST" th:action="@{/rol/destroy}">   
+        <div class="modal-body">
+          <input type="hidden" id="id_rol" name= "id_rol" value>
+          <p>¿Desea eliminar el rol del usuario seleccionado?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Aceptar</button>
+        </div>
+
+        </form>
 
       </div>
     </div>
   </div>
-	</div>
+  </div>
+  
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
@@ -152,6 +194,14 @@
 
         //Lanzar modal
         $('#modalEditar').modal('show');
+      })
+      
+      //Para eliminar un rol
+      $('[data-eliminar]').on('click', function(){
+    	  
+    	  var id_rol = $(this).data('eliminar');
+    	  $('#id_rol').val(id_rol);
+    	  $('#modalEliminar').modal('show');
       })
       //FIN-Editar un producto
     </script>
