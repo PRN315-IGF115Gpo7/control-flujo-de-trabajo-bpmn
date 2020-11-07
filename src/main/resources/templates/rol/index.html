@@ -186,11 +186,11 @@
 
         //Obteniendo datos de la tabla
         var id = $(this).data('editar');
-        var nombre = $(this).parent().siblings('td.authority').text();
+        var nombre = $(this).parent().siblings('td.autoridad').text();
         
         //Asignando datos a la modal
         $('#idRol').val(id);
-        $('#authority').val(autoridad);
+        $('#autoridad').val(nombre);
 
         //Lanzar modal
         $('#modalEditar').modal('show');
