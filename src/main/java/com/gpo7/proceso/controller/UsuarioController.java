@@ -85,9 +85,9 @@ private static final String INDEX_VIEW="usuario/index";
 
 
 @PostMapping("/destroy")
-public String destroy(@RequestParam("id_user") int id_user) {
+public String destroy(@RequestParam("id_user") int idUser) {
 	
-	Usuario usuario = usuarioService.findById(id_user);
+	Usuario usuario = usuarioService.findById(idUser);
     usuario.setEnabled(false);
 		
 	usuarioService.update(usuario);
