@@ -59,5 +59,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return userJpaRepository.findById(idUsuario).orElse(null);
 	}
 
-		
+	@Override
+	public void updatePassword(String password, int userId) {
+		userJpaRepository.updatePassword(password, userId);
+	}
+
+	@Override
+	public Usuario findByEmail(String email) {
+		return userJpaRepository.findByEmail(email);
+	}	
 }

@@ -40,6 +40,9 @@ public class Usuario {
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="cargo_id")
     private Cargo cargo;
+	
+	@Column(name = "email", unique = true, nullable = true)
+	private String email;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinTable(name = "usuarios_roles", 
@@ -172,6 +175,14 @@ public class Usuario {
 
 	public void setCargo(Cargo cargo) {
 		this.cargo = cargo;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

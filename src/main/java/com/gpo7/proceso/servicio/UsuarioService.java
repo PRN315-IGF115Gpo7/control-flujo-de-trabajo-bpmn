@@ -14,4 +14,6 @@ public interface UsuarioService {
 	public List<Usuario> getAll();
 	public abstract Usuario findById(int idUsuario);
 	public Usuario store(Usuario usuario);
+	public void updatePassword(String password, int userId);
+	public abstract Usuario findByEmail(String email);
 }
