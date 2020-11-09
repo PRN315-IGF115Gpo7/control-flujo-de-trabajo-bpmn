@@ -15,6 +15,10 @@
 			<div class="col-md-8 ">
 				<div class="card">
 	         <div class="card-header text-right">
+	         <button class="btn btn-sm btn-info" th:attr="data-darBaja=${usuario.idUsuario}">
+                   <i class="fas fa-less-circle mr-1 text-white"></i>
+                   <span class="text-white">Dar de baja</span>
+                   	</button>
 					<button class="btn btn-sm btn-primary" id="btnAgregar">
 							<i class="fas fa-plus-circle mr-1 text-white"></i>
 							<span class="text-white">Agregar Usuario</span>
@@ -41,10 +45,7 @@
 								<tr th:each="usuario: ${usuarios}">
 									<td class="usuario" th:text="${usuario.username}"></td>
 									<td> 
-									<button class="btn btn-sm btn-info" th:attr="data-darBaja=${usuario.idUsuario}">
-                     				 <i class="fas fa-down-circle mr-1 text-white"></i>
-                     				 <span class="text-white">Dar de baja</span>
-                   					 </button>
+									
                    					 <button id="btnEditar" class="btn btn-sm btn-primary" th:attr="data-editar=${usuario.idUsuario}">
                      					 <i class="fas fa-pencil-alt"></i>
                     				 </button>
