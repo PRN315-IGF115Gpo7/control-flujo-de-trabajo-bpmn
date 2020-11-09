@@ -152,12 +152,34 @@
         </div>
 
         </form>
-         </div>
+
+      </div>
     </div>
   </div>
-  	
-	</div>
+		
+	
+	<!--Modal para eliminar un usuario-->
+    <div class="modal" tabindex="-1" role="dialog" id="modal-Eliminar">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+        </div>
 
+        <form method="POST" th:action="@{/usuario/destroy}">   
+        <div class="modal-body">
+          <input type="hidden" id="id_user" name= "id_user" value>
+          <p>&iquest;Desea eliminar el usuario seleccionado?</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Aceptar</button>
+        </div>
+
+        </form>
+
+      </div>
+    </div>
   </div>
   </div>
 
