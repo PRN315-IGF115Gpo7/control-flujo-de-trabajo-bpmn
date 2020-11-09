@@ -54,6 +54,7 @@ public class Usuario {
 	 */
 
 	public Usuario() {
+		this.password = "flujos";//crea clave por defecto admin
 	}
 
 	public Usuario(String username, String password, boolean enabled, boolean accountExperired, boolean accountLocked, boolean passwordExpired, int intentos, List<Rol> roles) {

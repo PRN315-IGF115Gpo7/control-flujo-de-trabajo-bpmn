@@ -19,10 +19,13 @@
 							<i class="fas fa-plus-circle mr-1 text-white"></i>
 							<span class="text-white">Agregar Usuario</span>
 					</button>
+					
+					
 	              <h3 class="card-title"></h3>
 	          </div>
 
 					<div class="card-body">
+							
 						<table id="example1" class="table table-bordered table-striped">
 							<thead>
 
@@ -36,12 +39,15 @@
 							<tbody>
 
 								<tr th:each="usuario: ${usuarios}">
-									<td th:text="${usuario.username}"></td>
+									<td class="usuario" th:text="${usuario.username}"></td>
 									<td> 
 									<button class="btn btn-sm btn-info" th:attr="data-darBaja=${usuario.idUsuario}">
                      				 <i class="fas fa-down-circle mr-1 text-white"></i>
                      				 <span class="text-white">Dar de baja</span>
                    					 </button>
+                   					 <button id="btnEditar" class="btn btn-sm btn-primary" th:attr="data-editar=${usuario.idUsuario}">
+                     					 <i class="fas fa-pencil-alt"></i>
+                    				 </button>
                    					 <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${usuario.idUsuario}">
                                      <i class="fas fa-trash"></i>
                                      </button>
@@ -90,8 +96,8 @@
     </div>
   </div>
 		
-	 <!--Modal para crear un rol-->
-    <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
+	 <!--Modal para crear un USUARIO-->
+    <div class="modal"  role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -131,12 +137,12 @@
           </button>
         </div>
 
-        <form method="POST" th:action="@{/usuario/update}" th:object="${rol}">
+        <form method="POST" th:action="@{/usuario/update}" th:object="${usuario}">
         <div class="modal-body">
-          <input id="idRol" type="hidden" th:field="*{idRol}">
+          <input id="idUsuario" type="hidden" th:field="*{idUsuario}">
           <div class="form-group">
-              <label>Autoridad</label>
-              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
+              <label>Editar Usuario</label>
+              <input id="usuario" th:field="*{username}" type="text" class="form-control" placeholder="Ingrese el usuario">
           </div>
         </div>
 
@@ -179,20 +185,20 @@
       
      //--------------------
      //Para Cear un Usuario
-    $('#btnAgregar').on('click', function(){
-      		$('#modalAgregar').modal('show');
+		    $('#btnAgregar').on('click', function(){
+		    $('#modalAgregar').modal('show');
     })
-    //fin crear cargo
-    //Para editar un cargo
-      $('[data-editar]').on('click', function(){
+    //fin crear usuario
+    //Para editar un usuario
+      $('#btnEditar').on('click', function(){
 
         //Obteniendo datos de la tabla
         var id = $(this).data('editar');
-        var nombre = $(this).parent().siblings('td.username').text();
-        
+        var nombre = $(this).parent().siblings('td.usuario').text();
+       
         //Asignando datos a la modal
         $('#idUsuario').val(id);
-        $('#username').val(autoridad);
+        $('#usuario').val(nombre);
 
         //Lanzar modal
         $('#modalEditar').modal('show');
