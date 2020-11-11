@@ -1,0 +1,8 @@
+<select id="privileges" class="duallistbox" multiple="multiple" name="privilegios[]">
+  <th:block th:each="asignados : ${asignados}">
+      <option th:value="${asignados.idPrivilegio}" th:text="${asignados.privilegio}" selected>No hay privilegios</option>
+  </th:block>
+  <th:block th:each="noAsignado : ${noAsignados}">
+      <option th:value="${noAsignado.idPrivilegio}" th:text="${noAsignado.privilegio}"></option>
+  </th:block>
+</select>

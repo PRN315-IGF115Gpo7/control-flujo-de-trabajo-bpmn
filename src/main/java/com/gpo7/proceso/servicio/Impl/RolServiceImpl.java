@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.gpo7.proceso.entity.Cargo;
+import com.gpo7.proceso.entity.Privilegio;
 import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.repository.RolJpaRepository;
 import com.gpo7.proceso.servicio.RolService;
@@ -40,4 +41,5 @@ public class RolServiceImpl implements RolService{
 		// TODO Auto-generated method stub
 		rolJpaRepository.delete(rol);
 	}
+
 }

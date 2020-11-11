@@ -22,7 +22,7 @@
 	<div layout:fragment="content">
 
     <div class="row ml-3 mr-3">
-			<div class="col-md-9 offset-1">
+			<div class="col-md-7 offset-2">
 				<div class="card">
 	         <div class="card-header text-right">
 
@@ -30,8 +30,8 @@
 							<i class="fas fa-plus-circle mr-1 text-white"></i>
 							<span class="text-white">Agregar Rol</span>
 						</button>
-						
-						
+
+
 	           <h3 class="card-title"></h3>
 	          </div>
 
@@ -39,11 +39,11 @@
 					     <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
 				               <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
 				            </ul>
-				
+
 				            <div th:if="${success}">
 				              <div class="alert alert-success" th:text="${success}"></div>
 				            </div>
-				
+
 				            <div th:if="${mensaje}">
 				              <div class="alert alert-danger" th:text="${mensaje}"></div>
 				            </div>
@@ -65,6 +65,11 @@
                      <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
                       <i class="fas fa-trash"></i>
                     </button>
+                    <a class="btn btn-primary btn-sm"
+                       th:href="@{/rol/asignar/{idRol}(idRol=${rol.idRol})}"
+                       title="Gestionar Recursos y privilegios">
+                        <i class="fas fa-cubes"></i>
+                    </a>
                   </td>
 				  </tr>
 
@@ -83,7 +88,7 @@
 			</div>
 		</div>
 
-  
+
 
     <!--Modal para crear un rol-->
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
@@ -144,9 +149,9 @@
          </div>
     </div>
   </div>
-	
- 
-     
+
+
+
   	  	<!--Modal para eliminar un rol-->
     <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
     <div class="modal-dialog" role="document">
@@ -154,7 +159,7 @@
         <div class="modal-header">
         </div>
 
-        <form method="POST" th:action="@{/rol/destroy}">   
+        <form method="POST" th:action="@{/rol/destroy}">
         <div class="modal-body">
           <input type="hidden" id="id_rol" name= "id_rol" value>
           <p>¿Desea eliminar el rol del usuario seleccionado?</p>
@@ -171,23 +176,23 @@
     </div>
   </div>
   </div>
-  
+
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
     $('#btnAgregar').on('click', function(){
       		$('#modalAgregar').modal('show');
     })
-    
+
     //FIN-Crear un cargo
-    
+
     //Para editar un rol
       $('[data-editar]').on('click', function(){
 
         //Obteniendo datos de la tabla
         var id = $(this).data('editar');
         var nombre = $(this).parent().siblings('td.autoridad').text();
-        
+
         //Asignando datos a la modal
         $('#idRol').val(id);
         $('#autoridad').val(nombre);
@@ -195,10 +200,10 @@
         //Lanzar modal
         $('#modalEditar').modal('show');
       })
-      
+
       //Para eliminar un rol
       $('[data-eliminar]').on('click', function(){
-    	  
+
     	  var id_rol = $(this).data('eliminar');
     	  $('#id_rol').val(id_rol);
     	  $('#modalEliminar').modal('show');
@@ -206,7 +211,7 @@
       //FIN-Editar un producto
     </script>
 	</section>
-		
+
 
 
 

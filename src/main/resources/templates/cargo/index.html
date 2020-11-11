@@ -87,7 +87,7 @@
 				<!-- /.card -->
 			</div>
     </div>
-    
+
 		 <!--Modal para crear un cargo-->
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
@@ -190,7 +190,7 @@
     </div>
   </div>
   </div>
-  
+
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
@@ -203,17 +203,17 @@
 
      //Para editar un cargo
      $('[data-editar]').on('click', function(){
- 
+
        //Obteniendo datos de la tabla
        var id = $(this).data('editar');
        var nombre = $(this).parent().siblings('td.nombre').text();
        var descripcion = $(this).parent().siblings('td.descripcion').text();
-       
+
        //Asignando datos a la modal
        $('#id').val(id);
        $('#nombre-c').val(nombre);
        $('#descripcion-c').val(descripcion);
-       
+
        //Lanzar modal
        $('#modalEditar').modal('show');
        })
