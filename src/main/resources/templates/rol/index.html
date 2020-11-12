@@ -3,200 +3,201 @@
 
 <head>
 
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 </head>
 
 <body>
 
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Rol</h1>
+  <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Rol</h1>
 
-	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
-        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
-        <li class="breadcrumb-item active">Rol</li>
-    </ol>
+  <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+    <li class="breadcrumb-item active">Rol</li>
+  </ol>
 
-	<div layout:fragment="content">
+  <div layout:fragment="content">
 
     <div class="row ml-3 mr-3">
-			<div class="col-md-7 offset-2">
-				<div class="card">
-	         <div class="card-header text-right">
+      <div class="col-md-7 offset-2">
+        <div class="card">
+          <div class="card-header text-right">
 
-						<button class="btn btn-sm btn-primary" id="btnAgregar">
-							<i class="fas fa-plus-circle mr-1 text-white"></i>
-							<span class="text-white">Agregar Rol</span>
-						</button>
+            <button class="btn btn-sm btn-primary" id="btnAgregar">
+              <i class="fas fa-plus-circle mr-1 text-white"></i>
+              <span class="text-white">Agregar Rol</span>
+            </button>
 
 
-	           <h3 class="card-title"></h3>
-	          </div>
+            <h3 class="card-title"></h3>
+          </div>
 
-					<div class="card-body">
-					     <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
-				               <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
-				            </ul>
+          <div class="card-body">
+            <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+              <li class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+            </ul>
 
-				            <div th:if="${success}">
-				              <div class="alert alert-success" th:text="${success}"></div>
-				            </div>
+            <div th:if="${success}">
+              <div class="alert alert-success" th:text="${success}"></div>
+            </div>
 
-				            <div th:if="${mensaje}">
-				              <div class="alert alert-danger" th:text="${mensaje}"></div>
-				            </div>
-				            <div th:if="${delete_success}">
-				              <div class="alert alert-success">
-				              	Rol eliminado con éxito!
-				              </div>
-				            </div>
-				       
-						<table id="example1" class="table table-bordered table-striped">
-							<thead>
-                  <tr>
-                    <th>Autoridad</th>
-                    <th>Acciones</th>
-                  </tr>
-							</thead>
-							<tbody>
+            <div th:if="${mensaje}">
+              <div class="alert alert-danger" th:text="${mensaje}"></div>
+            </div>
+            <div th:if="${delete_success}">
+              <div class="alert alert-success">
+                Rol eliminado con éxito!
+              </div>
+            </div>
 
-				  <tr th:each="rol : ${roles}">
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Autoridad</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr th:each="rol : ${roles}">
                   <td class="autoridad" th:text="${rol.authority}"></td>
                   <td>
                     <button class="btn btn-sm btn-primary" th:attr="data-editar=${rol.idRol}">
                       <i class="fas fa-pencil-alt"></i>
                     </button>
-                     <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
+                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
                       <i class="fas fa-trash"></i>
                     </button>
-                    <a class="btn btn-primary btn-sm"
-                       th:href="@{/rol/asignar/{idRol}(idRol=${rol.idRol})}"
-                       title="Gestionar Recursos y privilegios">
-                        <i class="fas fa-cubes"></i>
+                    <a class="btn btn-primary btn-sm" th:href="@{/rol/asignar/{idRol}(idRol=${rol.idRol})}"
+                      title="Gestionar Recursos y privilegios">
+                      <i class="fas fa-cubes"></i>
                     </a>
                   </td>
-				  </tr>
+                </tr>
 
-							</tbody>
-							<tfoot>
-								   <tr>
-					                    <th>Autoridad</th>
-					                    <th>Acciones</th>
-					               </tr>
-							</tfoot>
-						</table>
-					</div>
-					<!-- /.card-body -->
-				</div>
-				<!-- /.card -->
-			</div>
-		</div>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Autoridad</th>
+                  <th>Acciones</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
 
 
 
     <!--Modal para crear un rol-->
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Agregar Rol</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <form method="POST" th:action="@{/rol/store}" th:object="${rol}">
-        <div class="modal-body">
-
-          <div class="form-group">
-              <label for="exampleInputPassword1">Autoridad</label>
-              <input th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad" required>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Agregar Rol</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
+
+          <form method="POST" th:action="@{/rol/store}" th:object="${rol}">
+            <div class="modal-body">
+
+              <div class="form-group">
+                <label for="exampleInputPassword1">Autoridad</label>
+                <input th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad"
+                  required>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+
+          </form>
+
         </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
-
-        </form>
-
       </div>
     </div>
-  	</div>
-  	  	<!--Modal para editar un rol-->
+    <!--Modal para editar un rol-->
     <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar Rol</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <form method="POST" th:action="@{/rol/update}" th:object="${rol}">
-        <div class="modal-body">
-          <input id="idRol" type="hidden" th:field="*{idRol}">
-          <div class="form-group">
-              <label>Autoridad</label>
-              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Rol</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-        </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
+          <form method="POST" th:action="@{/rol/update}" th:object="${rol}">
+            <div class="modal-body">
+              <input id="idRol" type="hidden" th:field="*{idRol}">
+              <div class="form-group">
+                <label>Autoridad</label>
+                <input id="autoridad" th:field="*{authority}" type="text" class="form-control"
+                  placeholder="Ingrese la autoridad">
+              </div>
+            </div>
 
-        </form>
-         </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
     </div>
-  </div>
 
 
 
-  	  	<!--Modal para eliminar un rol-->
+    <!--Modal para eliminar un rol-->
     <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-        	<h5 class="modal-title">Eliminar Rol</h5>
-	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	            <span aria-hidden="true">&times;</span>
-	          </button>
-        </div>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Eliminar Rol</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
 
-        <form method="POST" th:action="@{/rol/destroy}">
-        <div class="modal-body">
-          <input type="hidden" id="id_rol" name= "id_rol" value>
-          <p>¿Esta seguro que desea eliminar el rol?</p>
-        </div>
+          <form method="POST" th:action="@{/rol/destroy}">
+            <div class="modal-body">
+              <input type="hidden" id="id_rol" name="id_rol" value>
+              <p>¿Esta seguro que desea eliminar el rol?</p>
+            </div>
 
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Confirmar</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        </div>
-        </form>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-danger">Confirmar</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+          </form>
 
+        </div>
       </div>
     </div>
   </div>
-  </div>
 
-	<section layout:fragment="scripts">
+  <section layout:fragment="scripts">
     <script>
-    //Para Crear un cargo
-    $('#btnAgregar').on('click', function(){
-      		$('#modalAgregar').modal('show');
-    })
+      //Para Crear un cargo
+      $('#btnAgregar').on('click', function () {
+        $('#modalAgregar').modal('show');
+      })
 
-    //FIN-Crear un cargo
+      //FIN-Crear un cargo
 
-    //Para editar un rol
-      $('[data-editar]').on('click', function(){
+      //Para editar un rol
+      $('[data-editar]').on('click', function () {
 
         //Obteniendo datos de la tabla
         var id = $(this).data('editar');
@@ -211,18 +212,19 @@
       })
 
       //Para eliminar un rol
-      $('[data-eliminar]').on('click', function(){
+      $('[data-eliminar]').on('click', function () {
 
-    	  var id_rol = $(this).data('eliminar');
-    	  $('#id_rol').val(id_rol);
-    	  $('#modalEliminar').modal('show');
+        var id_rol = $(this).data('eliminar');
+        $('#id_rol').val(id_rol);
+        $('#modalEliminar').modal('show');
       })
       //FIN-Editar un producto
     </script>
-	</section>
+  </section>
 
 
 
 
 </body>
+
 </html>

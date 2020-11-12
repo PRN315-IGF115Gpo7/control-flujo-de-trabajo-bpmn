@@ -52,6 +52,8 @@ public class PrivilegioController {
     	nuevoPrivilegio.setPrivilegio(privilegio);
     	
     	privilegioService.store(nuevoPrivilegio);
+    	redirAttrs.addFlashAttribute("success", "El privilegio fue registrado con éxito");
+    	
     	return "redirect:/privilegio/index";
     }
     
@@ -66,10 +68,11 @@ public class PrivilegioController {
     	}
     	
     	Privilegio nuevoPrivilegio = privilegioService.findById(idPrivilegio);
-    	
     	nuevoPrivilegio.setPrivilegio(privilegio);
     	
     	privilegioService.store(nuevoPrivilegio);
+    	redirAttrs.addFlashAttribute("success", "El privilegio fue actualizado con éxito");
+    	
     	return "redirect:/privilegio/index";
     }
     
@@ -84,6 +87,8 @@ public class PrivilegioController {
         }
         
         privilegioService.destroy(privilegio);
+        redirAttrs.addFlashAttribute("success", "El privilegio fue elimando con éxito");
+        
         return "redirect:/privilegio/index";
     }
 }
