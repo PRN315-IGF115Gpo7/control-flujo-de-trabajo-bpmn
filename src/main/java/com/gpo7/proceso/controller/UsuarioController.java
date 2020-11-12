@@ -33,7 +33,7 @@ private static final String INDEX_VIEW="usuario/index";
 	@Qualifier("usuarioServiceImpl")
 	private UsuarioService usuarioService;
 	
-	@GetMapping("/index")
+	@GetMapping({"/index", ""}) 
 	public ModelAndView index() {
 		ModelAndView mav=new ModelAndView(INDEX_VIEW);
 		List<Usuario> usuarios=usuarioService.getAll();

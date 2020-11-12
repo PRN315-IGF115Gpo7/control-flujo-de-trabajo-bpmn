@@ -27,7 +27,7 @@ public class CargoController {
 	@Qualifier("cargoServiceImpl")
 	private CargoService cargoService;
 	
-	@GetMapping("/index")
+	@GetMapping({"/index", ""})
 	public ModelAndView index() {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
 		

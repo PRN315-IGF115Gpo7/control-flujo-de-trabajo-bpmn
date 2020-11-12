@@ -30,12 +30,13 @@ public class RolController {
 	@Qualifier("rolServiceImpl")
 	private RolService rolService;
 	
-	@GetMapping("/index")
-	public ModelAndView index() {
+	@GetMapping({"/index", ""})
+	public ModelAndView index(@RequestParam(name="delete_success", required=false) String delete_success) {
 		ModelAndView mav=new ModelAndView(INDEX_VIEW);
 		List<Rol> roles=rolService.getAll();
 		mav.addObject("roles", roles );
 		mav.addObject("rol", new Rol());
+		mav.addObject("delete_success", delete_success);
 		return mav;
 	}
 	
@@ -80,6 +81,6 @@ public String destroy(@RequestParam("id_rol") int idRol, RedirectAttributes redi
 		redirAttrs.addFlashAttribute("mensaje", "Este rol no puede ser eliminado porque ya fue asignado");
 	}
 	
-	return "redirect:/rol/index";
+	return "redirect:/rol/index?delete_success";
 }
 }
