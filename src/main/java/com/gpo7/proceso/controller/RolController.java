@@ -116,17 +116,15 @@ public class RolController {
 		List<RoleResource> rolesRes = new ArrayList<RoleResource>();
 		
 		List<Recurso> recursos = recursoService.getAll();
-		List<Privilegio> privilegiosAsignados = privilegioService.privilegiosAsignadosByRecurso(recursos.get(0).getIdRecurso(), idRol);
-		List<Privilegio> privilegiosNoAsignados = privilegioService.privilegiosNoAsignadosByRecurso(recursos.get(0).getIdRecurso(), idRol);
-		Rol rol = rolService.findById(idRol);
-				
-		for(RoleResource rr : rolesRes) {
-			System.out.println("-----Resource: " +rr.getName());
-			
-			for(RolePrivilege rp: rr.getPrivileges()) {
-				System.out.println("Privilege: " + rp.getName());
-			}
+		List<Privilegio> privilegiosAsignados = new ArrayList<Privilegio>();
+		List<Privilegio> privilegiosNoAsignados	= new ArrayList<Privilegio>();	
+		
+		if(!recursos.isEmpty()) {
+			privilegiosAsignados = privilegioService.privilegiosAsignadosByRecurso(recursos.get(0).getIdRecurso(), idRol);
+			privilegiosNoAsignados = privilegioService.privilegiosNoAsignadosByRecurso(recursos.get(0).getIdRecurso(), idRol);	
 		}
+		Rol rol = rolService.findById(idRol);
+		
 		mav.addObject("recursos", recursos);
 		mav.addObject("privilegiosAsignados", privilegiosAsignados);
 		mav.addObject("privilegiosNoAsignados", privilegiosNoAsignados);

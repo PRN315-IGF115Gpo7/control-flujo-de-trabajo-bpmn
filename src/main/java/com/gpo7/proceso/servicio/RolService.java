@@ -16,4 +16,7 @@ public interface RolService {
 	public void destroy(Rol rol);
 	public Rol findById(int idRol);
 	
+	public abstract List<Rol> getAvailableRoles(int idUsuario);
+	public abstract List<Rol> getUserRoles(int idUsuario);
+	
 }

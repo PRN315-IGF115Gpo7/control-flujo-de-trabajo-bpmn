@@ -42,4 +42,17 @@ public class RolServiceImpl implements RolService{
 		rolJpaRepository.delete(rol);
 	}
 
+	@Override
+	public List<Rol> getAvailableRoles(int idUsuario) {
+		// TODO Auto-generated method stub
+		return rolJpaRepository.findAvailableRoles(idUsuario);
+	}
+
+	@Override
+	public List<Rol> getUserRoles(int idUsuario) {
+		// TODO Auto-generated method stub
+		return rolJpaRepository.findUserRoles(idUsuario);
+	}
+
+	
 }
