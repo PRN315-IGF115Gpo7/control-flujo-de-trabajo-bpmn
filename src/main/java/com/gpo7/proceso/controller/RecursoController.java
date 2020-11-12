@@ -26,11 +26,16 @@ public class RecursoController {
 	private RecursoService recursoService;
 	
 	
-	@GetMapping("/index")
-	public ModelAndView index() {
+	@GetMapping({"/index", ""})
+	public ModelAndView index(@RequestParam(name="store_success", required=false) String store_success,
+			@RequestParam(name="update_success", required=false) String update_success,
+			@RequestParam(name="delete_success", required=false) String delete_success) {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
 		mav.addObject("recursos", recursoService.getAll());
-		mav.addObject("newRecurso", new Recurso()); 
+		mav.addObject("newRecurso", new Recurso());
+		mav.addObject("store_success", store_success);
+		mav.addObject("update_success", update_success);
+		mav.addObject("delete_success", delete_success);
 				
 		return mav;
 	}	
@@ -38,7 +43,7 @@ public class RecursoController {
 	@PostMapping("/store")
 	public String store(@ModelAttribute("newRecurso") Recurso recurso ) {
 		recursoService.store(recurso);
-		return "redirect:/recurso/index";
+		return "redirect:/recurso/index?store_success";
 	}
 	@PostMapping("/update")
 	public String update(@ModelAttribute("newRecurso") Recurso recurso) {
@@ -46,7 +51,7 @@ public class RecursoController {
 		recursoMod.setRecurso(recurso.getRecurso());
 		recursoService.update(recursoMod);
 		
-		return "redirect:/recurso/index";
+		return "redirect:/recurso/index?update_success";
 		
 	}
 	
@@ -57,7 +62,7 @@ public class RecursoController {
 		if(recurso.getRolesRecursosPrivilegios().isEmpty()) {
 			recursoService.destroy(recurso);		
 	}
-		return "redirect:/recurso/index";
+		return "redirect:/recurso/index?delete_success";
 
 	}
 }

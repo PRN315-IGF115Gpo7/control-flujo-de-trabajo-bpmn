@@ -49,7 +49,7 @@ public class UsuarioController {
 	@Qualifier("rolServiceImpl")
 	private RolService rolService;
 	
-	@GetMapping("/index")
+	@GetMapping({"/index", ""})
 	public ModelAndView index() {
 		ModelAndView mav=new ModelAndView(INDEX_VIEW);
 		List<Usuario> usuarios=usuarioService.getAll();

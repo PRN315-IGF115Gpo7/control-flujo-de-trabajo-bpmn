@@ -15,7 +15,7 @@
 	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Recurso</h1>
 
 	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
         <li class="breadcrumb-item active">Recurso</li>
     </ol>
 
@@ -35,8 +35,23 @@
 
 					<div class="card-body">
 
-            <div th:if="${mensaje}">
+            <!--<div th:if="${mensaje}">
               <div class="alert alert-danger" th:text="${mensaje}"></div>
+            </div>-->
+            <div th:if="${store_success}">
+              <div class="alert alert-success">
+              	Recurso almacenado con éxito!
+              </div>
+            </div>
+            <div th:if="${update_success}">
+              <div class="alert alert-success">
+              	Recurso actualizado con éxito!
+              </div>
+            </div>
+            <div th:if="${delete_success}">
+              <div class="alert alert-success">
+              	Recurso eliminado con éxito!
+              </div>
             </div>
 
 						<table id="example1" class="table table-bordered table-striped">
@@ -94,7 +109,7 @@
 
           <div class="form-group">
               <label for="exampleInputPassword1">Recurso</label>
-              <input th:field="*{recurso}" type="text" class="form-control" placeholder="Nombre del recurso">
+              <input th:field="*{recurso}" type="text" class="form-control" placeholder="Nombre del recurso" required="required">
           </div>
         </div>
 
@@ -155,7 +170,7 @@
           <input id="id" type="hidden" th:field="*{idRecurso}">
           <div class="form-group">
               <label>Recurso</label>
-              <input id="recurso-c" th:field="*{recurso}" type="text" class="form-control" placeholder="Nombre del cargo">
+              <input id="recurso-c" th:field="*{recurso}" type="text" class="form-control" placeholder="Nombre del cargo" required="required">
           </div>           
 
         <div class="modal-footer">
