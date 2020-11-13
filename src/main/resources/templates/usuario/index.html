@@ -30,8 +30,13 @@
 
            <div th:if="${success}">
              <div class="alert alert-success" th:text="${success}"></div>
+           </div>  
+			<div th:if="${unlock_success} == 'true'">
+             <div class="alert alert-success">Usuario Desbloqueado</div>
            </div>
-
+           <div th:if="${unlock_success} == 'false'">
+             <div class="alert alert-danger">Usuario No Desbloqueado</div>
+           </div>
             <table id="example1" class="table table-bordered table-striped">
               <thead>
                 <tr>
@@ -55,15 +60,15 @@
                       <i class="fas fa-pencil-alt"></i>
                     </a>
                     <th:block th:if="${usuario.enabled}">
-											<button class="btn btn-sm btn-danger mr-2" title="Deshabilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=false">
-												<i class="fas fa-lock"></i>
-											</button>
-											</th:block>
-											<th:block th:unless="${usuario.enabled}">
-												<button class="btn btn-sm btn-success mr-2" title="Habilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=true">
-													<i class="fas fa-unlock-alt"></i>
-												</button>
-											</th:block>
+					<button class="btn btn-sm btn-danger mr-2" title="Deshabilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=false">
+						<i class="fas fa-lock"></i>
+					</button>
+					</th:block>
+					<th:block th:unless="${usuario.enabled}">
+						<button class="btn btn-sm btn-success mr-2" title="Habilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=true">
+							<i class="fas fa-unlock-alt"></i>
+						</button>
+					</th:block>
                   </td>
                 </tr>
               </tbody>
@@ -109,8 +114,7 @@
       </div>
     </div>
   </div>
-
-
+  
   <section layout:fragment="scripts">
     <script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
     <script>
@@ -133,6 +137,7 @@
 
         $('#modal-Eliminar').modal('show');
       })
+     
     </script>
 
 

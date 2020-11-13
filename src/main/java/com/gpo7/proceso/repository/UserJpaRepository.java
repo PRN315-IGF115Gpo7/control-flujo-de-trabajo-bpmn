@@ -17,7 +17,7 @@ public interface UserJpaRepository extends JpaRepository<Usuario, Serializable>{
 	public abstract Usuario findByUsername(String username);
 	
 	@Query(value = "SELECT * FROM usuarios WHERE ID_USUARIO IN\n" + 
-			"(SELECT ID_USUARIO FROM usuarios_roles NATURAL JOIN ROLES WHERE AUTHORITY='ROLE_ADMIN')", nativeQuery = true)
+			"(SELECT ID_USUARIO FROM usuarios_roles NATURAL JOIN roles WHERE AUTHORITY='ROLE_ADMIN')", nativeQuery = true)
 	public abstract List<Usuario> findAdminUsers();
 	
 	@Query(value = "SELECT USERNAME FROM usuarios NATURAL JOIN usuarios_roles NATURAL JOIN roles WHERE AUTHORITY='ROLE_ADMIN' AND USERNAME=?1", nativeQuery = true)

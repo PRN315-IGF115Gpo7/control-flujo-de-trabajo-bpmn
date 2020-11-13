@@ -1,8 +1,11 @@
 package com.gpo7.proceso.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +22,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gpo7.proceso.entity.Cargo;
+import com.gpo7.proceso.entity.Mail;
 import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.servicio.CargoService;
+import com.gpo7.proceso.servicio.EmailService;
 import com.gpo7.proceso.servicio.RolService;
 import com.gpo7.proceso.servicio.UsuarioService;
 
@@ -49,15 +54,20 @@ public class UsuarioController {
 	@Qualifier("rolServiceImpl")
 	private RolService rolService;
 	
+	@Autowired
+	@Qualifier("emailServiceImpl")
+	private EmailService emailService;
+
 	@GetMapping({"/index", ""})
-	public ModelAndView index() {
-		ModelAndView mav=new ModelAndView(INDEX_VIEW);
-		List<Usuario> usuarios=usuarioService.getAll();
+	public ModelAndView index(@RequestParam(name="unlock_success", required=false) String unlock_success) {
+		ModelAndView mav = new ModelAndView(INDEX_VIEW);
+		List<Usuario> usuarios = usuarioService.getAll();
 		List<Cargo> cargos = cargoService.getAll();
 		
-		mav.addObject("usuarios", usuarios );
+		mav.addObject("usuarios", usuarios);
 		mav.addObject("cargos", cargos);
-		mav.addObject("usuario", new Usuario() );
+		mav.addObject("usuario", new Usuario());
+		mav.addObject("unlock_success", unlock_success);
 		
 		return mav;
 	}
@@ -214,5 +224,57 @@ public class UsuarioController {
     	return "redirect:/login";
     }
 	
+	@PostMapping("/send-unlock-email")
+    public String sendUnlockEmail(HttpServletRequest request, @RequestParam("username") String username, RedirectAttributes redirAttrs) {
+
+    	Mail email = new Mail();
+        Map<String, Object> model = new HashMap<>();
+
+        Usuario usuario = usuarioService.findByUsername(username);
+
+        if(usuario != null) {
+        	List<Usuario> admin_users = usuarioService.getAdminUsers();
+
+            String email_institucional = usuario.getEmail();
+            String nombre = usuario.getNombreCompleto();
+
+
+        	String  url_base = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort(); 
+            String 	url_unlock = url_base + "/usuario/unlock-user";
+
+        	model.put("email_ins", email_institucional);
+        	model.put("nombre", nombre);
+        	model.put("username", username);
+        	model.put("id", usuario.getIdUsuario());
+    		model.put("url_unlock", url_unlock);
+    		model.put("url_base", url_base);
+
+        	for(Usuario user : admin_users) {
+        		email.setFrom("metabitCorp@gmail.com");
+                email.setTo(user.getEmail());
+                email.setSubject("Desbloqueo de usario");
+
+                email.setModel(model);
+                emailService.sendEmail(email);
+        	}
+        	
+        	redirAttrs.addFlashAttribute("email_success", "success");
+        }
+        
+        return "redirect:/login";
 	
-}
+	}
+	
+	@PostMapping("/unlock-user")
+    public String unlockUser(@RequestParam("id") int id) {
+        Usuario usuario = usuarioService.findById(id);
+        if (usuario != null) {
+            usuario.setEnabled(true);
+            usuario.setIntentos(0);
+            usuarioService.update(usuario);
+        } else {
+            return "redirect:/usuario/index?unlock_success=false";
+        }
+        return "redirect:/usuario/index?unlock_success=true";
+    }
+}	
