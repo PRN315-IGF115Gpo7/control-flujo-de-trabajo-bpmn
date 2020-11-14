@@ -2,15 +2,29 @@
 <html xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
 <body>
 	
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Control de Flujos de Trabajo</h1>
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Bienvenidos</h1>
 
 	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
         <li class="breadcrumb-item active">Flujo de Trabajo</li>
     </ol>
 
-	<div layout:fragment="content">
-		<h5>Bienvenidos</h5>
+	<div layout:fragment="content">		
+		<div class="row mt-3">
+			<div class="animate__animated animate__bounceInUp col-md-6 ml-3 mr-3" >
+				<h1 class="display-4">Sistema para el Control de Flujos de Trabajo</h1>
+				<p class="lead">
+				Este sistema es un producto de software que tiene como objetivo automatizar los procesos empresariales. 
+				Dentro del mismo, se brindan las opciones para realizar nuevos diseños de procesos, los cuales posteriormente puede ser automatizados e implementados.
+				</p>
+				<hr class="my-4">
+				<p>El sistema es desarrollado por el <a href="https://github.com/PRN315-IGF115Gpo7">Grupo 7 de PRN3115 & IGF115</a></p>
+			</div>
+			<div class="animate__animated animate__bounceInRight col-md-5 ml-3 mr-3">
+				<img alt="" th:src="@{/img/empresa.svg}" style="max-width: 100%;">
+			</div>
+		</div>
+		
 	</div>
 	
 	
