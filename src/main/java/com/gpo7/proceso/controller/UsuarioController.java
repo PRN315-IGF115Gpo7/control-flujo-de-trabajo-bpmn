@@ -151,12 +151,16 @@ public class UsuarioController {
 		Usuario usuarioUsername = usuarioService.findByUsername(usuario.getUsername());
 		Usuario usuarioMod = usuarioService.findById(usuario.getIdUsuario());
 		
-		if(usuarioEmail.getIdUsuario() == usuario.getIdUsuario()) {
-			usuarioEmail = null;
+		if(usuarioEmail != null){
+            if(usuarioEmail.getIdUsuario() == usuario.getIdUsuario()) {
+                usuarioEmail = null;
+            }
 		}
 		
-		if(usuarioUsername.getIdUsuario() == usuario.getIdUsuario()) {
-			usuarioUsername = null;
+		if(usuarioUsername != null){
+            if(usuarioUsername.getIdUsuario() == usuario.getIdUsuario()) {
+                usuarioUsername = null;
+            }
 		}
 		
 		if(results.hasErrors() || usuarioEmail != null || usuarioUsername != null) {
