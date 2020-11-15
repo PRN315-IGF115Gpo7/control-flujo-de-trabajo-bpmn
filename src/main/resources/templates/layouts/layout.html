@@ -117,12 +117,27 @@
 
 
 	          <li class="nav-header">MENU</li>
-	          <li class="nav-item">
-	            <a th:href="@{/proceso/create}" class="nav-link">
-	              <i class="fas fa-plus-circle mr-1 text-white"></i>
-	              <p>Automatizar proceso</p>
-	            </a>
-	          </li>
+	         
+			  
+			<!-- ADMINISTRACION -->
+			<li class="nav-item has-treeview" id="admonLista">
+				<a href="#" class="nav-link row" id="admonItem">
+					<i class="fas fa-cogs col-sm-2"></i>
+					<p class="col-sm-10 text-bold">
+						Proceso
+					</p>
+					<p><i class="right fas fa-angle-left"></i></p>
+				</a>
+				<ul class="nav nav-treeview">
+					<li class="nav-item">
+						<a th:href="@{/proceso/create}" class="nav-link">
+						  <i class="fas fa-plus-circle mr-2 col-sm-2"></i>
+						  <p>Automatizar proceso</p>
+						</a>
+					  </li>
+				</ul>
+			</li>
+				<!-- ADMINISTRACION -->
 	          
 	          <!-- ADMINISTRACION -->
 	          <li class="nav-item has-treeview" id="admonLista">
@@ -132,7 +147,6 @@
 						Administración
 					</p>
 					<p><i class="right fas fa-angle-left"></i></p>
-
 	            </a>
 	            <ul class="nav nav-treeview">
 					<li class="nav-item">
@@ -142,14 +156,45 @@
 						</a>
 					</li>
 					<li class="nav-item">
-						<a href="#" th:href="@{/rol/index}" class="nav-link">
-							<i class="fas fa-user-tag mr-2 col-sm-2"></i>
-							<p>Roles</p>
+						<a href="#" th:href="@{/cargo/index}" class="nav-link">
+							<i class="fas fa-address-card mr-2 col-sm-2"></i>
+							<p>Cargos</p>
 						</a>
 					</li>
+
 	            </ul>
 	          </li>
-	          <!-- ADMINISTRACION -->
+			  <!-- ADMINISTRACION -->
+			  
+			  <!-- PERMISOS -->
+			<li class="nav-item has-treeview">
+				<a href="#" class="nav-link row">
+					<i class="fas fa-key col-sm-2"></i>
+					<p class="col-sm-10 text-bold">Permisos</p>
+					<p><i class="right fas fa-angle-left"></i></p>
+				</a>
+				<ul class="nav nav-treeview">
+					<li class="nav-item">
+						<a href="#" th:href="@{/rol/index}" class="nav-link">
+							<i class="fas fa-user-tag mr-2"></i>
+							<p> Roles</p>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="#" th:href="@{/recurso/index}" class="nav-link">
+							<i class="fas fa-cubes mr-2"></i>
+							<p> Recursos</p>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="#" th:href="@{/privilegio/index}" class="nav-link">
+							<i class="fas fa-file-contract mr-2"></i>
+							<p> Privilegios</p>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- PERMISOS -->
 	    
 	        </ul>
 	      </nav>
