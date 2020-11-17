@@ -17,7 +17,7 @@ INSERT INTO roles(id_rol, authority) VALUES(102, "PARTICIPANTE");
 INSERT INTO usuarios_roles(id_usuario, id_rol) VALUES(100, 100);
 
 INSERT INTO recursos(id_recurso, recurso) VALUES(100, 'CARGO');
-INSERT INTO recursos(id_recurso, recurso) VALUES(101, 'PERMISOo');
+INSERT INTO recursos(id_recurso, recurso) VALUES(101, 'PERMISO');
 INSERT INTO recursos(id_recurso, recurso) VALUES(102, 'PRIVILEGIO');
 INSERT INTO recursos(id_recurso, recurso) VALUES(103, 'PROCESO');
 INSERT INTO recursos(id_recurso, recurso) VALUES(104, 'RECURSO');
