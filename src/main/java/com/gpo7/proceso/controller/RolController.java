@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +58,7 @@ public class RolController {
 	@Qualifier("rolRecursoPrivilegioServiceImpl")
 	private RolRecursoPrivilegioService rolRecursoPrivilegioService;
 	
+	@PreAuthorize("hasAuthority('ROL_INDEX')")
 	@GetMapping({"/index", ""})
 	public ModelAndView index(@RequestParam(name="delete_success", required=false) String delete_success) {
 		ModelAndView mav=new ModelAndView(INDEX_VIEW);
@@ -67,7 +69,7 @@ public class RolController {
 		return mav;
 	}
 	
-	
+	@PreAuthorize("hasAuthority('ROL_CREATE')")
 	@PostMapping("/store")
     public String store(@Valid @ModelAttribute("rol")Rol rol, BindingResult results, RedirectAttributes redirAttrs){
 		if(results.hasErrors()) {
@@ -80,6 +82,7 @@ public class RolController {
     	return "redirect:/rol/index";
     }
     
+	@PreAuthorize("hasAuthority('ROL_EDIT')")
 	@PostMapping("/update")
 	public String update(@Valid @ModelAttribute("rol") Rol rol, BindingResult results, RedirectAttributes redirAttrs) {
 		Rol rolModificado = rolService.findById(rol.getIdRol());
@@ -98,6 +101,7 @@ public class RolController {
 		return "redirect:/rol/index";
 	}
 
+	@PreAuthorize("hasAuthority('ROL_DELETE')")
 	@PostMapping("/destroy")
 	public String destroy(@RequestParam("id_rol") int idRol, RedirectAttributes redirAttrs) {
 		Rol rol = rolService.findById(idRol);
@@ -111,6 +115,7 @@ public class RolController {
 		return "redirect:/rol/index?delete_success";
 	}
 	
+	@PreAuthorize("hasAuthority('ROLRECURSOPRIVILEGIO_CREATE')")
 	@GetMapping("/asignar/{idRol}")
 	public ModelAndView asignarRrecursoPrivilegio(@PathVariable("idRol") Integer idRol) {
 		ModelAndView mav = new ModelAndView(ASSIGN_VIEW);
@@ -135,6 +140,7 @@ public class RolController {
 		return mav;
 	}
 	
+	@PreAuthorize("hasAuthority('ROLRECURSOPRIVILEGIO_CREATE')")
 	@PostMapping("/asignar-recurso-privilegio")
 	public String asignarRrecursoPrivilegio(@RequestParam("idRol") Integer idRol, @RequestParam("idRecurso") Integer idRecurso, @RequestParam(name = "privilegios[]", required = false) List<Integer> privilegios) {
 		
@@ -161,6 +167,7 @@ public class RolController {
 		return "redirect:/rol/index";
 	}
 	
+	@PreAuthorize("hasAuthority('PRIVILEGIO_INDEX')")
 	@GetMapping("/rol/{idRol}/recurso/{idRecurso}")
 	public ModelAndView loadPrivileges(@PathVariable("idRecurso") int idRecurso, @PathVariable("idRol") int idRol) {
 		ModelAndView mav = new ModelAndView(LOAD_PRIVILEGES);

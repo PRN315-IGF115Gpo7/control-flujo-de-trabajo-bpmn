@@ -2,6 +2,7 @@ package com.gpo7.proceso.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,6 +31,7 @@ public class PrivilegioController {
 
     private static final String INDEX_VIEW = "privilegio/index";
 
+	@PreAuthorize("hasAuthority('PRIVILEGIO_INDEX')")
     @GetMapping("/index")
     public ModelAndView index(){
     	
@@ -40,6 +42,7 @@ public class PrivilegioController {
         return mav;
     }
 
+	@PreAuthorize("hasAuthority('PRIVILEGIO_CREATE')")
     @PostMapping("/store")
     public String store(@RequestParam("privilegio") String privilegio, RedirectAttributes redirAttrs){
     	
@@ -57,6 +60,7 @@ public class PrivilegioController {
     	return "redirect:/privilegio/index";
     }
     
+	@PreAuthorize("hasAuthority('PRIVILEGIO_EDIT')")
     @PostMapping("/update")
     public String update(@RequestParam("idPrivilegio") Integer idPrivilegio, 
     		@RequestParam("privilegio") String privilegio,
@@ -76,6 +80,7 @@ public class PrivilegioController {
     	return "redirect:/privilegio/index";
     }
     
+	@PreAuthorize("hasAuthority('PRIVILEGIO_DELETE')")
     @PostMapping("/destroy")
     public String destroy(@RequestParam("idPrivilegio") Integer idPrivilegio, RedirectAttributes redirAttrs){
 

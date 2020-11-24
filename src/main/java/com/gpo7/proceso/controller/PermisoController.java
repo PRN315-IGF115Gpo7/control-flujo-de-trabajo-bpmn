@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ public class PermisoController {
 	@Qualifier("permisoServiceImpl")
 	private PermisoService permisoService;
 	
+	@PreAuthorize("hasAuthority('PERMISO_INDEX')")
 	@GetMapping("/index")
 	public ModelAndView index() {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
@@ -38,6 +40,7 @@ public class PermisoController {
 		return mav;
 	}
 	
+	@PreAuthorize("hasAuthority('PERMISO_CREATE')")
 	@PostMapping("/store")
 	public String store(@Valid @ModelAttribute("permiso")Permiso permiso, BindingResult results, RedirectAttributes redirAttrs) {
 		if(results.hasErrors()) {
@@ -50,6 +53,7 @@ public class PermisoController {
 		return "redirect:/permiso/index";
 	}
 	
+	@PreAuthorize("hasAuthority('PERMISO DELETE')")
 	@PostMapping("/destroy")
 	public String destroy(@RequestParam("idPermiso") int id_permiso, RedirectAttributes redirAttrs) {
 		Permiso permiso = permisoService.findById(id_permiso);
@@ -60,6 +64,7 @@ public class PermisoController {
 		return "redirect:/permiso/index";
 	}
 	
+	@PreAuthorize("hasAuthority('PERMISO_EDIT')")
 	@PostMapping("/update")
 	public String update(@Valid @ModelAttribute("permiso") Permiso permiso, BindingResult results, RedirectAttributes redirAttrs) {
 		Permiso editarPermiso = permisoService.findById(permiso.getIdPermiso());

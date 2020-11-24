@@ -30,6 +30,7 @@ import com.gpo7.proceso.servicio.EmailService;
 import com.gpo7.proceso.servicio.RolService;
 import com.gpo7.proceso.servicio.UsuarioService;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,6 +59,7 @@ public class UsuarioController {
 	@Qualifier("emailServiceImpl")
 	private EmailService emailService;
 
+	@PreAuthorize("hasAuthority('USUARIO_INDEX')")
 	@GetMapping({"/index", ""})
 	public ModelAndView index(@RequestParam(name="unlock_success", required=false) String unlock_success) {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
@@ -72,6 +74,7 @@ public class UsuarioController {
 		return mav;
 	}
 	
+	@PreAuthorize("hasAuthority('USUARIO_CREATE')")
 	@GetMapping("/create")
 	public ModelAndView create() {
 		ModelAndView mav = new ModelAndView(CREATE_VIEW);
@@ -84,6 +87,7 @@ public class UsuarioController {
 		return mav;
 	}
 
+	@PreAuthorize("hasAuthority('USUARIO_CREATE')")
 	@PostMapping("/store")
     public String store(@Valid @ModelAttribute("usuario")Usuario usuario, 
     		BindingResult results, @RequestParam("idCargo") Integer idCargo, 
@@ -127,6 +131,7 @@ public class UsuarioController {
     	return "redirect:/usuario/index";
     }
 	
+	@PreAuthorize("hasAuthority('USUARIO_EDIT')")
 	@GetMapping("/edit/{id}")
 	public ModelAndView edit(@PathVariable("id") Integer idUsuario) {
 		ModelAndView mav = new ModelAndView(EDIT_VIEW);
@@ -142,6 +147,7 @@ public class UsuarioController {
 		return mav;
 	}
 	
+	@PreAuthorize("hasAuthority('USUARIO_EDIT')")
 	@PostMapping("/update")
     public String update(@Valid @ModelAttribute("usuario")Usuario usuario, 
     		BindingResult results, @RequestParam("idCargo") Integer idCargo, 
@@ -195,6 +201,7 @@ public class UsuarioController {
     	return "redirect:/usuario/index";
     }
 	
+	@PreAuthorize("hasAuthority('USUARIO_DELETE')")
 	@PostMapping("/destroy")
 	public String destroy(@RequestParam("id_user") int idUser, RedirectAttributes redirAttrs) {
 		
@@ -214,6 +221,7 @@ public class UsuarioController {
 		return "redirect:/usuario/index";
 	}
 	
+	@PreAuthorize("hasAuthority('USUARIO_EDIT')")
 	@PostMapping("/update-baja")
     public String updateBaja() {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

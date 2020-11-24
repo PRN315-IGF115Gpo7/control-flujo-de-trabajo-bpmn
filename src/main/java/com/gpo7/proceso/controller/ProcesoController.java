@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -54,6 +55,7 @@ public class ProcesoController {
 	@Qualifier("usuarioServiceImpl")
 	private UsuarioService usuarioService;
 	
+	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping("/create")
 	public ModelAndView create() {
 		ModelAndView mav = new ModelAndView(CREATE_VIEW);
@@ -64,6 +66,7 @@ public class ProcesoController {
 		return mav;
 	}
 	
+	@PreAuthorize("hasAuthority('PROCESO_CREATE')")
 	@PostMapping("/store")
 	public String store(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult results, 
 			HttpServletRequest request, RedirectAttributes redirAttrs) {
@@ -108,6 +111,7 @@ public class ProcesoController {
 		return mav;
 	}
 	
+	@PreAuthorize("hasAuthority('PROCESO_CREATE')")
 	@GetMapping("/agregar-variable/{nombre}/{tipo}")
 	public @ResponseBody void agregarVariable(HttpServletRequest request,
 			@PathVariable("nombre") String nombre, @PathVariable("tipo") int tipo) {
@@ -133,6 +137,7 @@ public class ProcesoController {
 		
 	}
 	
+	@PreAuthorize("hasAuthority('PROCESO_CREATE')")
 	@GetMapping("/obtener-variables")
 	public @ResponseBody List<Variable> obenerVariables(HttpServletRequest request) {
 		
@@ -142,6 +147,7 @@ public class ProcesoController {
 		return variablesSession;
 	}
 	
+	@PreAuthorize("hasAuthority('PROCESO_CREATE')")
 	@GetMapping("/remover-variable/{id}")
 	public @ResponseBody void removeVariable(@PathVariable("id") int id, HttpServletRequest request) {
 		HttpSession session = request.getSession();

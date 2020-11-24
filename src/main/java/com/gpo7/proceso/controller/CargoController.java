@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ public class CargoController {
 	@Qualifier("cargoServiceImpl")
 	private CargoService cargoService;
 	
+	@PreAuthorize("hasAuthority('CARGO_INDEX')")
 	@GetMapping({"/index", ""})
 	public ModelAndView index() {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
@@ -36,6 +38,8 @@ public class CargoController {
 		
 		return mav;
 	}
+	
+	@PreAuthorize("hasAuthority('CARGO_CREATE')")
 	@PostMapping("/store")
 	public String store(@Valid @ModelAttribute("cargo") Cargo cargo, BindingResult results, RedirectAttributes redirAttrs) {
 		
@@ -50,6 +54,7 @@ public class CargoController {
 		return "redirect:/cargo/index";
 	}
 	
+	@PreAuthorize("hasAuthority('CARGO_EDIT')")
 	@PostMapping("/update")
 	public String update(@Valid @ModelAttribute("cargo") Cargo cargo, BindingResult results, RedirectAttributes redirAttrs) {
 		Cargo cargoModificado = cargoService.findById(cargo.getIdCargo());
@@ -66,6 +71,8 @@ public class CargoController {
 		
 		return "redirect:/cargo/index";
 	}
+	
+	@PreAuthorize("hasAuthority('CARGO_DELETE')")
 	@PostMapping("/destroy")
 	public String destroy(@RequestParam("idCargo") int id_cargo, RedirectAttributes redirAttrs) {
 		Cargo cargo = cargoService.findById(id_cargo);

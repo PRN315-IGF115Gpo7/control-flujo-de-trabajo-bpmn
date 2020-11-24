@@ -2,6 +2,7 @@ package com.gpo7.proceso.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,7 +26,7 @@ public class RecursoController {
 	@Qualifier("recursoServiceImpl")
 	private RecursoService recursoService;
 	
-	
+	@PreAuthorize("hasAuthority('RECURSO_INDEX')")
 	@GetMapping({"/index", ""})
 	public ModelAndView index(@RequestParam(name="store_success", required=false) String store_success,
 			@RequestParam(name="update_success", required=false) String update_success,
@@ -40,11 +41,14 @@ public class RecursoController {
 		return mav;
 	}	
 	
+	@PreAuthorize("hasAuthority('RECURSO_CREATE')")
 	@PostMapping("/store")
 	public String store(@ModelAttribute("newRecurso") Recurso recurso ) {
 		recursoService.store(recurso);
 		return "redirect:/recurso/index?store_success";
 	}
+	
+	@PreAuthorize("hasAuthority('RECURSO_UPDATE')")
 	@PostMapping("/update")
 	public String update(@ModelAttribute("newRecurso") Recurso recurso) {
 		Recurso recursoMod = recursoService.findById(recurso.getIdRecurso());
@@ -55,6 +59,7 @@ public class RecursoController {
 		
 	}
 	
+	@PreAuthorize("hasAuthority('RECURSO_DELETE')")
 	@PostMapping("/destroy")
 	public String destroy(@RequestParam("idRecurso") int id_recurso) {
 		Recurso recurso = recursoService.findById(id_recurso);
