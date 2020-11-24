@@ -41,3 +41,12 @@ INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio,
 INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(107, 102, 107, 100);
 INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(108, 103, 107, 100);
 INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(109, 104, 107, 100);
+
+INSERT INTO procesos(proceso_id, es_automatizado, proceso_activo, proceso_descripcion, proceso_nombre, usuario_id) VALUES(100, 1, 1, 'Esta es una descripción de proceso', 'Solicitud de aumento de suelto', 100);
+INSERT INTO procesos(proceso_id, es_automatizado, proceso_activo, proceso_descripcion, proceso_nombre, usuario_id) VALUES(101, 1, 1, 'Esta es una descripción de proceso', 'Solicitud para revisión de nota', 100);
+
+INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(100, 0, 100, 100);
+INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(101, 0, 101, 100);
+INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(102, 1, 100, 100);
+INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(103, 0, 100, 100);
+INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(104, 1, 101, 100);

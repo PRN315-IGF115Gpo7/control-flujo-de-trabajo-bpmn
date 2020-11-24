@@ -89,6 +89,8 @@ public class ProcesoController {
 		
 		proceso.setVariables(variables);
 		proceso.setUsuario(usuario);
+		proceso.setEsAutomatizado(true);
+		proceso.setProcesoActivo(true);
 		procesoService.store(proceso);
 		
 		for (Variable variable : variables) {
