@@ -10,6 +10,34 @@ INSERT INTO tipos_datos(tipo_dato_id, tipo_dato_nombre) VALUES(3, "Date");
 INSERT INTO tipos_datos(tipo_dato_id, tipo_dato_nombre) VALUES(4, "Double");
 INSERT INTO tipos_datos(tipo_dato_id, tipo_dato_nombre) VALUES(5, "Integer");
 
-INSERT INTO roles(id_rol, authority) VALUES(100, "admin");
-INSERT INTO roles(id_rol, authority) VALUES(101, "diagramador");
-INSERT INTO roles(id_rol, authority) VALUES(102, "participante");
+INSERT INTO roles(id_rol, authority) VALUES(100, "ADMIN");
+INSERT INTO roles(id_rol, authority) VALUES(101, "DIAGRAMADOR");
+INSERT INTO roles(id_rol, authority) VALUES(102, "PARTICIPANTE");
+
+INSERT INTO usuarios_roles(id_usuario, id_rol) VALUES(100, 100);
+
+INSERT INTO recursos(id_recurso, recurso) VALUES(100, 'CARGO');
+INSERT INTO recursos(id_recurso, recurso) VALUES(101, 'PERMISOo');
+INSERT INTO recursos(id_recurso, recurso) VALUES(102, 'PRIVILEGIO');
+INSERT INTO recursos(id_recurso, recurso) VALUES(103, 'PROCESO');
+INSERT INTO recursos(id_recurso, recurso) VALUES(104, 'RECURSO');
+INSERT INTO recursos(id_recurso, recurso) VALUES(105, 'ROL');
+INSERT INTO recursos(id_recurso, recurso) VALUES(106, 'USUARIO');
+INSERT INTO recursos(id_recurso, recurso) VALUES(107, 'ROLRECURSOPRIVILEGIO');
+
+INSERT INTO privilegios(id_privilegio, privilegio) VALUES(100, 'INDEX');
+INSERT INTO privilegios(id_privilegio, privilegio) VALUES(101, 'EDIT');
+INSERT INTO privilegios(id_privilegio, privilegio) VALUES(102, 'CREATE');
+INSERT INTO privilegios(id_privilegio, privilegio) VALUES(103, 'DELETE');
+INSERT INTO privilegios(id_privilegio, privilegio) VALUES(104, 'SHOW');
+
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(100, 100, 105, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(101, 101, 105, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(102, 102, 105, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(103, 103, 105, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(104, 104, 105, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(105, 100, 107, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(106, 101, 107, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(107, 102, 107, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(108, 103, 107, 100);
+INSERT INTO roles_recursos_privilegios(id_rol_usuario_privilegio, id_privilegio, id_recurso, id_rol) VALUES(109, 104, 107, 100);

@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,7 +67,6 @@ public class RolController {
 		mav.addObject("delete_success", delete_success);
 		return mav;
 	}
-	
 	
 	@PostMapping("/store")
     public String store(@Valid @ModelAttribute("rol")Rol rol, BindingResult results, RedirectAttributes redirAttrs){

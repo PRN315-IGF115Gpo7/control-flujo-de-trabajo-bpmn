@@ -58,6 +58,12 @@
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-security</artifactId>
 	    </dependency>
+
+		<!-- Dependency for to use Spring Security on thymeleaf-->
+		<dependency>
+	        <groupId>org.thymeleaf.extras</groupId>
+	        <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+    	</dependency>
 	    
 	    <!-- Dependency for validations -->
 	    <dependency>
