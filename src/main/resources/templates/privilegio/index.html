@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+</head>
+
+<body>
+
+  <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Privilegio</h1>
+
+  <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+    <li class="breadcrumb-item active">Privilegio</li>
+  </ol>
+
+  <div layout:fragment="content">
+
+    <div class="row ml-3 mr-3">
+      <div class="col-md-7 offset-2">
+        <div class="card">
+          <div class="card-header text-right">
+
+            <button class="btn btn-sm btn-primary" id="btnAgregar">
+              <i class="fas fa-plus-circle mr-1 text-white"></i>
+              <span class="text-white">Agregar Privilegio</span>
+            </button>
+
+
+            <h3 class="card-title"></h3>
+          </div>
+
+          <div class="card-body">
+            <div th:if="${empty_error}">
+              <div class="alert alert-danger" th:text="${empty_error}"></div>
+            </div>
+            <div th:if="${destroy_error}">
+              <div class="alert alert-danger" th:text="${destroy_error}"></div>
+            </div>
+            <div th:if="${success}">
+              <div class="alert alert-success" th:text="${success}"></div>
+            </div>
+
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Privilegio</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr th:each="privilegio : ${privilegios}">
+                  <td class="privilegio" th:text="${privilegio.privilegio}"></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${privilegio.idPrivilegio}">
+                      <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${privilegio.idPrivilegio}">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Privilegio</th>
+                  <th>Acciones</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+
+    <!--Modal para crear un privilegio-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Agregar Privilegio</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form method="POST" th:action="@{/privilegio/store}">
+            <div class="modal-body">
+
+              <div class="form-group">
+                <label>Privilegio</label>
+                <input name="privilegio" type="text" class="form-control" placeholder="Ingrese nombre del privilegio"
+                  required>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <!--Modal para editar un privilegio-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Actualizar Privilegio</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form method="POST" th:action="@{/privilegio/update}">
+            <div class="modal-body">
+              <input type="hidden" id="idPrivilegio" name="idPrivilegio">
+              <div class="form-group">
+                <label>Privilegio</label>
+                <input name="privilegio" id="privilegio" type="text" class="form-control"
+                  placeholder="Ingrese nombre del privilegio" required>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <!--Modal para eliminar un rol-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalEliminar">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            Eliminar Privilegio
+          </div>
+
+          <form method="POST" th:action="@{/privilegio/destroy}">
+            <div class="modal-body">
+              <input type="hidden" id="id_privilegio" name="idPrivilegio" value>
+              <p>¿Desea eliminar este privilegio?</p>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-danger">Confirmar</button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <section layout:fragment="scripts">
+    <script>
+      //Para Crear un cargo
+      $('#btnAgregar').on('click', function () {
+        $('#modalAgregar').modal('show');
+      })
+
+      //FIN-Crear un cargo
+
+      //Para editar un rol
+      $('[data-editar]').on('click', function () {
+
+        //Obteniendo datos de la tabla
+        var id = $(this).data('editar');
+        var privilegio = $(this).parent().siblings('td.privilegio').text();
+
+        //Asignando datos a la modal
+        $('#idPrivilegio').val(id);
+        $('#privilegio').val(privilegio);
+
+        //Lanzar modal
+        $('#modalEditar').modal('show');
+      })
+
+      //Para eliminar un privilegio
+      $('[data-eliminar]').on('click', function () {
+
+        var id_privilegio = $(this).data('eliminar');
+        $('#id_privilegio').val(id_privilegio);
+        $('#modalEliminar').modal('show');
+      })
+    </script>
+  </section>
+
+
+
+
+</body>
+
+</html>

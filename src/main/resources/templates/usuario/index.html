@@ -1,207 +1,149 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
+<head>
+  <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+</head>
 <body>
 
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Usuario</h1>
+  <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Usuario</h1>
 
-	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
-        <li class="breadcrumb-item active">Usuario</li>
-    </ol>
+  <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+    <li class="breadcrumb-item active">Usuario</li>
+  </ol>
 
-	<div layout:fragment="content">
-		<div class="row ml-3 mr-3">
-			<div class="col-md-2"></div>
-			<div class="col-md-8 ">
-				<div class="card">
-	         <div class="card-header text-right">
-					<button class="btn btn-sm btn-primary" id="btnAgregar">
-							<i class="fas fa-plus-circle mr-1 text-white"></i>
-							<span class="text-white">Agregar Usuario</span>
-					</button>
-	              <h3 class="card-title"></h3>
-	          </div>
+  <div layout:fragment="content">
+    <div class="row offset-2">
+      <div class="col-md-10">
+        <div class="card">
+          <div class="card-header text-right">
+            <a th:href="@{/usuario/create}" class="btn btn-sm btn-primary">
+              <i class="fas fa-plus-circle mr-1 text-white"></i>
+              <span class="text-white">Agregar Usuario</span>
+            </a>
 
-					<div class="card-body">
-						<table id="example1" class="table table-bordered table-striped">
-							<thead>
+            <h3 class="card-title"></h3>
+          </div>
 
-			                  <tr>
-			                  	<th>Usuario</th>
-			                
-			                  	<th>Acciones</th>
-			                  </tr>
+          <div class="card-body">
 
-							</thead>
-							<tbody>
-
-								<tr th:each="usuario: ${usuarios}">
-									<td th:text="${usuario.username}"></td>
-									<td> 
-									<button class="btn btn-sm btn-info" th:attr="data-darBaja=${usuario.idUsuario}">
-                     				 <i class="fas fa-down-circle mr-1 text-white"></i>
-                     				 <span class="text-white">Dar de baja</span>
-                   					 </button>
-                   					 <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${usuario.idUsuario}">
-                                     <i class="fas fa-trash"></i>
-                                     </button>
-                   					 </td>
-								</tr>
-							</tbody>
-							<tfoot>
-
-								<tr>
-								<th>Usuario</th> 
-								<th>Acciones</th>
-
+           <div th:if="${success}">
+             <div class="alert alert-success" th:text="${success}"></div>
+           </div>  
+			<div th:if="${unlock_success} == 'true'">
+             <div class="alert alert-success">Usuario Desbloqueado</div>
+           </div>
+           <div th:if="${unlock_success} == 'false'">
+             <div class="alert alert-danger">Usuario No Desbloqueado</div>
+           </div>
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Nombre completo</th>
+                  <th>Email</th>
+                  <th>Cargo</th>
+                  <th>Acciones</th>
                 </tr>
+              </thead>
+              <tbody>
 
-							</tfoot>
-						</table>
-					</div>
-					<!-- /.card-body -->
-				</div>
-				<!-- /.card -->
-			</div>
-		</div>
-		 <!--Modal para preguntar si dar de baja-->
-		<div class="modal" tabindex="-1" role="dialog" id="modal-preguntar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Atencion!</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+                <tr th:each="usuario: ${usuarios}">
+                  <td class="usuario" th:text="${usuario.username}"></td>
+                  <td class="usuario" th:text="${usuario.nombreCompleto}"></td>
+                  <td class="usuario" th:text="${usuario.email}"></td>
+                  <td class="usuario" th:text="${usuario.cargo.nombreCargo}"></td>
+                  <td>
+
+                    <a class="btn btn-sm btn-primary" th:href="@{/usuario/edit/{id}(id=${usuario.idUsuario})}">
+                      <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <th:block th:if="${usuario.enabled}">
+					<button class="btn btn-sm btn-danger mr-2" title="Deshabilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=false">
+						<i class="fas fa-lock"></i>
+					</button>
+					</th:block>
+					<th:block th:unless="${usuario.enabled}">
+						<button class="btn btn-sm btn-success mr-2" title="Habilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=true">
+							<i class="fas fa-unlock-alt"></i>
+						</button>
+					</th:block>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Nombre completo</th>
+                  <th>Email</th>
+                  <th>Cargo</th>
+                  <th>Acciones</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <!-- /.card-body -->
         </div>
+        <!-- /.card -->
+      </div>
+    </div>
 
-        <form method="POST" th:action="@{/usuario/update-baja}">
-        <div class="modal-body">
-          <p>¿Desea dar de baja el usuario?</p>
+    <!--Modal para eliminar un usuario-->
+    <div class="modal" tabindex="-1" role="dialog" id="modal-Eliminar">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            Cambiar estado del usuario
+          </div>
+
+          <form method="POST" th:action="@{/usuario/destroy}">
+            <div class="modal-body">
+              <input type="hidden" id="id_user" name="id_user" value>
+              <p id="msg-destroy">¿Desea deshabilitar al usuario seleccionado?</p>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button id="btn-state" type="submit" class="btn btn-danger">Confirmar</button>
+            </div>
+
+          </form>
+
         </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Confirmar</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        </div>
-        </form>
-
       </div>
     </div>
   </div>
-		
-	 <!--Modal para crear un rol-->
-    <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Agregar Usuario</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+  
+  <section layout:fragment="scripts">
+    <script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+    <script>
 
-        <form method="POST" th:action="@{/usuario/store}" th:object="${usuario}">
-        <div class="modal-body">
-
-          <div class="form-group">
-              <label for="exampleInputPassword1">Usuario</label>
-              <input th:field="*{username}" type="text" class="form-control" placeholder="Ingrese el usuario" required>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
-
-        </form>
-
-      </div>
-    </div>
-  	</div>	 
-   	<!--Modal para editar un usuario-->
-    <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar usuario</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <form method="POST" th:action="@{/usuario/update}" th:object="${rol}">
-        <div class="modal-body">
-          <input id="idRol" type="hidden" th:field="*{idRol}">
-          <div class="form-group">
-              <label>Autoridad</label>
-              <input id="autoridad" th:field="*{authority}" type="text" class="form-control" placeholder="Ingrese la autoridad">
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
-
-        </form>
-         </div>
-    </div>
-  </div>
-  	
-	</div>
-
-  </div>
-  </div>
-
-
-	<section layout:fragment="scripts">
-	    <script>
-
-
-      $('[data-darBaja]').on('click', function(){
-    	  var idUsuario = $(this).data('eliminar');
-
-
-          $('#idUsuario').val(idUsuario);
-
-        $('#modal-preguntar').modal('show');
-      })
-      
-       //Para eliminar un usuario
-      $('[data-eliminar]').on('click', function(){
-    	  
-    	  var id_user = $(this).data('eliminar');
-    	  $('#id_user').val(id_user);
-    	  $('#modal-Eliminar').modal('show');
-      })
-      
-     //--------------------
-     //Para Cear un Usuario
-    $('#btnAgregar').on('click', function(){
-      		$('#modalAgregar').modal('show');
-    })
-    //fin crear cargo
-    //Para editar un cargo
-      $('[data-editar]').on('click', function(){
-
-        //Obteniendo datos de la tabla
-        var id = $(this).data('editar');
-        var nombre = $(this).parent().siblings('td.username').text();
+      //Para eliminar un usuario
+      $('[data-change-state]').on('click', function () {
         
-        //Asignando datos a la modal
-        $('#idUsuario').val(id);
-        $('#username').val(autoridad);
+        var id_user = $(this).data('change-state');
+        var state = $(this).data('state');
+        var message = $('#msg-destroy');
+        $('#id_user').val(id_user);
 
-        //Lanzar modal
-        $('#modalEditar').modal('show');
+        if(state==true){
+					$('#btn-state').attr('class', 'btn btn-primary')
+					message.html("¿Desea habilitar al usuario seleccionado?");
+				}else{
+					$('#btn-state').attr('class', 'btn btn-danger')
+					message.html("¿Desea deshabilitar al usuario seleccionado?");
+				}
+
+        $('#modal-Eliminar').modal('show');
       })
+     
     </script>
-	
-	
-	</section>
-	
+
+
+  </section>
+
 
 </body>
+
 </html>

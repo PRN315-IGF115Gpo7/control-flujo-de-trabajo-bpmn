@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
@@ -15,9 +16,13 @@ public class Usuario {
 	@Column(name = "id_usuario", unique = true, nullable = false)
 	private int idUsuario;
 	
-	@NotEmpty(message="Debe ingresar el Usuario")
+	@NotEmpty(message="Debe ingresar nombre de usuario")
 	@Column(name = "username", unique = true, nullable = false)
 	private String username;
+	
+	@NotEmpty(message = "Debe ingresar el nombre completo del usuario")
+	@Column(name = "nombre_completo")
+	private String nombreCompleto;
 
 	@Column(name = "password", nullable = false)
 	private String password;
@@ -40,6 +45,11 @@ public class Usuario {
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="cargo_id")
     private Cargo cargo;
+	
+	@Email(message = "El formato email ingresado es incorrecto")
+	@NotEmpty(message = "Debe ingresar el email del usuario")
+	@Column(name = "email", unique = true, nullable = true)
+	private String email;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinTable(name = "usuarios_roles", 
@@ -54,6 +64,7 @@ public class Usuario {
 	 */
 
 	public Usuario() {
+		this.password = "flujos";//crea clave por defecto admin
 	}
 
 	public Usuario(String username, String password, boolean enabled, boolean accountExperired, boolean accountLocked, boolean passwordExpired, int intentos, List<Rol> roles) {
@@ -172,6 +183,22 @@ public class Usuario {
 
 	public void setCargo(Cargo cargo) {
 		this.cargo = cargo;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getNombreCompleto() {
+		return nombreCompleto;
+	}
+
+	public void setNombreCompleto(String nombreCompleto) {
+		this.nombreCompleto = nombreCompleto;
 	}
 
 }

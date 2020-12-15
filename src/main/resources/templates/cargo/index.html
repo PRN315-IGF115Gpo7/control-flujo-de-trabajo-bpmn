@@ -15,7 +15,7 @@
 	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Cargo</h1>
 
 	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
         <li class="breadcrumb-item active">Cargo</li>
     </ol>
 
@@ -87,7 +87,7 @@
 				<!-- /.card -->
 			</div>
     </div>
-    
+
 		 <!--Modal para crear un cargo-->
     <div class="modal" tabindex="-1" role="dialog" id="modalAgregar">
     <div class="modal-dialog" role="document">
@@ -144,7 +144,7 @@
           <p>¿Desea eliminar el Cargo?</p>
         </div>
 
-        <div class="modal-footer">
+        <div class="modal-footer"> 
           <button type="submit" class="btn btn-danger">Confirmar</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         </div>
@@ -190,7 +190,7 @@
     </div>
   </div>
   </div>
-  
+
 	<section layout:fragment="scripts">
     <script>
     //Para Crear un cargo
@@ -203,17 +203,17 @@
 
      //Para editar un cargo
      $('[data-editar]').on('click', function(){
- 
+
        //Obteniendo datos de la tabla
        var id = $(this).data('editar');
        var nombre = $(this).parent().siblings('td.nombre').text();
        var descripcion = $(this).parent().siblings('td.descripcion').text();
-       
+
        //Asignando datos a la modal
        $('#id').val(id);
        $('#nombre-c').val(nombre);
        $('#descripcion-c').val(descripcion);
-       
+
        //Lanzar modal
        $('#modalEditar').modal('show');
        })

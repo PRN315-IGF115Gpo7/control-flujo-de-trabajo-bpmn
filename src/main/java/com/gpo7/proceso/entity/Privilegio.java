@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -18,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Privilegio {
 	
 	@Id
-	@GeneratedValue
-	@Column(name = "id_privilegio", unique = true, nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_privilegio")
 	private Integer idPrivilegio;
 	
 	@Column(name = "privilegio")

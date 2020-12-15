@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+
+</head>
+
+<body>
+
+    <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Control de Flujos de Trabajo</h1>
+
+    <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/usuario/index}">Usuarios</a></li>
+        <li class="breadcrumb-item active">Editar usuario</li>
+    </ol>
+
+    <div layout:fragment="content">
+        <div class="row offset-2">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header text-right">
+                        Editar usuario
+                    </div>
+
+                    <form method="POST" th:action="@{/usuario/update}">
+                        <div class="card-body">
+                            <input type="hidden" th:field="*{usuario.idUsuario}">
+                            <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+                                <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+                             </ul>
+
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <label>Nombre de usuario</label>
+                                    <input th:field="*{usuario.username}" type="text" class="form-control"
+                                        placeholder="Nombre de usuario" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Nombre Completo</label>
+                                    <input th:field="*{usuario.nombreCompleto}" type="text" class="form-control"
+                                        placeholder="Nombre completo" required>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-4">
+                                <div class="col-sm-6">
+                                    <label>Email</label>
+                                    <input th:field="*{usuario.email}" type="email" class="form-control"
+                                        placeholder="Email" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Seleccione el cargo</label>
+                                    <select name="idCargo" id="idCargo" class="form-control select2bs4"
+                                        style="width: 100%;">
+                                        <th:block  th:each="cargo : ${cargos}">
+                                            <option th:if="${usuario.cargo.idCargo == cargo.idCargo}" th:value="${cargo.idCargo}" th:text="${cargo.nombreCargo}" selected></option>
+                                            <option th:unless="${usuario.cargo.idCargo == cargo.idCargo}" th:value="${cargo.idCargo}" th:text="${cargo.nombreCargo}"></option>
+                                        </th:block>
+                                        <option th:if="${#lists.isEmpty(cargos)}">No hay cargos</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <b>Seleccione los privilegios</b>
+                                <select class="duallistbox" multiple="multiple" name="rolesAsig[]">
+                                <th:block th:each="rol : ${availableRoles}">
+                                    <option th:value="${rol.idRol}" th:text="${rol.authority}"></option>
+                                </th:block>
+                                <th:block th:each="rol : ${userRoles}">
+                                    <option th:value="${rol.idRol}" th:text="${rol.authority}" selected></option>
+                                </th:block>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-footer text-right">
+                            <a th:href="@{/usuario/index}" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+                            <button type="submit" class="btn btn-primary mx-3">Guardar</button>
+                        </div>
+                    </form>
+            
+                </div>
+              <!-- /.card -->
+            </div>
+          </div>
+	</div>
+	
+	<section layout:fragment="scripts">
+        <script th:src="@{/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js}"></script>
+        <script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+        
+        <script>
+            $('.duallistbox').bootstrapDualListbox();
+            $(function () {
+                //Initialize Select2 Elements
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            });
+
+        </script>
+	</section>
+
+</body>
+</html>

@@ -15,7 +15,7 @@
 	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Crear proceso automatizado</h1>
 
 	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
         <li class="breadcrumb-item active">nuevo proceso</li>
     </ol>
 
@@ -33,7 +33,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <form method="POST" th:action="@{/proceso/usuario}" th:object="${proceso}">
+          <form method="POST" th:action="@{/proceso/store}" th:object="${proceso}">
           <div class="card-body">
             <div class="row">
 
@@ -104,6 +104,7 @@
           </div>
 
           <div class="card-footer text-right">
+            <a th:href="@{/index}" class="btn btn-secondary mx-1">Cancelar</a>
             <button onClick="this.form.submit(); this.disabled=true;" id="btnContinuar" type="submit" name="button" class="btn btn-primary">Continuar</button>
           </div>
         </form>

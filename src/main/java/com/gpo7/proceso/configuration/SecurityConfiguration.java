@@ -30,7 +30,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
 		http.authorizeRequests()
 		.antMatchers( //***************Agregar urls que no neciten logueo****************//
-				"/api/**"
+				"/api/**",
+				//Recuperacion de contraseña
+				"/forgot-password**",
+				"/reset-password**",
+				"/usuario/send-unlock-email"
 				).permitAll()
 		.antMatchers("/css/**","/imgs/**","/js/**","/dist/**","/plugins/**").permitAll()
 		.anyRequest().authenticated()
@@ -43,6 +47,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
 		
 		//Problemas con el POST en AJAX
-		//http.csrf().disable();
+		http.csrf().disable();
 	}
 }

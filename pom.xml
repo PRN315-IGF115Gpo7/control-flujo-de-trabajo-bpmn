@@ -47,21 +47,40 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
-		<!-- Dependencia para utilizar los layouts con thymelife con el objetivo de hacer herencia de plantillas -->
+		<!-- Dependency for template inheritance -->
 		<dependency>
 	    	<groupId>nz.net.ultraq.thymeleaf</groupId>
 	      	<artifactId>thymeleaf-layout-dialect</artifactId>
-
 	    </dependency>
+	    
+	    <!-- Dependency for Spring Security -->
 	    <dependency>
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-security</artifactId>
 	    </dependency>
+
+		<!-- Dependency for to use Spring Security on thymeleaf-->
+		<dependency>
+	        <groupId>org.thymeleaf.extras</groupId>
+	        <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+    	</dependency>
 	    
 	    <!-- Dependency for validations -->
 	    <dependency>
 		  <groupId>org.springframework.boot</groupId>
 		  <artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		
+		<!-- Dependency for mail sending -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.3</version>
 		</dependency>
 		
 	</dependencies>
