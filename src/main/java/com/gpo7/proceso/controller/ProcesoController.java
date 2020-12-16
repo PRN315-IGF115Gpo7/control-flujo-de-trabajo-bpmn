@@ -23,11 +23,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gpo7.proceso.entity.Permiso;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.TipoDato;
+import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
 import com.gpo7.proceso.servicio.ProcesoService;
+import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.TipoDatoService;
 import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
@@ -38,6 +41,7 @@ public class ProcesoController {
 
 	private static final String CREATE_VIEW = "proceso/create";
 	private static final String DIAGRAM_VIEW = "proceso/diagram";
+	private static final String HISTORIAL_VIEW = "proceso/historial";
 	
 	@Autowired
 	@Qualifier("procesoServiceImpl")
@@ -54,6 +58,9 @@ public class ProcesoController {
 	@Autowired 
 	@Qualifier("usuarioServiceImpl")
 	private UsuarioService usuarioService;
+	@Autowired 
+	@Qualifier("instanciaProcesoServiceImpl")
+	private InstanciaProcesoService instanciaProcesoService;
 	
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping("/create")
@@ -63,6 +70,20 @@ public class ProcesoController {
 		mav.addObject("proceso", new Proceso());
 		mav.addObject("tiposDato", tipoDatoService.getAll());
 		
+		return mav;
+	}
+	
+	@GetMapping("/historial")
+	public ModelAndView historial() {
+		ModelAndView mav = new ModelAndView(HISTORIAL_VIEW);
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuario = usuarioService.findByUsername(user.getUsername());
+		Boolean finalizado = true;
+		mav.addObject("proceso", new Proceso());
+		mav.addObject("procesos", procesoService.getAll());
+		mav.addObject("usuario", usuarioService.getAll());
+		mav.addObject("instanciaProceso", new InstanciaProceso());
+		mav.addObject("instanciaProcesos", instanciaProcesoService.findByUsuarioAndFinalizado(usuario, finalizado));
 		return mav;
 	}
 	

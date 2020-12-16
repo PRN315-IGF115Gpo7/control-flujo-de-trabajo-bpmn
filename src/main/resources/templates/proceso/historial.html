@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+</head>
+
+<body>
+
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Historial de Procesos Finalizados</h1>
+
+	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+        <li class="breadcrumb-item active">Historial</li>
+    </ol>
+
+    <div layout:fragment="content">
+
+        <div class="row ml-3 mr-3">
+            <div class="col-md-9 offset-1">
+                <div class="card">
+
+                    <div class="card-body"></div>
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Finalizado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usuario : ${usuarios}">
+                                <td class="nombre" th:text="${usuairio.idUsuario}"></td>
+                                <td class="estado" th:text="${usuario.usuario_id}"></td>
+                                <td class="finalizado" th:text="${usuario.idUsuario}"></td>
+                                 
+                                </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Finalizado</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> 
