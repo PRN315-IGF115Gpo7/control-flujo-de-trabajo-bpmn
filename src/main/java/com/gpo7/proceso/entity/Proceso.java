@@ -15,6 +15,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -48,9 +53,15 @@ public class Proceso {
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
 	
+	
 	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"proceso"})
     private List<Variable> variables =  new ArrayList();
+	
+	@OneToMany(mappedBy = "proceso", fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@JsonIgnore
+	private List<InstanciaProceso> instanciasProceso = new ArrayList();
 
 	public Proceso() {
 	}
@@ -131,4 +142,12 @@ public class Proceso {
 		this.variables = variables;
 	}
 
+	public List<InstanciaProceso> getInstanciasProceso() {
+		return instanciasProceso;
+	}
+
+	public void setInstanciasProceso(List<InstanciaProceso> instanciasProceso) {
+		this.instanciasProceso = instanciasProceso;
+	}
+    
 }
