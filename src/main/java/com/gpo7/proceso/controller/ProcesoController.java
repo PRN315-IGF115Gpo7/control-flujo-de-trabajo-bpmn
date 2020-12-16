@@ -64,13 +64,11 @@ public class ProcesoController {
 	@Autowired 
 	@Qualifier("usuarioServiceImpl")
 	private UsuarioService usuarioService;
-	@Autowired 
-	@Qualifier("instanciaProcesoServiceImpl")
-	private InstanciaProcesoService instanciaProcesoService;
 	
 	@Autowired 
 	@Qualifier("instanciaProcesoServiceImpl")
 	private InstanciaProcesoService instanciaProcesoService;
+	
 	
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping("/create")
@@ -105,12 +103,14 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(HISTORIAL_VIEW);
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
+		
 		Boolean finalizado = true;
 		mav.addObject("proceso", new Proceso());
 		mav.addObject("procesos", procesoService.getAll());
-		mav.addObject("usuario", usuarioService.getAll());
-		mav.addObject("instanciaProceso", new InstanciaProceso());
-		mav.addObject("instanciaProcesos", instanciaProcesoService.findByUsuarioAndFinalizado(usuario, finalizado));
+		mav.addObject("usuarios", usuario);
+		mav.addObject("instancias", instanciaProcesoService.getAll());
+		mav.addObject("instancia", new InstanciaProceso());
+		//mav.addObject("instanciaProcesos", instanciaProcesoService.findByUsuarioAndFinalizado(usuario, finalizado));
 		return mav;
 	}
 	

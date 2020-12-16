@@ -31,22 +31,22 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th>Estado</th>
-                                <th>Finalizado</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="usuario : ${usuarios}">
-                                <td class="nombre" th:text="${usuairio.idUsuario}"></td>
-                                <td class="estado" th:text="${usuario.usuario_id}"></td>
-                                <td class="finalizado" th:text="${usuario.idUsuario}"></td>
-                                 
-                                </tr>
+                            <tr th:each="instancia : ${instancias}">
+                                <th:block th:if="${usuarios == instancia.usuario}">
+                                    <th:block th:if="${instancia.finalizado}">
+                                        <td class="nombre" th:text="${instancia.proceso.procesoNombre}"></td>
+                                        <td class="estado" th:text="${instancia.proceso.procesoActivo}"></td>  
+                                    </th:block>     
+                                </th:block>                 
+                            </tr>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Estado</th>
-                                <th>Finalizado</th>
                             </tr>
                         </tfoot>
                     </table>
