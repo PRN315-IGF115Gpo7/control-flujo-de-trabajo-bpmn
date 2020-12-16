@@ -23,10 +23,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gpo7.proceso.entity.Cargo;
+import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.TipoDato;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
+import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.TipoDatoService;
 import com.gpo7.proceso.servicio.UsuarioService;
@@ -36,6 +39,7 @@ import com.gpo7.proceso.servicio.VariableService;
 @RequestMapping("/proceso")
 public class ProcesoController {
 
+	private static final String INDEX_VIEW = "proceso/index";
 	private static final String CREATE_VIEW = "proceso/create";
 	private static final String DIAGRAM_VIEW = "proceso/diagram";
 	
@@ -65,6 +69,20 @@ public class ProcesoController {
 		
 		return mav;
 	}
+	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
+	@GetMapping({"/index", ""})
+	public ModelAndView index() {
+		ModelAndView mav = new ModelAndView(INDEX_VIEW);
+		int respuestas = 0;
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuario = usuarioService.findByUsername(user.getUsername());
+		
+	    mav.addObject("procesos", procesoService.getAll());
+	    mav.addObject("proceso", new Proceso());
+	    mav.addObject("usuarios", usuario);
+	    return mav;
+	}
+	
 	
 	@PreAuthorize("hasAuthority('PROCESO_CREATE')")
 	@PostMapping("/store")
