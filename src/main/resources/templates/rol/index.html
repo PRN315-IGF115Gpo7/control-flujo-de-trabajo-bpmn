@@ -54,6 +54,9 @@
             </div>
 
             <table id="example1" class="table table-bordered table-striped">
+              <div class="text-center" th:if="${#lists.isEmpty(roles)}">No hay roles registrados en el sistema.</div>
+              <!-- Validacion para el caso cuando no hay roles -->  
+              <div th:if="${!#lists.isEmpty(roles)}"> 
               <thead>
                 <tr>
                   <th>Autoridad</th>
@@ -61,23 +64,21 @@
                 </tr>
               </thead>
               <tbody>
-
-                <tr th:each="rol : ${roles}">
-                  <td class="autoridad" th:text="${rol.authority}"></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${rol.idRol}">
-                      <i class="fas fa-pencil-alt"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                    <a class="btn btn-primary btn-sm" th:href="@{/rol/asignar/{idRol}(idRol=${rol.idRol})}"
-                      title="Gestionar Recursos y privilegios">
-                      <i class="fas fa-cubes"></i>
-                    </a>
-                  </td>
-                </tr>
-
+					<tr th:each="rol : ${roles}">
+	                  <td class="autoridad" th:text="${rol.authority}"></td>
+	                  <td>
+	                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${rol.idRol}">
+	                      <i class="fas fa-pencil-alt"></i>
+	                    </button>
+	                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
+	                      <i class="fas fa-trash"></i>
+	                    </button>
+	                    <a class="btn btn-primary btn-sm" th:href="@{/rol/asignar/{idRol}(idRol=${rol.idRol})}"
+	                      title="Gestionar Recursos y privilegios">
+	                      <i class="fas fa-cubes"></i>
+	                    </a>
+	                  </td>
+	                </tr>
               </tbody>
               <tfoot>
                 <tr>
@@ -86,6 +87,7 @@
                 </tr>
               </tfoot>
             </table>
+          </div>
           </div>
           <!-- /.card-body -->
         </div>
@@ -201,11 +203,11 @@
 
         //Obteniendo datos de la tabla
         var id = $(this).data('editar');
-        var nombre = $(this).parent().siblings('td.autoridad').text();
+        var autoridad = $(this).parent().siblings('td.autoridad').text();
 
         //Asignando datos a la modal
         $('#idRol').val(id);
-        $('#autoridad').val(nombre);
+        $('#autoridad').val(autoridad);
 
         //Lanzar modal
         $('#modalEditar').modal('show');
