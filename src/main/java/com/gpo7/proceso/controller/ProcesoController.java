@@ -23,12 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-<<<<<<< HEAD
+
 import com.gpo7.proceso.entity.Permiso;
-=======
+
 import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.InstanciaProceso;
->>>>>>> 932b456e3f2c202b554033a73838d9d848429278
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.TipoDato;
 import com.gpo7.proceso.entity.InstanciaProceso;
