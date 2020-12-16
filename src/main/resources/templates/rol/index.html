@@ -56,7 +56,7 @@
             <table id="example1" class="table table-bordered table-striped">
               <div class="text-center" th:if="${#lists.isEmpty(roles)}">No hay roles registrados en el sistema.</div>
               <!-- Validacion para el caso cuando no hay roles -->  
-              <div th:if="${!#lists.isEmpty(roles)}"> 
+              <div th:if="${!#lists.isEmpty(roles)}">
               <thead>
                 <tr>
                   <th>Autoridad</th>
@@ -86,8 +86,8 @@
                   <th>Acciones</th>
                 </tr>
               </tfoot>
+              </div>
             </table>
-          </div>
           </div>
           <!-- /.card-body -->
         </div>
