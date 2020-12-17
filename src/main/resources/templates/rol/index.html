@@ -57,36 +57,36 @@
               <div class="text-center" th:if="${#lists.isEmpty(roles)}">No hay roles registrados en el sistema.</div>
               <!-- Validacion para el caso cuando no hay roles -->  
               <div th:if="${!#lists.isEmpty(roles)}">
-              <thead>
-                <tr>
-                  <th>Autoridad</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-					<tr th:each="rol : ${roles}">
-	                  <td class="autoridad" th:text="${rol.authority}"></td>
-	                  <td>
-	                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${rol.idRol}">
-	                      <i class="fas fa-pencil-alt"></i>
-	                    </button>
-	                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
-	                      <i class="fas fa-trash"></i>
-	                    </button>
-	                    <a class="btn btn-primary btn-sm" th:href="@{/rol/asignar/{idRol}(idRol=${rol.idRol})}"
-	                      title="Gestionar Recursos y privilegios">
-	                      <i class="fas fa-cubes"></i>
-	                    </a>
-	                  </td>
+	              <thead>
+	                <tr>
+	                  <th>Autoridad</th>
+	                  <th>Acciones</th>
 	                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th>Autoridad</th>
-                  <th>Acciones</th>
-                </tr>
-              </tfoot>
-              </div>
+	              </thead>
+	              <tbody>
+						<tr th:each="rol : ${roles}">
+		                  <td class="autoridad" th:text="${rol.authority}"></td>
+		                  <td>
+		                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${rol.idRol}">
+		                      <i class="fas fa-pencil-alt"></i>
+		                    </button>
+		                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${rol.idRol}">
+		                      <i class="fas fa-trash"></i>
+		                    </button>
+		                    <a class="btn btn-primary btn-sm" th:href="@{/rol/asignar/{idRol}(idRol=${rol.idRol})}"
+		                      title="Gestionar Recursos y privilegios">
+		                      <i class="fas fa-cubes"></i>
+		                    </a>
+		                  </td>
+		                </tr>
+	              </tbody>
+	              <tfoot>
+	                <tr>
+	                  <th>Autoridad</th>
+	                  <th>Acciones</th>
+	                </tr>
+	              </tfoot>
+              </div> <!-- Fin de validacion -->
             </table>
           </div>
           <!-- /.card-body -->
