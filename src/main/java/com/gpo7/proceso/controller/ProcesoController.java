@@ -110,7 +110,7 @@ public class ProcesoController {
 		mav.addObject("usuarios", usuario);
 		mav.addObject("instancias", instanciaProcesoService.getAll());
 		mav.addObject("instancia", new InstanciaProceso());
-		//mav.addObject("instanciaProcesos", instanciaProcesoService.findByUsuarioAndFinalizado(usuario, finalizado));
+		
 		return mav;
 	}
 	
