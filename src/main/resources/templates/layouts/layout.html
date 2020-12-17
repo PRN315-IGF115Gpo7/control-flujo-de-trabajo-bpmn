@@ -152,6 +152,14 @@
 						</a>
 					  </li>
 				</ul>
+				<ul class="nav nav-treeview" sec:authorize="hasAuthority('PROCESO_INDEX')">
+					<li class="nav-item">
+						<a th:href="@{/proceso/procesos-activos}" class="nav-link">
+							<i class="fas fa-list mr-2 col-sm-2"></i>
+						  <p>Procesos activos</p>
+						</a>
+					  </li>
+				</ul>
 			</li>
 				<!-- ADMINISTRACION -->
 	          

@@ -28,6 +28,7 @@ import com.gpo7.proceso.entity.Permiso;
 import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Proceso;
+import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.entity.TipoDato;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Usuario;
@@ -47,6 +48,7 @@ public class ProcesoController {
 	private static final String CREATE_VIEW = "proceso/create";
 	private static final String DIAGRAM_VIEW = "proceso/diagram";
 	private static final String HISTORIAL_VIEW = "proceso/historial";
+	private static final String ACTIVE_PROCESS_VIEW = "proceso/procesos-activos";
 	
 	@Autowired
 	@Qualifier("procesoServiceImpl")
@@ -201,5 +203,20 @@ public class ProcesoController {
 				break;
 			}
 		}
+	}
+	
+	
+	@GetMapping("/procesos-activos")
+	public ModelAndView activeProcess() {
+		ModelAndView mav = new ModelAndView(ACTIVE_PROCESS_VIEW);
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuario = usuarioService.findByUsername(user.getUsername());
+		
+	    mav.addObject("instanciaProcesos", instanciaProcesoService.findByUsuarioAndFinalizado(usuario, false));
+	    mav.addObject("instanciaProceso", new InstanciaProceso());
+
+	    mav.addObject("usuarios", usuario);
+	    
+	    return mav;
 	}
 }
