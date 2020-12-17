@@ -27,7 +27,9 @@
           </div>
 
           <div class="card-body">
-
+			<ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+              <li class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+            </ul>
            <div th:if="${success}">
              <div class="alert alert-success" th:text="${success}"></div>
            </div>  
@@ -37,8 +39,12 @@
            <div th:if="${unlock_success} == 'false'">
              <div class="alert alert-danger">Usuario No Desbloqueado</div>
            </div>
-            <table id="example1" class="table table-bordered table-striped">
-              <thead>
+           
+       <table id="example1" class="table table-bordered table-striped">
+            <div class="text-center" th:if="${#lists.isEmpty(usuarios)}">No hay usuarios registrados en el sistema.</div>
+              <!-- Validacion para el caso cuando no hay usuarios -->  
+            <div th:if="${!#lists.isEmpty(usuarios)}">
+            <thead>
                 <tr>
                   <th>Usuario</th>
                   <th>Nombre completo</th>
@@ -48,29 +54,30 @@
                 </tr>
               </thead>
               <tbody>
-
-                <tr th:each="usuario: ${usuarios}">
-                  <td class="usuario" th:text="${usuario.username}"></td>
-                  <td class="usuario" th:text="${usuario.nombreCompleto}"></td>
-                  <td class="usuario" th:text="${usuario.email}"></td>
-                  <td class="usuario" th:text="${usuario.cargo.nombreCargo}"></td>
-                  <td>
-
-                    <a class="btn btn-sm btn-primary" th:href="@{/usuario/edit/{id}(id=${usuario.idUsuario})}">
-                      <i class="fas fa-pencil-alt"></i>
-                    </a>
-                    <th:block th:if="${usuario.enabled}">
-					<button class="btn btn-sm btn-danger mr-2" title="Deshabilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=false">
-						<i class="fas fa-lock"></i>
-					</button>
-					</th:block>
-					<th:block th:unless="${usuario.enabled}">
-						<button class="btn btn-sm btn-success mr-2" title="Habilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=true">
-							<i class="fas fa-unlock-alt"></i>
+              		
+					  <tr th:each="usuario: ${usuarios}">
+	                  <td class="usuario" th:text="${usuario.username}"></td>
+	                  <td class="usuario" th:text="${usuario.nombreCompleto}"></td>
+	                  <td class="usuario" th:text="${usuario.email}"></td>
+	                  <td class="usuario" th:text="${usuario.cargo.nombreCargo}"></td>
+	                  <td>
+	
+	                    <a class="btn btn-sm btn-primary" th:href="@{/usuario/edit/{id}(id=${usuario.idUsuario})}">
+	                      <i class="fas fa-pencil-alt"></i>
+	                    </a>
+	                    <th:block th:if="${usuario.enabled}">
+						<button class="btn btn-sm btn-danger mr-2" title="Deshabilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=false">
+							<i class="fas fa-lock"></i>
 						</button>
-					</th:block>
-                  </td>
-                </tr>
+						</th:block>
+						<th:block th:unless="${usuario.enabled}">
+							<button class="btn btn-sm btn-success mr-2" title="Habilitar" th:attr="data-change-state=${usuario.idUsuario}, data-state=true">
+								<i class="fas fa-unlock-alt"></i>
+							</button>
+						</th:block>
+	                  </td>
+	                </tr>
+	          
               </tbody>
               <tfoot>
                 <tr>
@@ -81,6 +88,8 @@
                   <th>Acciones</th>
                 </tr>
               </tfoot>
+              </div>
+              
             </table>
           </div>
           <!-- /.card-body -->
