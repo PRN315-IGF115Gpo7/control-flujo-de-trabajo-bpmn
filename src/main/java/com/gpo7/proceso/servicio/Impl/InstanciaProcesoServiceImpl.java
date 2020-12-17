@@ -23,4 +23,9 @@ public class InstanciaProcesoServiceImpl implements InstanciaProcesoService{
 		// TODO Auto-generated method stub
 		return instanciaProcesoJpaRepository.findByUsuarioAndFinalizado(usuario, finalizado);
 	}
+
+	public List<InstanciaProceso> getAll() {
+		// TODO Auto-generated method stub
+		return instanciaProcesoJpaRepository.findAll();
+	}
 }
