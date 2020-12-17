@@ -149,5 +149,14 @@ public class Proceso {
 	public void setInstanciasProceso(List<InstanciaProceso> instanciasProceso) {
 		this.instanciasProceso = instanciasProceso;
 	}
-    
+	
+	public int contadorRespuestas(List<InstanciaProceso> instanciasProceso, Boolean finalizado)
+	{
+	    int count=0;
+	    for (InstanciaProceso respuestas: instanciasProceso) {
+	        if(String.valueOf(respuestas.getFinalizado()).toLowerCase().equals(String.valueOf(finalizado).toLowerCase()))
+	            count+=1;
+	    }
+	    return count;
+	}
 }
