@@ -47,11 +47,10 @@
               <div class="alert alert-danger" th:text="${mensaje}"></div>
             </div>
             
-            <div th:if="${#lists.isEmpty(cargos)}">
-              <div class="alert alert-danger">No hay cargos registrados</div>
-            </div>
             
 						<table id="example1" class="table table-bordered table-striped">
+              <div class="text-center" th:if="${#lists.isEmpty(cargos)}">No hay cargos registrados en el sistema.</div>
+              <!-- Validacion para el caso cuando no hay cargos -->  
               <div th:if="${!#lists.isEmpty(cargos)}">
 							<thead>
                   <tr>
