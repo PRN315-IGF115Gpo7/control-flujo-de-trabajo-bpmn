@@ -46,8 +46,12 @@
             <div th:if="${mensaje}">
               <div class="alert alert-danger" th:text="${mensaje}"></div>
             </div>
-
+            
+            
 						<table id="example1" class="table table-bordered table-striped">
+              <div class="text-center" th:if="${#lists.isEmpty(cargos)}">No hay cargos registrados en el sistema.</div>
+              <!-- Validacion para el caso cuando no hay cargos -->  
+              <div th:if="${!#lists.isEmpty(cargos)}">
 							<thead>
                   <tr>
                     <th>Nombre</th>
@@ -56,21 +60,21 @@
                   </tr>
 							</thead>
 							<tbody>
-                <div th:if="${!#lists.isEmpty(cargos)}">
-				  <tr th:each="cargo : ${cargos}">
-                  <td class="nombre" th:text="${cargo.nombreCargo}"></td>
-                  <td class="descripcion" th:text="${cargo.descripcionCargo}"></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${cargo.idCargo}">
-                      <i class="fas fa-pencil-alt"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${cargo.idCargo}">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-          </tr>
-        </div>
-        <option th:if="${#lists.isEmpty(cargos)}">No hay cargos registrados</option>
+                
+				            <tr th:each="cargo : ${cargos}">
+                        <td class="nombre" th:text="${cargo.nombreCargo}"></td>
+                        <td class="descripcion" th:text="${cargo.descripcionCargo}"></td>
+                        <td>
+                        <button class="btn btn-sm btn-primary" th:attr="data-editar=${cargo.idCargo}">
+                           <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${cargo.idCargo}">
+                           <i class="fas fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+               
+                
 
 							</tbody>
 							<tfoot>
@@ -80,7 +84,9 @@
                     <th>Acciones</th>
                   </tr>
 
-							</tfoot>
+              </tfoot>
+            </div>
+            
 						</table>
 					</div>
 					<!-- /.card-body -->

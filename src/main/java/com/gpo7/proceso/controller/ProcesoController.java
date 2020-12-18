@@ -25,7 +25,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import com.gpo7.proceso.entity.Permiso;
-
 import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Proceso;
@@ -86,16 +85,13 @@ public class ProcesoController {
 	@GetMapping({"/index", ""})
 	public ModelAndView index() {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
-		int contador = 0;
+
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
-		
+
 	    mav.addObject("procesos", procesoService.getAll());
 	    mav.addObject("proceso", new Proceso());
-	    mav.addObject("instancias", instanciaProcesoService.getAll());
-	    mav.addObject("instancia", new InstanciaProceso());
 	    mav.addObject("usuarios", usuario);
-	    mav.addObject("count", contador);
 	    return mav;
 	}
 	
@@ -106,9 +102,6 @@ public class ProcesoController {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 		
-		Boolean finalizado = true;
-		mav.addObject("proceso", new Proceso());
-		mav.addObject("procesos", procesoService.getAll());
 		mav.addObject("usuarios", usuario);
 		mav.addObject("instancias", instanciaProcesoService.getAll());
 		mav.addObject("instancia", new InstanciaProceso());

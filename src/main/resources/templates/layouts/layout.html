@@ -140,7 +140,7 @@
 					<li class="nav-item">
 						<a th:href="@{/proceso/index}" class="nav-link">
 							<i class="fas fa-list mr-2 col-sm-2"></i>
-						  <p>Lista de procesos</p>
+						  <p>Procesos creados</p>
 						</a>
 					  </li>
 				</ul>
@@ -149,6 +149,14 @@
 						<a th:href="@{/proceso/historial}" class="nav-link">
 							<i class="fas fa-list mr-2 col-sm-2"></i>
 						  <p>Historial de procesos</p>
+						</a>
+					  </li>
+				</ul>
+				<ul class="nav nav-treeview" sec:authorize="hasAuthority('PROCESO_INDEX')">
+					<li class="nav-item">
+						<a th:href="@{/proceso/procesos-activos}" class="nav-link">
+							<i class="fas fa-list mr-2 col-sm-2"></i>
+						  <p>Procesos activos</p>
 						</a>
 					  </li>
 				</ul>

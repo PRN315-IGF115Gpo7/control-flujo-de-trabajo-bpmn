@@ -2,7 +2,10 @@ package com.gpo7.proceso.servicio;
 
 import java.util.List;
 
+import org.springframework.web.servlet.ModelAndView;
+
 import com.gpo7.proceso.entity.InstanciaProceso;
+import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.Usuario;
 
 public interface InstanciaProcesoService {
