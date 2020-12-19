@@ -49,6 +49,7 @@ public class ProcesoController {
 	private static final String DIAGRAM_VIEW = "proceso/diagram";
 	private static final String HISTORIAL_VIEW = "proceso/historial";
 	private static final String ACTIVE_PROCESS_VIEW = "proceso/procesos-activos";
+	private static final String REPLY_PROCESS_VIEW = "proceso/procesos-respondidos";
 	
 	@Autowired
 	@Qualifier("procesoServiceImpl")
@@ -218,5 +219,21 @@ public class ProcesoController {
 	    mav.addObject("usuarios", usuario);
 	    
 	    return mav;
+	}
+	
+	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
+	@GetMapping("/{id}/procesos-respondidos")
+	
+	public ModelAndView edit(@PathVariable int id) {
+		ModelAndView mav = new ModelAndView(REPLY_PROCESS_VIEW);
+		
+		
+		Proceso proceso = procesoService.findById(id);
+		List<InstanciaProceso> instanciasProceso = proceso.getInstanciasProceso();
+		
+		mav.addObject("proceso", proceso);
+		
+		return mav;
+		
 	}
 }
