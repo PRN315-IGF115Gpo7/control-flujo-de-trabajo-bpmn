@@ -1,0 +1,28 @@
+.config-actividad{
+	min-width: 350px;
+    max-width: 350px;
+    min-height: 100vh;
+    position: absolute;
+    border: 0.5px solid grey;
+    border-radius: 5px;
+    top: 0;
+    right: 0;
+    display:none;
+	padding: 10px;
+	background:white;
+}
+	
+.show-form{
+	display: inline-block;
+}
+
+.not-show{
+	display: none;
+}
+
+@media (max-width: 768px) {
+    .config-actividad {
+        min-width: 250px;
+    	max-width: 250px;
+    }
+}

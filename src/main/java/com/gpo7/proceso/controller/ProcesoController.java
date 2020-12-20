@@ -33,6 +33,7 @@ import com.gpo7.proceso.entity.TipoDato;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
+import com.gpo7.proceso.servicio.CargoService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
@@ -70,6 +71,10 @@ public class ProcesoController {
 	@Autowired 
 	@Qualifier("instanciaProcesoServiceImpl")
 	private InstanciaProcesoService instanciaProcesoService;
+	
+	@Autowired
+	@Qualifier("cargoServiceImpl")
+	private CargoService cargoService;
 	
 	
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
@@ -144,14 +149,14 @@ public class ProcesoController {
 			variable.setProceso(proceso);
 			variableService.store(variable);
 		}
-		
-		return "redirect:/proceso/diagram";
+		return "redirect:/proceso/diagram/"+ proceso.getIdProceso();
 	}
 	
-	@GetMapping("/diagram")
-	public ModelAndView diagram() {
+	@GetMapping("/diagram/{proceso_id}")
+	public ModelAndView diagram(@PathVariable("proceso_id") int procesoId) {
 		ModelAndView mav = new ModelAndView(DIAGRAM_VIEW);
-		
+		mav.addObject("proceso", procesoService.findById(procesoId));
+		mav.addObject("cargos", cargoService.getAll());
 		return mav;
 	}
 	

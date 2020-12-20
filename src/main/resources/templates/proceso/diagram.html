@@ -9,7 +9,8 @@
 
   <link rel="stylesheet" th:href="@{/bpmn/css/diagram-js.css}">
   <link rel="stylesheet" th:href="@{/bpmn/css/bpmn.css}">
-
+  <link rel="stylesheet" th:href="@{/css/configurar-actividad.css}">
+  
   <script th:src="@{/bpmn/js/bpmn-viewer.development.js}"></script>
   <script th:src="@{/bpmn/js/bpmn-modeler.development.js}"></script>
 </head>
@@ -23,77 +24,224 @@
     </ol>
 
 	<div layout:fragment="content" style="height: 100vh;">
-
-      <div id="canvas" style="height: 100%"></div>
+	
+	<h5 id="nombre-proceso"></h5>
+	
+	<div id="canvas" style="height: 100%"></div>
+	
+	<div class="config-actividad">
+		
+		<i class="fas fa-arrow-left fa-lg mb-3" id="close-form"></i>
+		
+		<div id="agregar-variable" class="not-show">
+			<form action="#">
+				<div class="form-group">
+					<label>Nombre de Actividad: </label>
+					<input class="form-control" id="nombre-actividad" disabled/>
+				</div>
+			 
+				<div class="form-group">
+		          	<label>Seleccione la variable</label>
+		          	<select class="form-control" id="idVariables">
+		            	<option value="">Seleccione una opción</option>
+		          	</select>
+	        	</div>
+	        	<div class="form-group">
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" class="custom-control-input" id="esEscritura" 
+							> 
+						<label class="custom-control-label" for="esEscritura">Se permite Escritura</label>
+						<small id="emailHelp" class="form-text text-muted">(Seleccione para indicar que el participante podrá responder a la actividad).</small>
+					</div>
+				</div>
+				<button class="btn btn-primary btn-sm" disabled>Agregar</button>
+			</form>
+		
+			<div class="card mt-3">
+              <div class="card-header">
+                <label>Variables Agregadas a Actividad</label>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th style="width: 10px">#</th>
+                      <th>Variable</th>
+                      <th>Tipo</th>
+                      <th style="width: 40px">Escritura</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1.</td>
+                      <td>Nombre</td>
+                      <td><span class="badge bg-danger">String</span></td>
+                      <td style="vertical-align:middle; text-align:center"><i class="fas fa-user-edit"></i></td>
+                      
+                    </tr>
+                    <tr>
+                      <td>2.</td>
+                      <td>Edad</td>
+                      <td><span class="badge bg-primary">Integer</span></td>
+                      <td style="vertical-align:middle; text-align:center"><i class="fas fa-eye"></i></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+		</div>
+		<div id="set-participante" class="not-show">
+			<form action="#">
+				<div class="form-group">
+		          	<label>Seleccione la entidad responsable</label>
+		          	<select class="form-control" id="idEntidad">
+		            	<option value="">Seleccione una opción</option>
+		          	</select>
+	        	</div>
+	        </form>
+		</div>
+		
+	</div>
+	
+      
 	</div>
 
 
 	<section layout:fragment="scripts">
-    <script>
+	
+		<script th:inline="javascript">
+		
+			/*<![CDATA[*/
+				let proceso = /*[[${proceso}]]*/ null;
+				
+				let cargos = /*[[${cargos}]]*/ null;
+				
+				let variables = /*[[${proceso.variables}]]*/ null;
+				
+			/*]]>*/
 
-        $('body').prop("class", "sidebar-mini layout-fixed sidebar-collapse")
+			$('body').prop("class", "sidebar-mini layout-fixed sidebar-collapse")
 
-        var baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
-        var diagramUrl = `${baseUrl}/bpmn/base.bpmn`;
+			var baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+			var diagramUrl = `${baseUrl}/bpmn/base.bpmn`;
 
-        // modeler instance
-        var bpmnModeler = new BpmnJS({
-          container: '#canvas',
-          keyboard: {
-            bindTo: window
-          }
-        });
+			// modeler instance
+			var bpmnModeler = new BpmnJS({
+				container: '#canvas',
+				keyboard: {
+					bindTo: window
+				}
+			});
+			
+			  // load external diagram file via AJAX and open it
+			$.get(diagramUrl, openDiagram, 'text');
 
-        //Save diagram contents and print them to the console.
-        async function exportDiagram() {
+			/**
+			 * Open diagram in our modeler instance.
+			 * @param {String} bpmnXML diagram to display
+			 */
+			async function openDiagram(bpmnXML) {
+			// import diagram
+				try {
+				var xmlBase =  "<?xml version=\"1.0\" encoding=\"UTF-8\"?><definitions xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:omgdc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" targetNamespace=\"\" xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd\"><collaboration id=\"Collaboration_1k4vxpn\"><participant id=\"Participant_0axkjtm\" name=\"NombreProceso\" processRef=\"Process_0g3egdl\" /></collaboration><process id=\"Process_0g3egdl\"><laneSet id=\"LaneSet_0el1pb8\"><lane id=\"Lane_1wcf2uc\" name=\"Participante1\" /></laneSet></process><bpmndi:BPMNDiagram id=\"sid-74620812-92c4-44e5-949c-aa47393d3830\"><bpmndi:BPMNPlane id=\"sid-cdcae759-2af7-4a6d-bd02-53f3352a731d\" bpmnElement=\"Collaboration_1k4vxpn\"><bpmndi:BPMNShape id=\"Participant_0axkjtm_di\" bpmnElement=\"Participant_0axkjtm\" isHorizontal=\"true\"><omgdc:Bounds x=\"80\" y=\"100\" width=\"600\" height=\"250\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Lane_1wcf2uc_di\" bpmnElement=\"Lane_1wcf2uc\" isHorizontal=\"true\"><omgdc:Bounds x=\"110\" y=\"100\" width=\"570\" height=\"250\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>";    
+				
+				if(proceso != null){
+					$("#nombre-proceso").append(proceso.procesoNombre);
+					if(proceso.proceoXml != null){
+						xmlBase = proceso.proceoXml;
+					}else{
+						xmlBase = xmlBase.replace("NombreProceso", proceso.procesoNombre);
+					}
+				}
+			
+				await bpmnModeler.importXML(xmlBase);
+				// access modeler components
+				var canvas = bpmnModeler.get('canvas');
+				//var overlays = bpmnModeler.get('overlays');
 
-          try {
+				//Evento click de los elementos
+				canvas._eventBus.on('element.click', function(e) {
+					// e.element = the model element
+					// e.gfx = the graphical element
+					hideForm();
+						
+					switch(e.element.type) {
+					case "bpmn:Task":
+						$(".config-actividad").addClass("show-form");
+						$("#agregar-variable").removeClass("not-show");
+						if(e.element.businessObject.name){
+							$("#nombre-actividad").val(e.element.businessObject.name);
+						}else{
+							$("#nombre-actividad").val("");
+						}
+						break;
+					case "bpmn:Lane":
+						$(".config-actividad").addClass("show-form");
+						$("#set-participante").removeClass("not-show");
+						break;
+					default:
+						// code block
+					}
+						
+					console.log(e.element);
+					console.log(e.element.businessObject.name);
+				});
 
-            var result = await bpmnModeler.saveXML({ format: true });
+				// zoom to fit full viewport
+				canvas.zoom('fit-viewport');
 
-            alert('Diagram exported. Check the developer tools!');
-
-            console.log('DIAGRAM', result.xml);
-          } catch (err) {
-
-            console.error('could not save BPMN 2.0 diagram', err);
-          }
-        }
-
-        /**
-         * Open diagram in our modeler instance.
-         *
-         * @param {String} bpmnXML diagram to display
-         */
-        async function openDiagram(bpmnXML) {
-
-          // import diagram
-          try {
-
-            await bpmnModeler.importXML(bpmnXML);
-
-            // access modeler components
-            var canvas = bpmnModeler.get('canvas');
-            //var overlays = bpmnModeler.get('overlays');
-
-
-            // zoom to fit full viewport
-            canvas.zoom('fit-viewport');
-
-            // add marker
-            canvas.addMarker('SCAN_OK', 'needs-discussion');
-          } catch (err) {
-
-            console.error('could not import BPMN 2.0 diagram', err);
-          }
-        }
-
-        // load external diagram file via AJAX and open it
-        $.get(diagramUrl, openDiagram, 'text');
-
-    </script>
-    <svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>
-
+				// add marker
+				canvas.addMarker('SCAN_OK', 'needs-discussion');
+				} catch (err) {
+					console.error('could not import BPMN 2.0 diagram', err);
+				}
+			}
+			 
+			//Save diagram contents and print them to the console.
+			async function exportDiagram() {
+				try {
+					var result = await bpmnModeler.saveXML({ format: true });
+					alert('Diagram exported. Check the developer tools!');
+					console.log('DIAGRAM', result.xml);
+				}catch (err) {
+					alert('could not save BPMN 2.0 diagram!');
+					console.error('could not save BPMN 2.0 diagram', err);
+				}
+			}
+		        
+			$("#close-form").click(function() {
+				hideForm();
+			});
+		        
+			function hideForm(){
+				$(".config-actividad").removeClass("show-form");
+				$("#set-participante").addClass("not-show");
+				$("#agregar-variable").addClass("not-show");
+			}
+			
+			//inicializar cargos 
+			var htmlCargos = '';
+			if(cargos != null){
+				for (var i = 0; i < cargos.length; ++i) {
+					htmlCargos += `<option value=${cargos[i].idCargo}>${cargos[i].nombreCargo}</option>`;
+				}
+				$("#idEntidad").append(htmlCargos);
+			}
+			
+			//Inicializar variables
+			var htmlVariables = '';
+			if(variables != null){
+				for (var i = 0; i < variables.length; ++i) {
+					htmlVariables += `<option value=${variables[i].idVariable}>${variables[i].variableNombre}</option>`;
+				}
+				$("#idVariables").append(htmlVariables);
+			}
+			
+		</script>
+    	<!-- <script type="text/javascript" th:inline="javascript" th:src="@{/js/configurar-actividad.js}"></script> -->
+    	<svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>
 	</section>
 </body>
 
