@@ -1,5 +1,6 @@
 package com.gpo7.proceso.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,15 +14,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gpo7.proceso.entity.ElementoBpmn;
+import com.gpo7.proceso.entity.ElementoBpmnFormulario;
+import com.gpo7.proceso.entity.ElementoFormulario;
 import com.gpo7.proceso.entity.Privilegio;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.TipoElementoBpmn;
 import com.gpo7.proceso.entity.Usuario;
+import com.gpo7.proceso.entity.Variable;
 import com.gpo7.proceso.repository.UserJpaRepository;
+import com.gpo7.proceso.servicio.ElementoBpmnFormularioService;
 import com.gpo7.proceso.servicio.ElementoBpmnService;
+import com.gpo7.proceso.servicio.ElementoFormularioService;
 import com.gpo7.proceso.servicio.PrivilegioService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.TipoElementoService;
+import com.gpo7.proceso.servicio.VariableService;
 
 @RestController
 @RequestMapping("/api")
@@ -46,6 +53,18 @@ public class DataRestController {
 	@Autowired
     @Qualifier("tipoElementoServiceImpl")
     private TipoElementoService tipoElementoService;
+	
+	@Autowired
+	@Qualifier("elementoFormularioServiceImpl")
+	private ElementoFormularioService elementoFormularioService;
+	
+	@Autowired
+	@Qualifier("elementoBpmnFormularioServiceImpl")
+	private ElementoBpmnFormularioService elementoBpmnFormularioService;
+	
+	@Autowired
+	@Qualifier("variableServiceImpl")
+	private VariableService variableService;
 	
 	@GetMapping("/rol/{idRol}/recurso/{idRecurso}/no-asignados")
 	public List<Privilegio> privilegiosNoAsignadosByRecurso(@PathVariable("idRecurso") int idRecurso, @PathVariable("idRol") int idRol){
@@ -90,6 +109,47 @@ public class DataRestController {
 		proceso.setProceoXml(xml);
 		procesoService.update(proceso);
 		return "Exito";
+	}
+	
+	@PostMapping("/elemento-bpmn-formulario/create")
+	public String createElementoBpmnForm(
+			@RequestParam("procesoId") int procesoId, 
+			@RequestParam("elementoBpmnId") String elementoBpmnId,
+			@RequestParam("variableId") int  variableId,
+			@RequestParam("esEscritura") boolean esEscritura) {
+		
+		Proceso proceso = this.procesoService.findById(procesoId);
+		ElementoBpmn elementoBpmn = this.elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(elementoBpmnId, proceso);
+		
+		Variable variable = this.variableService.findById(variableId);
+		ElementoFormulario elementoFormulario = this.elementoFormularioService.findByVariable(variable);
+		
+		ElementoBpmnFormulario elementoBpmnFormulario = new ElementoBpmnFormulario(elementoBpmn, elementoFormulario, esEscritura);
+		
+		this.elementoBpmnFormularioService.store(elementoBpmnFormulario);
+		
+		return "Exito";
+	}
+	
+	@GetMapping("/obtener-variables-elemento/{procesoId}/{elementoBpmnId}")
+	public List<Variable> obtenerVariablesElemento(@PathVariable("procesoId") int procesoId,
+			@PathVariable("elementoBpmnId") String elementoBpmnId){
+		
+		Proceso proceso = this.procesoService.findById(procesoId);
+		ElementoBpmn elementoBpmn = this.elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(elementoBpmnId, proceso);
+		
+		List<ElementoBpmnFormulario> elementosBpmnFormulario = this.elementoBpmnFormularioService.findByElementoBpmn(elementoBpmn);
+		List<Variable> variables = new ArrayList<Variable>();
+				
+		if(elementosBpmnFormulario != null) {
+			for(ElementoBpmnFormulario elementoBpmnFormulario : elementosBpmnFormulario) {
+				Variable variable = elementoBpmnFormulario.getElementoFormulario().getVariable();
+				variable.setEsEscritura(elementoBpmnFormulario.isPermitirEscritura());
+				variables.add(variable);
+			}
+		}
+				
+		return variables;
 	}
 	
 }

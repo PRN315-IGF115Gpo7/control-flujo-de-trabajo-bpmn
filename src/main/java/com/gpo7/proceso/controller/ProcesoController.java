@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gpo7.proceso.entity.Permiso;
 import com.gpo7.proceso.entity.Cargo;
+import com.gpo7.proceso.entity.ElementoFormulario;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.Rol;
@@ -34,6 +35,7 @@ import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
 import com.gpo7.proceso.servicio.CargoService;
+import com.gpo7.proceso.servicio.ElementoFormularioService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
@@ -75,6 +77,10 @@ public class ProcesoController {
 	@Autowired
 	@Qualifier("cargoServiceImpl")
 	private CargoService cargoService;
+	
+	@Autowired
+	@Qualifier("elementoFormularioServiceImpl")
+	private ElementoFormularioService elementoFormularioService;
 	
 	
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
@@ -147,9 +153,36 @@ public class ProcesoController {
 		
 		for (Variable variable : variables) {
 			variable.setProceso(proceso);
-			variableService.store(variable);
+			Variable variableStored = variableService.store(variable);
+			
+			//Funcion para Crear Elemento_Formulario
+			crearElementoFormulario(variableStored);
 		}
+
 		return "redirect:/proceso/diagram/"+ proceso.getIdProceso();
+	}
+	
+	public void crearElementoFormulario(Variable variable) {
+		ElementoFormulario elementoFormulario = new ElementoFormulario();
+		elementoFormulario.setLabel(variable.getVariableNombre());
+		elementoFormulario.setVariable(variable);
+		String tipoElementoFormulario = "";
+		
+		switch(variable.getTipoDato().getTipoDatoNombre()) {
+			case "String":
+				tipoElementoFormulario = "text";
+				break;
+			case "Date":
+				tipoElementoFormulario = "date";
+				break;	
+			case "Boolean":
+				tipoElementoFormulario = "checkbox";
+				break;
+			default:
+				tipoElementoFormulario = "number";
+		}
+		elementoFormulario.setElementoFormularioTipo(tipoElementoFormulario);
+		this.elementoFormularioService.store(elementoFormulario);
 	}
 	
 	@GetMapping("/diagram/{proceso_id}")

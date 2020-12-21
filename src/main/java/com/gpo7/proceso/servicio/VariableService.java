@@ -7,4 +7,5 @@ import com.gpo7.proceso.entity.Variable;
 public interface VariableService {
 
 	public Variable store(Variable variable);
+	public Variable findById(int variableId);
 }

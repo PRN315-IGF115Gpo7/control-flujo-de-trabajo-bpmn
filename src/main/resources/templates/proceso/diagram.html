@@ -42,19 +42,20 @@
 		<i class="fas fa-arrow-left fa-lg mb-3" id="close-form"></i>
 		
 		<div id="agregar-variable" class="not-show">
-			<form action="#">
+			<form id="varsForm" action="#">
+				<input type="hidden" id="hiddenElementoBpmnId" value=""/>
 				<div class="form-group">
 					<label id="tipo-elemento-bpmn"></label>
 					<input class="form-control" id="nombre-actividad" disabled/>
 				</div>
-			 
+				
 				<div class="form-group">
 		          	<label>Seleccione la variable</label>
 		          	<select class="form-control" id="idVariables">
 		            	<option value="">Seleccione una opción</option>
 		          	</select>
 	        	</div>
-	        	<div class="form-group">
+	        	<div id="permitirEscrituraChkbx" class="form-group">
 					<div class="custom-control custom-checkbox">
 						<input type="checkbox" class="custom-control-input" id="esEscritura" 
 							> 
@@ -62,7 +63,7 @@
 						<small id="emailHelp" class="form-text text-muted">(Seleccione para indicar que el participante podrá responder a la actividad).</small>
 					</div>
 				</div>
-				<button class="btn btn-primary btn-sm" disabled>Agregar</button>
+				<button class="btn btn-primary btn-sm" onclick="agregarVariable(event)">Agregar</button>
 			</form>
 		
 			<div class="card mt-3">
@@ -71,7 +72,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body p-0">
-                <table class="table table-sm">
+                <table id="variablesAgregadasTable" class="table table-sm">
                   <thead>
                     <tr>
                       <th style="width: 10px">#</th>
@@ -80,8 +81,8 @@
                       <th style="width: 40px">Escritura</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
+                  <tbody id="variablesBodyTable">
+                    <!--<tr>
                       <td>1.</td>
                       <td>Nombre</td>
                       <td><span class="badge bg-danger">String</span></td>
@@ -93,7 +94,7 @@
                       <td>Edad</td>
                       <td><span class="badge bg-primary">Integer</span></td>
                       <td style="vertical-align:middle; text-align:center"><i class="fas fa-eye"></i></td>
-                    </tr>
+                    </tr>-->
                   </tbody>
                 </table>
               </div>
@@ -192,6 +193,16 @@
 						}else{
 							$("#nombre-actividad").val("");
 						}
+						//cargar Variables DC16009
+						$("#permitirEscrituraChkbx").removeClass('d-none');
+						$("#hiddenElementoBpmnId").val(e.element.id);
+						inicializarVariables(e.element.id);
+
+						$.get("/api/elemento-bpmn/obtener-varibles", elemento, function(data, status){
+							console.log("Estado: " + status);
+							console.log(data);
+						});
+
 						break;
 					case "bpmn:ExclusiveGateway":
 						$(".config-actividad").addClass("show-form");
@@ -203,6 +214,11 @@
 						}else{
 							$("#nombre-actividad").val("");
 						}
+						//cargar Variables DC16009
+						$("#permitirEscrituraChkbx").addClass('d-none');
+						$("#hiddenElementoBpmnId").val(e.element.id);
+						inicializarVariables(e.element.id);
+						
 						break;
 					case "bpmn:Lane":
 						$(".config-actividad").addClass("show-form");
@@ -280,13 +296,13 @@
 			/*
 			* inicializar el selector de variables
 			*/
-			var htmlVariables = '';
+			/*var htmlVariables = '';
 			if(variables != null){
 				for (var i = 0; i < variables.length; ++i) {
 					htmlVariables += `<option value=${variables[i].idVariable}>${variables[i].variableNombre}</option>`;
 				}
 				$("#idVariables").append(htmlVariables);
-			}
+			}*/
 			
 			/*
 			* Funcion que permite crear o actualizar un elemento BPMN
@@ -320,6 +336,87 @@
 				}catch (err) {
 					xml = null;
 				}
+			}
+
+			function agregarVariable(e){
+				e.preventDefault();
+				var procesoId = proceso.idProceso;
+				var elementoBpmnId = $("#hiddenElementoBpmnId").val();
+				var variableId = $("#idVariables").val();
+				var esEscritura = $("#esEscritura").is(":checked");
+
+				console.log(procesoId);
+				console.log(elementoBpmnId);
+				console.log(variableId);
+				console.log(esEscritura);
+
+				$.post("/api/elemento-bpmn-formulario/create", 
+					{"procesoId": procesoId,
+					"elementoBpmnId": elementoBpmnId, 
+					"variableId": variableId,
+					"esEscritura": esEscritura}, 
+					function(data, status){
+					console.log("Estado: " + status);
+					console.log(data);
+					$('#varsForm').trigger("reset");
+					inicializarVariables(elementoBpmnId);
+				});
+			}
+
+			function inicializarVariables(elementoBpmnId){
+				$.get("/api/obtener-variables-elemento/" + proceso.idProceso + "/" + elementoBpmnId,
+				function(data, status){
+					console.log("Estado: " + status);
+					console.log(data);
+
+					var htmlVariablesSelect = '<option value="">Seleccione una opción</option>';
+					if(variables != null){
+						for (var i = 0; i < variables.length; ++i) {
+							var agregado = false;
+							
+							if(data){
+								for(var j = 0; j < data.length; j++){
+									if(variables[i].idVariable == data[j].idVariable){
+										agregado = true;
+									}
+								}
+							}
+
+							if(! agregado){
+								htmlVariablesSelect += `<option value=${variables[i].idVariable}>${variables[i].variableNombre}</option>`;
+							}
+						}
+						$("#idVariables").html(htmlVariablesSelect);
+					}
+
+					var htmlVariablesTable = '';
+					if(data){
+						for (var i = 0; i < data.length; ++i) {
+							
+							var badge_class = "primary";
+							
+							if(data[i].tipoDato.tipoDatoNombre == "String" || data[i].tipoDato.tipoDatoNombre == "Date"){
+								badge_class = "danger";
+							}else if(data[i].tipoDato.tipoDatoNombre == "Boolean"){
+								badge_class = "secondary";
+							}
+
+							var row = "<tr>"; 
+							row += "<td>" + (i+1) + ".</td>";
+							row += "<td>" + data[i].variableNombre + "</td>";
+                      		row += `<td><span class="badge bg-${badge_class}">` + data[i].tipoDato.tipoDatoNombre + '</span></td>';
+							if(data[i].esEscritura){  
+                      			row += '<td style="vertical-align:middle; text-align:center"><i class="fas fa-user-edit"></i></td>';	
+							}else{
+								row += '<td style="vertical-align:middle; text-align:center"><i class="fas fa-eye"></i></td>';
+							}
+							row += "</tr>"
+
+							htmlVariablesTable += row;
+						}
+						$("#variablesBodyTable").html(htmlVariablesTable);
+					}
+				});
 			}
 			
 		</script>

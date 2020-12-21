@@ -22,5 +22,11 @@ public class VariableServiceImpl implements VariableService{
 		// TODO Auto-generated method stub
 		return variableJpaRepository.save(variable);
 	}
+
+	@Override
+	public Variable findById(int variableId) {
+		// TODO Auto-generated method stub
+		return variableJpaRepository.findById(variableId).get();
+	}
 	
 }
