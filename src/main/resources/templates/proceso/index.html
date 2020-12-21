@@ -24,7 +24,6 @@
         <div class="row ml-3 mr-3">
             <div class="col-md-9 offset-1">
                 <div class="card">
-
                     <div class="card-body"></div>
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
@@ -32,6 +31,7 @@
                                 <th>Nombre</th>
                                 <th>Estado</th>
                                 <th>Respuestas</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,6 +45,11 @@
                                         <td class="estado1" th:text="Inactivo"></td>
                                     </th:block>
                                     <td class="respuestas" th:text="${proceso.contadorRespuestas(proceso.getInstanciasProceso(), true)}"></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" th:attr="data-editar=${proceso.idProceso}">
+                                            <i class="fas fa-pencil-alt"> </i>                                           
+                                        </button>         
+                                    </td>
                                 </th:block>
                             </tr>
                         </tbody>
@@ -53,10 +58,62 @@
                                 <th>Nombre</th>
                                 <th>Estado</th>
                                 <th>Respuestas</th>
+                                <th>Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
         </div>
+
+        <div class="modal" tabindex="-1" role="dialog" id="modalEditar">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Actualizar Proceso</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <form method="POST" th:action="@{/proceso/update}" th:object="${proceso}">                     
+                        <div class="modal-body">
+                            <input id="id" type="hidden" th:field="*{idProceso}">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre: </label>
+                                <input id="nombre-p" th:field="*{procesoNombre}" type="text" class="form-control"
+                                    placeholder="Ingrese su nombre">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripcion: </label>
+                                <input id="descripcion-p" th:field="*{procesoDescripcion}" type="text" class="form-control"
+                                    placeholder="Ingrese su descripcion">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+    <section layout:fragment="scripts">
+        <script>
+            $('[data-editar]').on('click', function() {
+                $('#modalEditar').modal('show');
+
+                var id = $(this).data('editar');
+                var nombre = $(this).parent().siblings('td.nombre').text();
+                var descripcion = $(this).parent().siblings('td.descripcion').text();      
+                
+                $('#id').val(id);
+                $('#nombre-p').val(nombre);
+                $('#descripcion-p').val(descripcion);
+            })
+        </script>
+    </section>
+
+</body>
+</html>
