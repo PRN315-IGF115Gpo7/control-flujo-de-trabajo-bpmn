@@ -27,8 +27,12 @@
 	
 	<div style="position: relative;">
 		<h5 id="nombre-proceso" ></h5>
-		<button class="btn btn-success btn-validar">Validar</button>
-		<button class="btn btn-primary btn-automatizar">Automatizar</button>
+		<button class="btn btn-success btn-validar"><i class="far fa-check-square fa-lg"></i></button>
+		<button class="btn btn-primary btn-automatizar"><i class="fas fa-cog fa-lg"></i></button>
+		<button id="btn-guardar-cambios" class="btn btn-dark btn-guardar"><i class="far fa-save fa-lg"></i></button>
+		
+		
+		
 	</div>
 	
 	<div id="canvas" style="height: 100%"></div>
@@ -247,6 +251,10 @@
 			$("#close-form").click(function() {
 				hideForm();
 			});
+			
+			$("#btn-guardar-cambios").click(function(){
+				setProcesoXml();
+			});
 		       
 			
 			/*
@@ -296,6 +304,22 @@
 					console.log("Estado: " + status);
 					console.log(data);
 				});
+			}
+			
+			/*
+			* Funcion que actualizar el proceso (actualizar xml)
+			*/
+			async function setProcesoXml(){
+				try {
+					var result = await bpmnModeler.saveXML({ format: true });
+					proceso.proceoXml = result.xml;
+					$.post("/api/proceso/update-xml", {"xml": proceso.proceoXml, "id_proceso": proceso.idProceso}, function(data, status){
+						console.log("Estado: " + status);
+						console.log(data);
+					});
+				}catch (err) {
+					xml = null;
+				}
 			}
 			
 		</script>

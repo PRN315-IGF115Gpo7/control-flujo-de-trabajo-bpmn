@@ -68,21 +68,28 @@ public class DataRestController {
 			@RequestParam("nombre_elemento_bpmn") String nombreElementoBpmn,
 			@RequestParam("tipo_elemento_bpmn") String tipoElementoBpmn,
 			@RequestParam("id_proceso") int idProceso) {
-		System.out.println(idElementoDiagramaBpmn + " " + nombreElementoBpmn + " " + tipoElementoBpmn + " " + idProceso);
-		
+		//System.out.println(idElementoDiagramaBpmn + " " + nombreElementoBpmn + " " + tipoElementoBpmn + " " + idProceso);
 		Proceso proceso = procesoService.findById(idProceso);
 		TipoElementoBpmn tipoElemento =  tipoElementoService.findByNombre(tipoElementoBpmn);
-		
 		ElementoBpmn elementoBpmn = elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(idElementoDiagramaBpmn, proceso);
-		
 		if(elementoBpmn == null) {
 			elementoBpmn = new ElementoBpmn(nombreElementoBpmn, idElementoDiagramaBpmn, tipoElemento, proceso);
 		}else {
 			elementoBpmn.setNombreElementoBpmn(nombreElementoBpmn);
 		}
-		
 		elementoBpmnService.createOrReplace(elementoBpmn);
-		
-		return "Exito: ";
+		return "Exito: " + elementoBpmn.getIdElementoBpmn();
 	}
+	
+	@PostMapping("/proceso/update-xml")
+	public String updateProcesoPost(
+			@RequestParam("xml") String xml,
+			@RequestParam("id_proceso") int idProceso
+			){
+		Proceso proceso = procesoService.findById(idProceso);
+		proceso.setProceoXml(xml);
+		procesoService.update(proceso);
+		return "Exito";
+	}
+	
 }

@@ -43,7 +43,7 @@ public class Proceso {
 	@Column(name = "proceso_activo")
 	private Boolean procesoActivo;
 	
-	@Column(name = "proceso_xml")
+	@Column(name = "proceso_xml", columnDefinition="TEXT")
 	private String proceoXml;
 	
 	@Column(name = "es_automatizado")

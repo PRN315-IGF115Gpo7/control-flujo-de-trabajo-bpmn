@@ -24,7 +24,14 @@
 	position: absolute; 
 	top: 0; 
 	right: 0; 
-	margin-right:115px;
+	margin-right:55px;
+}
+
+.btn-guardar{
+	position: absolute; 
+	top: 0; 
+	right: 0;
+	margin-right:110px;
 }
 
 .btn-automatizar{
