@@ -24,7 +24,6 @@
         <div class="row ml-3 mr-3">
             <div class="col-md-9 offset-1">
                 <div class="card">
-
                     <div class="card-body"></div>
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
@@ -32,6 +31,7 @@
                                 <th>Nombre</th>
                                 <th>Estado</th>
                                 <th>Respuestas</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,6 +45,11 @@
                                         <td class="estado1" th:text="Inactivo"></td>
                                     </th:block>
                                     <td class="respuestas" th:text="${proceso.contadorRespuestas(proceso.getInstanciasProceso(), true)}"></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" th:attr="data-editar=${proceso.idProceso}">
+                                            <i class="fas fa-pencil-alt"> </i>                                           
+                                        </button>         
+                                    </td>
                                 </th:block>
                             </tr>
                         </tbody>
@@ -53,10 +58,43 @@
                                 <th>Nombre</th>
                                 <th>Estado</th>
                                 <th>Respuestas</th>
+                                <th>Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
         </div>
+        <div class="modal" tabindex="-1"  role="dialog" id="modalEditar">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Editar Proceso</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" th:action="@{/proceso/update}" th:object="${proceso}">
+                        <div class="mb-3">
+                          <label for="exampleInputEmail1" class="form-label">Nombre: </label>
+                          <input th:field="*{nombre}" type="text" class="form-control" placeholder="Ingrese su nombre">
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleInputPassword1" class="form-label">Descripcion: </label>
+                          <input th:field="*{descripcion}" type="text" class="form-control" placeholder="Ingrese su descripcion">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button class="btn btn-primary" type="submit" name="button">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
     </div>
+    <section layout:fragment="scripts">
+        <script>
+            $('[data-editar]').on('click', function(){
+                $('#modalEditar').modal('show');
+            })
+        </script>
+    </section>

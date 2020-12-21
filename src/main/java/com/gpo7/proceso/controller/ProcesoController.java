@@ -241,4 +241,13 @@ public class ProcesoController {
 		return mav;
 		
 	}
+	@PostMapping("/update")
+	public String update(@ModelAttribute("proceso")Proceso proceso) {		
+		Proceso procesoMod = procesoService.findById(proceso.getIdProceso());
+		procesoMod.setProcesoNombre(proceso.getProcesoNombre());
+		procesoMod.setProcesoDescripcion(proceso.getProcesoDescripcion());		
+		procesoService.update(procesoMod);
+		
+		return "redirect: /proceso/index";	
+	}
 }
