@@ -25,7 +25,11 @@
 
 	<div layout:fragment="content" style="height: 100vh;">
 	
-	<h5 id="nombre-proceso"></h5>
+	<div style="position: relative;">
+		<h5 id="nombre-proceso" ></h5>
+		<button class="btn btn-success btn-validar">Validar</button>
+		<button class="btn btn-primary btn-automatizar">Automatizar</button>
+	</div>
 	
 	<div id="canvas" style="height: 100%"></div>
 	
@@ -36,7 +40,7 @@
 		<div id="agregar-variable" class="not-show">
 			<form action="#">
 				<div class="form-group">
-					<label>Nombre de Actividad: </label>
+					<label id="tipo-elemento-bpmn"></label>
 					<input class="form-control" id="nombre-actividad" disabled/>
 				</div>
 			 
@@ -121,6 +125,9 @@
 				let variables = /*[[${proceso.variables}]]*/ null;
 				
 			/*]]>*/
+			
+			//elemento seleccionado
+			var elementoSeleccionado = null;
 
 			$('body').prop("class", "sidebar-mini layout-fixed sidebar-collapse")
 
@@ -160,17 +167,33 @@
 				// access modeler components
 				var canvas = bpmnModeler.get('canvas');
 				//var overlays = bpmnModeler.get('overlays');
-
+				
 				//Evento click de los elementos
 				canvas._eventBus.on('element.click', function(e) {
 					// e.element = the model element
 					// e.gfx = the graphical element
 					hideForm();
-						
+					
+					//Set Elemento seleccionado
+					elementoSeleccionado = e.element;
+					
 					switch(e.element.type) {
 					case "bpmn:Task":
 						$(".config-actividad").addClass("show-form");
 						$("#agregar-variable").removeClass("not-show");
+						$("#tipo-elemento-bpmn").empty();
+						$("#tipo-elemento-bpmn").append("Nombre de Actividad");
+						if(e.element.businessObject.name){
+							$("#nombre-actividad").val(e.element.businessObject.name);
+						}else{
+							$("#nombre-actividad").val("");
+						}
+						break;
+					case "bpmn:ExclusiveGateway":
+						$(".config-actividad").addClass("show-form");
+						$("#agregar-variable").removeClass("not-show");
+						$("#tipo-elemento-bpmn").empty();
+						$("#tipo-elemento-bpmn").append("Nombre de Compuerta");
 						if(e.element.businessObject.name){
 							$("#nombre-actividad").val(e.element.businessObject.name);
 						}else{
@@ -187,6 +210,16 @@
 						
 					console.log(e.element);
 					console.log(e.element.businessObject.name);
+				});
+				
+				canvas._eventBus.on("shape.added", function(e){
+					console.log("add");
+					console.log(e.element);
+					createElementoBpmn(e.element.id, e.element.id, e.element.type, proceso.idProceso);
+					if(e.element.type === "bpmn:Task"){
+						e.element.businessObject.name = e.element.id;
+					}
+					
 				});
 
 				// zoom to fit full viewport
@@ -214,14 +247,20 @@
 			$("#close-form").click(function() {
 				hideForm();
 			});
-		        
+		       
+			
+			/*
+			* Función que permite ocultar el formulario de configuración de actividades
+			*/
 			function hideForm(){
 				$(".config-actividad").removeClass("show-form");
 				$("#set-participante").addClass("not-show");
 				$("#agregar-variable").addClass("not-show");
 			}
 			
-			//inicializar cargos 
+			/*
+			* inicializar el selector de cargos
+			*/
 			var htmlCargos = '';
 			if(cargos != null){
 				for (var i = 0; i < cargos.length; ++i) {
@@ -230,7 +269,9 @@
 				$("#idEntidad").append(htmlCargos);
 			}
 			
-			//Inicializar variables
+			/*
+			* inicializar el selector de variables
+			*/
 			var htmlVariables = '';
 			if(variables != null){
 				for (var i = 0; i < variables.length; ++i) {
@@ -239,8 +280,25 @@
 				$("#idVariables").append(htmlVariables);
 			}
 			
+			/*
+			* Funcion que permite crear o actualizar un elemento BPMN
+			*/
+			function createElementoBpmn(idDiagramaElementoBpmn, nombreElementoBpmn, tipoElementoBpmn, idProceso){
+				
+				var elemento = {
+					"id_diagrama_elemento_bpmn" : idDiagramaElementoBpmn,
+					"nombre_elemento_bpmn" : nombreElementoBpmn,
+					"tipo_elemento_bpmn" : tipoElementoBpmn,
+					"id_proceso": idProceso
+				};
+		
+				$.post("/api/elemento-bpmn/create", elemento, function(data, status){
+					console.log("Estado: " + status);
+					console.log(data);
+				});
+			}
+			
 		</script>
-    	<!-- <script type="text/javascript" th:inline="javascript" th:src="@{/js/configurar-actividad.js}"></script> -->
     	<svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>
 	</section>
 </body>

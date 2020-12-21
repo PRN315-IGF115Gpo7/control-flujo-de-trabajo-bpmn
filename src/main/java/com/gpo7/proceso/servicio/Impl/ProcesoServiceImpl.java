@@ -46,6 +46,4 @@ public class ProcesoServiceImpl implements ProcesoService{
 		// TODO Auto-generated method stub
 		return procesoJpaRepository.findById(proceso_id).orElse(null);
 	}
-
-	
 }

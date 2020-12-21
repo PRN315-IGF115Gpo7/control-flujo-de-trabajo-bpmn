@@ -93,3 +93,10 @@ INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, us
 INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(102, 1, 100, 100);
 INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(103, 0, 100, 100);
 INSERT INTO instancias_procesos(instancia_proceso_id, finalizado, proceso_id, usuario_id) VALUES(104, 1, 101, 100);
+
+INSERT INTO tipos_elemento_bpmn(tipo_elemento_bpmn_iD, tipo_elemento_bpmn_nombre) values (100, 'bpmn:Task');
+INSERT INTO tipos_elemento_bpmn(tipo_elemento_bpmn_iD, tipo_elemento_bpmn_nombre) values (101, 'bpmn:Lane');
+INSERT INTO tipos_elemento_bpmn(tipo_elemento_bpmn_iD, tipo_elemento_bpmn_nombre) values (102, 'bpmn:Participant');
+INSERT INTO tipos_elemento_bpmn(tipo_elemento_bpmn_iD, tipo_elemento_bpmn_nombre) values (103, 'bpmn:StartEvent');
+INSERT INTO tipos_elemento_bpmn(tipo_elemento_bpmn_iD, tipo_elemento_bpmn_nombre) values (104, 'bpmn:ExclusiveGateway');
+INSERT INTO tipos_elemento_bpmn(tipo_elemento_bpmn_iD, tipo_elemento_bpmn_nombre) values (105, 'bpmn:EndEvent');

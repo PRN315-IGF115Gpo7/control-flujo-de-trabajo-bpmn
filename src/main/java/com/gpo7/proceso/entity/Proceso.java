@@ -63,7 +63,11 @@ public class Proceso {
 	@JsonIgnore
 	private List<InstanciaProceso> instanciasProceso = new ArrayList();
 
+	/**
+	 * 
+	 */
 	public Proceso() {
+		super();
 	}
 
 	public Proceso(Integer idProceso, String procesoNombre, String procesoDescripcion, Boolean procesoActivo,

@@ -129,7 +129,7 @@ public class ProcesoController {
 		
 		if(results.hasErrors() || variables.isEmpty()) {
 			if(variables.isEmpty()) {
-				results.reject("variable", "Debe asginar variables al proceso para continuar");
+				results.reject("variable", "Debe asignar variables al proceso para continuar");
 			}
 			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
 			return "redirect:/proceso/create";
