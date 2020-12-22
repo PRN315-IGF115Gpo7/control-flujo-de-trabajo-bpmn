@@ -274,13 +274,20 @@ public class ProcesoController {
 		return mav;		
 	}
 	@PostMapping("/update")
-	public String update(@ModelAttribute("proceso") Proceso proceso) {		
+	public String update(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult results, RedirectAttributes redirAttrs) {		
 		Proceso procesoMod = procesoService.findById(proceso.getIdProceso());
 		
 		procesoMod.setProcesoNombre(proceso.getProcesoNombre());
 		procesoMod.setProcesoDescripcion(proceso.getProcesoDescripcion());	
 		
-		procesoService.update(procesoMod);
-		return "redirect:/proceso/index";	
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/proceso/index";
+		}	
+		else {
+			procesoService.update(procesoMod);
+			redirAttrs.addFlashAttribute("success", "El proceso fue modificado con éxito");
+		}
+		return "redirect:/proceso/index";
 	}
 }

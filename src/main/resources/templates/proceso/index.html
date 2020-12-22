@@ -24,44 +24,61 @@
         <div class="row ml-3 mr-3">
             <div class="col-md-9 offset-1">
                 <div class="card">
-                    <div class="card-body"></div>
-                    <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Estado</th>
-                                <th>Respuestas</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="proceso : ${procesos}">
-                                <th:block th:if="${usuarios == proceso.usuario}">
-                                    <td class="nombre" th:text="${proceso.procesoNombre}"></td>
-                                    <th:block th:if="${proceso.procesoActivo}">
-                                        <td class="estado" th:text="Activo"></td>
+                    <div class="card-body">
+
+                        <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
+                            <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+                        </ul>
+             
+                        <div th:if="${success}">
+                           <div class="alert alert-success" th:text="${success}"></div>
+                        </div>
+             
+                        <div th:if="${mensaje}">
+                           <div class="alert alert-danger" th:text="${mensaje}"></div>
+                        </div>
+
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                    <th>Respuestas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="proceso : ${procesos}">
+                                    <th:block th:if="${usuarios == proceso.usuario}">
+                                        <td class="nombre" th:text="${proceso.procesoNombre}"></td>
+                                        <td class="descripcion" th:text="${proceso.procesoDescripcion}"></td>
+                                        <th:block th:if="${proceso.procesoActivo}">
+                                            <td class="estado" th:text="Activo"></td>
+                                        </th:block>
+                                        <th:block th:unless="${proceso.procesoActivo}">
+                                            <td class="estado1" th:text="Inactivo"></td>
+                                        </th:block>
+                                        <td class="respuestas" th:text="${proceso.contadorRespuestas(proceso.getInstanciasProceso(), true)}"></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" th:attr="data-editar=${proceso.idProceso}">
+                                                <i class="fas fa-pencil-alt"> </i>                                           
+                                            </button>         
+                                        </td>
                                     </th:block>
-                                    <th:block th:unless="${proceso.procesoActivo}">
-                                        <td class="estado1" th:text="Inactivo"></td>
-                                    </th:block>
-                                    <td class="respuestas" th:text="${proceso.contadorRespuestas(proceso.getInstanciasProceso(), true)}"></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" th:attr="data-editar=${proceso.idProceso}">
-                                            <i class="fas fa-pencil-alt"> </i>                                           
-                                        </button>         
-                                    </td>
-                                </th:block>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Estado</th>
-                                <th>Respuestas</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                    <th>Respuestas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,12 +99,12 @@
                             <div class="mb-3">
                                 <label class="form-label">Nombre: </label>
                                 <input id="nombre-p" th:field="*{procesoNombre}" type="text" class="form-control"
-                                    placeholder="Ingrese su nombre">
+                                    placeholder="Ingrese su nombre" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Descripcion: </label>
                                 <input id="descripcion-p" th:field="*{procesoDescripcion}" type="text" class="form-control"
-                                    placeholder="Ingrese su descripcion">
+                                    placeholder="Ingrese su descripcion" required>
                             </div>
                         </div>
                         <div class="modal-footer">
