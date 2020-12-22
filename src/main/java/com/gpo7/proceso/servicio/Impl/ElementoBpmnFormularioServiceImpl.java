@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.gpo7.proceso.entity.ElementoBpmn;
 import com.gpo7.proceso.entity.ElementoBpmnFormulario;
+import com.gpo7.proceso.entity.ElementoFormulario;
 import com.gpo7.proceso.repository.ElementoBpmnFormularioJpaRepository;
 import com.gpo7.proceso.servicio.ElementoBpmnFormularioService;
 
@@ -36,13 +37,18 @@ public class ElementoBpmnFormularioServiceImpl implements ElementoBpmnFormulario
 
 	@Override
 	public List<ElementoBpmnFormulario> index() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<ElementoBpmnFormulario> findByElementoBpmn(ElementoBpmn elementoBpmn) {
 		return this.elementoBpmnFormularioRepository.findByElementoBpmn(elementoBpmn);
+	}
+
+	@Override
+	public ElementoBpmnFormulario findByElementoBpmnAndElementoFormulario(ElementoBpmn elementoBpmn,
+			ElementoFormulario elementoFormulario) {
+		return (ElementoBpmnFormulario) this.elementoBpmnFormularioRepository.findByElementoBpmnAndElementoFormulario(elementoBpmn, elementoFormulario);
 	}
 
 }

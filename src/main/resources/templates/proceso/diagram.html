@@ -78,7 +78,8 @@
                       <th style="width: 10px">#</th>
                       <th>Variable</th>
                       <th>Tipo</th>
-                      <th style="width: 40px">Escritura</th>
+					  <th style="width: 40px">Escritura</th>
+					  <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody id="variablesBodyTable">
@@ -410,12 +411,24 @@
 							}else{
 								row += '<td style="vertical-align:middle; text-align:center"><i class="fas fa-eye"></i></td>';
 							}
-							row += "</tr>"
+							row += `<td style="vertical-align:middle; text-align:center"><button class="btn btn-sm btn-danger" onclick="eliminarVariable(event, ${data[i].idVariable}, '${elementoBpmnId}');"><i class="fas fa-trash"></i></button></td>`;
+							row += "</tr>";
 
 							htmlVariablesTable += row;
 						}
 						$("#variablesBodyTable").html(htmlVariablesTable);
 					}
+				});
+			}
+
+			function eliminarVariable(e, variableId, elementoBpmnId){
+				e.preventDefault();
+
+				$.get("/api/eliminar-variable-elemento/" + proceso.idProceso + "/" + elementoBpmnId + "/" + variableId,
+				function(data, status){
+					console.log("Estado: " + status);
+					console.log(data);
+					inicializarVariables(elementoBpmnId);
 				});
 			}
 			

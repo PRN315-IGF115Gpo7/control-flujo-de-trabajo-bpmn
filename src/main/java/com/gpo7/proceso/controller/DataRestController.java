@@ -152,4 +152,23 @@ public class DataRestController {
 		return variables;
 	}
 	
+	@GetMapping("/eliminar-variable-elemento/{procesoId}/{elementoBpmnId}/{variableId}")
+	public String eliminarVariableElementoBpmn(
+			@PathVariable("procesoId") int procesoId,
+			@PathVariable("elementoBpmnId") String elementoBpmnId,
+			@PathVariable("variableId") int variableId) {
+		
+		Proceso proceso = this.procesoService.findById(procesoId);
+		ElementoBpmn elementoBpmn = this.elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(elementoBpmnId, proceso);
+		
+		Variable variable = this.variableService.findById(variableId);
+		ElementoFormulario elementoFormulario= this.elementoFormularioService.findByVariable(variable);
+		
+		ElementoBpmnFormulario elementoBpmnFormulario = this.elementoBpmnFormularioService.findByElementoBpmnAndElementoFormulario(elementoBpmn, elementoFormulario);
+		
+		this.elementoBpmnFormularioService.destroy(elementoBpmnFormulario);
+		
+		return "Exito";
+	}
+	
 }
