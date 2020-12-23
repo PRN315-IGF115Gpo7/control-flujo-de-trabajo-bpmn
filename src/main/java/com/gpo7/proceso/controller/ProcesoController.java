@@ -262,17 +262,19 @@ public class ProcesoController {
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping("/{id}/procesos-respondidos")
 	
-	public ModelAndView edit(@PathVariable int id) {
+	public ModelAndView replyProcess(@PathVariable int id) {
 		ModelAndView mav = new ModelAndView(REPLY_PROCESS_VIEW);
 		
 		
 		Proceso proceso = procesoService.findById(id);
-		List<InstanciaProceso> instanciasProceso = proceso.getInstanciasProceso();
+		List<InstanciaProceso> instanciasProceso = instanciaProcesoService.findByProcesoAndFinalizado(proceso,true);
 		
-		mav.addObject("proceso", proceso);
+		mav.addObject("instanciaProcesos", instanciasProceso);
 		
 		return mav;		
 	}
+	
+	
 	@PostMapping("/update")
 	public String update(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult results, RedirectAttributes redirAttrs) {		
 		Proceso procesoMod = procesoService.findById(proceso.getIdProceso());
