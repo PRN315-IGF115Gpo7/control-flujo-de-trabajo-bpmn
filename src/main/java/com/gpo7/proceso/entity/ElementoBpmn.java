@@ -33,8 +33,10 @@ public class ElementoBpmn {
     @JoinColumn(name="proceso_id")
     private Proceso proceso;
 	
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="id_cargo")
+    private Cargo cargo;
 	
-
 	/**
 	 * 
 	 */
@@ -124,7 +126,13 @@ public class ElementoBpmn {
 		this.proceso = proceso;
 	}
 
+	public Cargo getCargo() {
+		return cargo;
+	}
 
+	public void setCargo(Cargo cargo) {
+		this.cargo = cargo;
+	}
 
 	@Override
 	public String toString() {

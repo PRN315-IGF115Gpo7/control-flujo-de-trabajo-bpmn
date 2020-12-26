@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.ElementoBpmn;
 import com.gpo7.proceso.entity.ElementoBpmnFormulario;
 import com.gpo7.proceso.entity.ElementoFormulario;
@@ -22,6 +23,7 @@ import com.gpo7.proceso.entity.TipoElementoBpmn;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
 import com.gpo7.proceso.repository.UserJpaRepository;
+import com.gpo7.proceso.servicio.CargoService;
 import com.gpo7.proceso.servicio.ElementoBpmnFormularioService;
 import com.gpo7.proceso.servicio.ElementoBpmnService;
 import com.gpo7.proceso.servicio.ElementoFormularioService;
@@ -66,6 +68,10 @@ public class DataRestController {
 	@Qualifier("variableServiceImpl")
 	private VariableService variableService;
 	
+	@Autowired
+	@Qualifier("cargoServiceImpl")
+	private CargoService cargoService;
+	
 	@GetMapping("/rol/{idRol}/recurso/{idRecurso}/no-asignados")
 	public List<Privilegio> privilegiosNoAsignadosByRecurso(@PathVariable("idRecurso") int idRecurso, @PathVariable("idRol") int idRol){
 		return privilegioService.privilegiosNoAsignadosByRecurso(idRecurso, idRol);
@@ -108,6 +114,20 @@ public class DataRestController {
 		Proceso proceso = procesoService.findById(idProceso);
 		proceso.setProceoXml(xml);
 		procesoService.update(proceso);
+		return "Exito";
+	}
+	
+	@PostMapping("/elemento-bpmn/update-participante")
+	public String updateElementoBpmnPost(
+			@RequestParam("id_diagrama_elemento_bpmn") String idElementoDiagramaBpmn,
+			@RequestParam("id_proceso") int idProceso,
+			@RequestParam("id_cargo") int idCargo
+			){
+		Proceso proceso = procesoService.findById(idProceso);
+		Cargo cargo = cargoService.findById(idCargo);
+		ElementoBpmn elementoBpmn = elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(idElementoDiagramaBpmn, proceso);
+		elementoBpmn.setCargo(cargo);
+		elementoBpmnService.createOrReplace(elementoBpmn);
 		return "Exito";
 	}
 	

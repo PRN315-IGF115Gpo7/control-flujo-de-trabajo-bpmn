@@ -28,7 +28,7 @@
 	<div style="position: relative;">
 		<h5 id="nombre-proceso" ></h5>
 		<button class="btn btn-success btn-validar"><i class="far fa-check-square fa-lg"></i></button>
-		<button class="btn btn-primary btn-automatizar"><i class="fas fa-cog fa-lg"></i></button>
+		<button class="btn btn-primary btn-automatizar" disabled><i class="fas fa-cog fa-lg"></i></button>
 		<button id="btn-guardar-cambios" class="btn btn-dark btn-guardar"><i class="far fa-save fa-lg"></i></button>
 		
 		
@@ -83,19 +83,7 @@
                     </tr>
                   </thead>
                   <tbody id="variablesBodyTable">
-                    <!--<tr>
-                      <td>1.</td>
-                      <td>Nombre</td>
-                      <td><span class="badge bg-danger">String</span></td>
-                      <td style="vertical-align:middle; text-align:center"><i class="fas fa-user-edit"></i></td>
-                      
-                    </tr>
-                    <tr>
-                      <td>2.</td>
-                      <td>Edad</td>
-                      <td><span class="badge bg-primary">Integer</span></td>
-                      <td style="vertical-align:middle; text-align:center"><i class="fas fa-eye"></i></td>
-                    </tr>-->
+                    
                   </tbody>
                 </table>
               </div>
@@ -103,14 +91,14 @@
             </div>
 		</div>
 		<div id="set-participante" class="not-show">
-			<form action="#">
-				<div class="form-group">
-		          	<label>Seleccione la entidad responsable</label>
-		          	<select class="form-control" id="idEntidad">
-		            	<option value="">Seleccione una opción</option>
-		          	</select>
-	        	</div>
-	        </form>
+			<div class="form-group">
+	          	<label>Seleccione la entidad responsable</label>
+	          	<select class="form-control" id="idEntidad">
+	            	<option value="">Seleccione una opción</option>
+	          	</select>
+        	</div>
+        	<button class="btn btn-primary btn-sm" id="btn-set-participante">Establecer</button>
+	        
 		</div>
 		
 	</div>
@@ -134,6 +122,7 @@
 			
 			//elemento seleccionado
 			var elementoSeleccionado = null;
+			var participantes = [];
 
 			$('body').prop("class", "sidebar-mini layout-fixed sidebar-collapse")
 
@@ -198,12 +187,6 @@
 						$("#permitirEscrituraChkbx").removeClass('d-none');
 						$("#hiddenElementoBpmnId").val(e.element.id);
 						inicializarVariables(e.element.id);
-
-						$.get("/api/elemento-bpmn/obtener-varibles", elemento, function(data, status){
-							console.log("Estado: " + status);
-							console.log(data);
-						});
-
 						break;
 					case "bpmn:ExclusiveGateway":
 						$(".config-actividad").addClass("show-form");
@@ -228,21 +211,18 @@
 					default:
 						// code block
 					}
-						
-					console.log(e.element);
-					console.log(e.element.businessObject.name);
 				});
 				
 				canvas._eventBus.on("shape.added", function(e){
 					console.log("add");
-					console.log(e.element);
-					createElementoBpmn(e.element.id, e.element.id, e.element.type, proceso.idProceso);
-					if(e.element.type === "bpmn:Task"){
-						e.element.businessObject.name = e.element.id;
+					if(e.element.type === "bpmn:Task" || e.element.type === "bpmn:ExclusiveGateway"){
+						createElementoBpmn(e.element.id, e.element.id, e.element.type, proceso.idProceso);
+						if(e.element.type === "bpmn:Task"){
+							e.element.businessObject.name = e.element.id;
+						}
 					}
-					
 				});
-
+				
 				// zoom to fit full viewport
 				canvas.zoom('fit-viewport');
 
@@ -251,6 +231,7 @@
 				} catch (err) {
 					console.error('could not import BPMN 2.0 diagram', err);
 				}
+				
 			}
 			 
 			//Save diagram contents and print them to the console.
@@ -272,6 +253,15 @@
 			$("#btn-guardar-cambios").click(function(){
 				setProcesoXml();
 			});
+			
+			$("#btn-set-participante").click(function(){
+				setParticipante();
+			});
+			
+			$(".btn-validar").click(function(){
+				setProcesoXml();
+				validarProceso();
+			})
 		       
 			
 			/*
@@ -295,21 +285,9 @@
 			}
 			
 			/*
-			* inicializar el selector de variables
-			*/
-			/*var htmlVariables = '';
-			if(variables != null){
-				for (var i = 0; i < variables.length; ++i) {
-					htmlVariables += `<option value=${variables[i].idVariable}>${variables[i].variableNombre}</option>`;
-				}
-				$("#idVariables").append(htmlVariables);
-			}*/
-			
-			/*
 			* Funcion que permite crear o actualizar un elemento BPMN
 			*/
 			function createElementoBpmn(idDiagramaElementoBpmn, nombreElementoBpmn, tipoElementoBpmn, idProceso){
-				
 				var elemento = {
 					"id_diagrama_elemento_bpmn" : idDiagramaElementoBpmn,
 					"nombre_elemento_bpmn" : nombreElementoBpmn,
@@ -338,6 +316,30 @@
 					xml = null;
 				}
 			}
+			
+			
+			function setParticipante(){
+				participantes.forEach(function(elemento, indice){
+					if(elemento.id == elementoSeleccionado.id){
+						participantes.splice(indice, 1);//elimina el elemento
+					}
+				});
+				
+				console.log(elementoSeleccionado.businessObject.name);
+				var canvas = bpmnModeler.get('canvas');
+				var modeling = bpmnModeler.get('modeling');
+				var lane = canvas._elementRegistry.get(elementoSeleccionado.id);
+				
+				modeling.updateProperties(lane,{
+					"name": $('#idEntidad option').filter(':selected').text()
+					});
+				
+				participantes.push({
+					"id" : elementoSeleccionado.id,
+					"id_cargo" : $("#idEntidad").val()
+				});
+			}
+			
 
 			function agregarVariable(e){
 				e.preventDefault();
@@ -431,6 +433,52 @@
 					inicializarVariables(elementoBpmnId);
 				});
 			}
+			
+			function validarProceso(){
+				var elementos = bpmnModeler.get('elementRegistry').getAll();
+				var i = 0;
+				for(i = 0; i <= elementos.length; i++){
+					var elemento = elementos[i];
+					if(elemento != undefined){
+						if(elemento.type  === "bpmn:Task" || elemento.type === "bpmn:ExclusiveGateway"){
+							
+							//set participante en elemento
+							if(getCargo(elemento.businessObject.lanes[0].id)>0){
+								console.log(getCargo(elemento.businessObject.lanes[0].id));
+								var body = {
+										"id_diagrama_elemento_bpmn" : elemento.id,
+										"id_proceso" : proceso.idProceso,
+										"id_cargo" : getCargo(elemento.businessObject.lanes[0].id)
+								}
+								$.post("/api/elemento-bpmn/update-participante", body , function(data, status){
+									console.log("Estado: " + status);
+									console.log(data);
+								});
+								
+								$(".btn-automatizar").removeAttr("disabled");
+								
+							}else{
+								alert('No ha seleccionado participante');
+								break;
+							}
+						}
+							
+					}
+				}
+				
+			}
+			
+			
+		function getCargo(idLane){
+			var idCargo = 0;
+			participantes.forEach(function(elemento, indice){
+				if(elemento.id == idLane){
+					idCargo = elemento.id_cargo;
+				}
+			});	
+			return idCargo;
+		}
+			
 			
 		</script>
     	<svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>
