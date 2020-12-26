@@ -262,25 +262,34 @@ public class ProcesoController {
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping("/{id}/procesos-respondidos")
 	
-	public ModelAndView edit(@PathVariable int id) {
+	public ModelAndView replyProcess(@PathVariable int id) {
 		ModelAndView mav = new ModelAndView(REPLY_PROCESS_VIEW);
 		
 		
 		Proceso proceso = procesoService.findById(id);
-		List<InstanciaProceso> instanciasProceso = proceso.getInstanciasProceso();
+		List<InstanciaProceso> instanciasProceso = instanciaProcesoService.findByProcesoAndFinalizado(proceso,true);
 		
-		mav.addObject("proceso", proceso);
+		mav.addObject("instanciaProcesos", instanciasProceso);
 		
 		return mav;		
 	}
+	
+	
 	@PostMapping("/update")
-	public String update(@ModelAttribute("proceso") Proceso proceso) {		
+	public String update(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult results, RedirectAttributes redirAttrs) {		
 		Proceso procesoMod = procesoService.findById(proceso.getIdProceso());
 		
 		procesoMod.setProcesoNombre(proceso.getProcesoNombre());
 		procesoMod.setProcesoDescripcion(proceso.getProcesoDescripcion());	
 		
-		procesoService.update(procesoMod);
-		return "redirect:/proceso/index";	
+		if(results.hasErrors()) {
+			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
+			return "redirect:/proceso/index";
+		}	
+		else {
+			procesoService.update(procesoMod);
+			redirAttrs.addFlashAttribute("success", "El proceso fue modificado con éxito");
+		}
+		return "redirect:/proceso/index";
 	}
 }

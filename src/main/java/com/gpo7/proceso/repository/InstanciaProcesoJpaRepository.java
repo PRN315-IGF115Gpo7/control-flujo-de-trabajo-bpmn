@@ -17,4 +17,5 @@ import com.gpo7.proceso.entity.Usuario;
 public interface InstanciaProcesoJpaRepository extends JpaRepository<InstanciaProceso, Serializable>{
 
 	public abstract List<InstanciaProceso> findByUsuarioAndFinalizado(Usuario usuario, Boolean finalizado);
+	public abstract List<InstanciaProceso> findByProcesoAndFinalizado(Proceso proceso, Boolean finalizado);
 }

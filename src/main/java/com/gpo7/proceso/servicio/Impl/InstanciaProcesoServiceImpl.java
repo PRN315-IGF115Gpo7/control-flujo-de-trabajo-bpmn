@@ -30,4 +30,12 @@ public class InstanciaProcesoServiceImpl implements InstanciaProcesoService{
 		// TODO Auto-generated method stub
 		return instanciaProcesoJpaRepository.findAll();
 	}
+
+	@Override
+	public List<InstanciaProceso> findByProcesoAndFinalizado(Proceso proceso, Boolean finalizado) {
+		// TODO Auto-generated method stub
+		return instanciaProcesoJpaRepository.findByProcesoAndFinalizado(proceso, finalizado);
+	}
+	
+	
 }

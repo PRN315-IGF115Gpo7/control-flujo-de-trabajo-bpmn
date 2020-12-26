@@ -27,6 +27,11 @@
 
                     <div class="card-body"></div>
                     <table id="example1" class="table table-bordered table-striped">
+                     <div class="text-center" th:if="${#lists.isEmpty(instanciaProcesos)}">No hay respuestas de procesos en el sistema.</div>
+              <!-- Validacion para el caso cuando no hay procesos respondidos --> 
+                    <div th:if="${!#lists.isEmpty(instanciaProcesos)}">
+                    
+             
                         <thead>
                             <tr>
                                 <th>Nombre</th>
@@ -36,15 +41,12 @@
                         </thead>
                         <tbody>
                         
-                            <tr th:each="proceso : ${procesos}">
-                                <th:block th:if="${usuarios == proceso.usuario}">
-                                    <td class="nombre" th:text="${proceso.procesoNombre}"></td>
-                                    <td class="descripcion" th:text="${proceso.procesoDescripcion}"></td>
+                            <tr th:each="instanciaProceso : ${instanciaProcesos}">
+                                    <td class="nombre" th:text="${instanciaProceso.proceso.procesoNombre}"></td>
+                                    <td class="descripcion" th:text="${instanciaProceso.proceso.procesoDescripcion}"></td>
                                     
-                                   <a class="btn btn-sm btn-primary" th:href="@{/proceso/{id}/procesos-respondidos(id=${proceso.id})}">
-                                       
-                                   </a>    
-                                </th:block>
+                                      
+                               
                             </tr>
                         </tbody>
                         <tfoot>
@@ -54,8 +56,14 @@
                                 
                             </tr>
                         </tfoot>
+                        
+                       </div>
+                       
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    </body>
+
+</html>
