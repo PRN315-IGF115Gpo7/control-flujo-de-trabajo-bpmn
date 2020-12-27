@@ -1,5 +1,8 @@
 package com.gpo7.proceso.entity;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,9 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "elementos_bpmn")
@@ -36,6 +39,27 @@ public class ElementoBpmn {
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_cargo")
     private Cargo cargo;
+	
+	/*
+	@ManyToMany
+	@JoinTable(name="sequences",
+	 joinColumns=@JoinColumn(name="elemento_bpmn_anterior"),
+	 inverseJoinColumns=@JoinColumn(name="elemento_bpmn_siguiente")
+	)
+	private List<ElementoBpmn> siguientes;
+
+	@ManyToMany
+	@JoinTable(name="sequences",
+	 joinColumns=@JoinColumn(name="elemento_bpmn_siguiente"),
+	 inverseJoinColumns=@JoinColumn(name="elemento_bpmn_anterior")
+	)
+	private List<ElementoBpmn> anteriores;*/
+	
+	 @ManyToMany
+	 private List<ElementoBpmn> reference_next;
+
+	 @ManyToMany(mappedBy="reference_next")
+	 private List<ElementoBpmn> reference_previous;
 	
 	/**
 	 * 
@@ -113,14 +137,16 @@ public class ElementoBpmn {
 	public void setIdElementoDiagramaBpmn(String idElementoDiagramaBpmn) {
 		this.idElementoDiagramaBpmn = idElementoDiagramaBpmn;
 	}
+	
+	public void addElementoNext(ElementoBpmn elementoBpmn) {
+		this.reference_next.add(elementoBpmn);
+	}
 
 
 
 	public Proceso getProceso() {
 		return proceso;
 	}
-
-
 
 	public void setProceso(Proceso proceso) {
 		this.proceso = proceso;
@@ -132,6 +158,22 @@ public class ElementoBpmn {
 
 	public void setCargo(Cargo cargo) {
 		this.cargo = cargo;
+	}
+
+	public List<ElementoBpmn> getReference_next() {
+		return reference_next;
+	}
+
+	public void setReference_next(List<ElementoBpmn> reference_next) {
+		this.reference_next = reference_next;
+	}
+
+	public List<ElementoBpmn> getReference_previous() {
+		return reference_previous;
+	}
+
+	public void setReference_previous(List<ElementoBpmn> reference_previous) {
+		this.reference_previous = reference_previous;
 	}
 
 	@Override

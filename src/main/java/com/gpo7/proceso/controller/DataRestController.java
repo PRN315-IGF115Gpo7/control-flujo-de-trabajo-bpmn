@@ -3,6 +3,7 @@ package com.gpo7.proceso.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +32,8 @@ import com.gpo7.proceso.servicio.PrivilegioService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.TipoElementoService;
 import com.gpo7.proceso.servicio.VariableService;
+
+import objects.ElementoDiagrama;
 
 @RestController
 @RequestMapping("/api")
@@ -127,6 +130,21 @@ public class DataRestController {
 		Cargo cargo = cargoService.findById(idCargo);
 		ElementoBpmn elementoBpmn = elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(idElementoDiagramaBpmn, proceso);
 		elementoBpmn.setCargo(cargo);
+		elementoBpmnService.createOrReplace(elementoBpmn);
+		return "Exito";
+	}
+	
+	@PostMapping("/elemento-bpmn/update-elemento-next")
+	public String updateElementoBpmnNextPost(
+			@RequestParam("id_diagrama_elemento_bpmn") String idElementoDiagramaBpmn,
+			@RequestParam("id_proceso") int idProceso,
+			@RequestParam("elemento_next") String elementoNext
+			){
+		System.out.println(elementoNext);
+		Proceso proceso = procesoService.findById(idProceso);
+		ElementoBpmn elementoBpmn = elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(idElementoDiagramaBpmn, proceso);
+		ElementoBpmn elementoBpmnNext = elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(elementoNext, proceso);
+		elementoBpmn.addElementoNext(elementoBpmnNext);
 		elementoBpmnService.createOrReplace(elementoBpmn);
 		return "Exito";
 	}
