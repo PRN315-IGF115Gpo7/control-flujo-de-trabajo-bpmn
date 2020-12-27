@@ -48,45 +48,52 @@
 					<label id="tipo-elemento-bpmn"></label>
 					<input class="form-control" id="nombre-actividad" disabled/>
 				</div>
+				<div id="esDivergenteDiv" class="custom-control custom-checkbox mb-2">
+					<input type="checkbox" class="custom-control-input" id="esDivergente" onclick="cambiarEstadoCompuerta()"> 
+					<label class="custom-control-label" for="esDivergente">La compuerta es Divergente</label>
+					<small class="form-text text-muted">(Seleccione para indicar que la compuerta es divergente, caso contrario la compuerta sera interpretada como convergente).</small>
+				</div>
+				<div id="divVariables">
+					<div class="form-group">
+						<label>Seleccione la variable</label>
+						<select class="form-control" id="idVariables">
+							<option value="">Seleccione una opción</option>
+						</select>
+					</div>
+					<div id="permitirEscrituraChkbx" class="form-group">
+						<div class="custom-control custom-checkbox">
+							<input type="checkbox" class="custom-control-input" id="esEscritura" 
+								> 
+							<label class="custom-control-label" for="esEscritura">Se permite Escritura</label>
+							<small id="emailHelp" class="form-text text-muted">(Seleccione para indicar que el participante podrá responder a la actividad).</small>
+						</div>
+					</div>
+					<button class="btn btn-primary btn-sm" onclick="agregarVariable(event)">Agregar</button>
+			
+					</form>
 				
-				<div class="form-group">
-		          	<label>Seleccione la variable</label>
-		          	<select class="form-control" id="idVariables">
-		            	<option value="">Seleccione una opción</option>
-		          	</select>
-	        	</div>
-	        	<div id="permitirEscrituraChkbx" class="form-group">
-					<div class="custom-control custom-checkbox">
-						<input type="checkbox" class="custom-control-input" id="esEscritura" 
-							> 
-						<label class="custom-control-label" for="esEscritura">Se permite Escritura</label>
-						<small id="emailHelp" class="form-text text-muted">(Seleccione para indicar que el participante podrá responder a la actividad).</small>
+					<div class="card mt-3">
+					<div class="card-header">
+						<label>Variables Agregadas a Actividad</label>
+					</div>
+					<!-- /.card-header -->
+					<div class="card-body p-0">
+						<table id="variablesAgregadasTable" class="table table-sm">
+						<thead>
+							<tr>
+							<th style="width: 10px">#</th>
+							<th>Variable</th>
+							<th>Tipo</th>
+							<th style="width: 40px">Permiso</th>
+							<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody id="variablesBodyTable">
+							
+						</tbody>
+						</table>
 					</div>
 				</div>
-				<button class="btn btn-primary btn-sm" onclick="agregarVariable(event)">Agregar</button>
-			</form>
-		
-			<div class="card mt-3">
-              <div class="card-header">
-                <label>Variables Agregadas a Actividad</label>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body p-0">
-                <table id="variablesAgregadasTable" class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th style="width: 10px">#</th>
-                      <th>Variable</th>
-                      <th>Tipo</th>
-					  <th style="width: 40px">Escritura</th>
-					  <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody id="variablesBodyTable">
-                    
-                  </tbody>
-                </table>
-              </div>
               <!-- /.card-body -->
             </div>
 		</div>
@@ -174,6 +181,8 @@
 					
 					switch(e.element.type) {
 					case "bpmn:Task":
+						$("#esDivergenteDiv").addClass("d-none");
+						$("#divVariables").removeClass("d-none");
 						$(".config-actividad").addClass("show-form");
 						$("#agregar-variable").removeClass("not-show");
 						$("#tipo-elemento-bpmn").empty();
@@ -186,9 +195,12 @@
 						//cargar Variables DC16009
 						$("#permitirEscrituraChkbx").removeClass('d-none');
 						$("#hiddenElementoBpmnId").val(e.element.id);
-						inicializarVariables(e.element.id);
+						inicializarVariables(e.element.id, "bpmn:Task");
 						break;
 					case "bpmn:ExclusiveGateway":
+						$("#esDivergenteDiv").removeClass("d-none");
+						$("#esDivergente").prop("checked", false);
+						$("#divVariables").addClass("d-none");
 						$(".config-actividad").addClass("show-form");
 						$("#agregar-variable").removeClass("not-show");
 						$("#tipo-elemento-bpmn").empty();
@@ -201,7 +213,7 @@
 						//cargar Variables DC16009
 						$("#permitirEscrituraChkbx").addClass('d-none');
 						$("#hiddenElementoBpmnId").val(e.element.id);
-						inicializarVariables(e.element.id);
+						inicializarVariables(e.element.id, "bpmn:ExclusiveGateway");
 						
 						break;
 					case "bpmn:Lane":
@@ -365,7 +377,7 @@
 				});
 			}
 
-			function inicializarVariables(elementoBpmnId){
+			function inicializarVariables(elementoBpmnId, elementoBpmnType){
 				$.get("/api/obtener-variables-elemento/" + proceso.idProceso + "/" + elementoBpmnId,
 				function(data, status){
 					console.log("Estado: " + status);
@@ -392,7 +404,11 @@
 					}
 
 					var htmlVariablesTable = '';
-					if(data){
+					if(data.length > 0){
+						if(elementoBpmnType == "bpmn:ExclusiveGateway"){
+							$("#esDivergente").prop("checked", true);
+							$("#divVariables").removeClass('d-none');
+						}
 						for (var i = 0; i < data.length; ++i) {
 							
 							var badge_class = "primary";
@@ -408,9 +424,9 @@
 							row += "<td>" + data[i].variableNombre + "</td>";
                       		row += `<td><span class="badge bg-${badge_class}">` + data[i].tipoDato.tipoDatoNombre + '</span></td>';
 							if(data[i].esEscritura){  
-                      			row += '<td style="vertical-align:middle; text-align:center"><i class="fas fa-user-edit"></i></td>';	
+                      			row += '<td style="vertical-align:middle; text-align:center"><span title="Escritura"><i class="fas fa-user-edit"></i></span></td>';	
 							}else{
-								row += '<td style="vertical-align:middle; text-align:center"><i class="fas fa-eye"></i></td>';
+								row += '<td style="vertical-align:middle; text-align:center"><span title="Lectura"><i class="fas fa-eye"></i></span></td>';
 							}
 							row += `<td style="vertical-align:middle; text-align:center"><button class="btn btn-sm btn-danger" onclick="eliminarVariable(event, ${data[i].idVariable}, '${elementoBpmnId}');"><i class="fas fa-trash"></i></button></td>`;
 							row += "</tr>";
@@ -418,6 +434,8 @@
 							htmlVariablesTable += row;
 						}
 						$("#variablesBodyTable").html(htmlVariablesTable);
+					}else{
+						$("#variablesBodyTable").html("");
 					}
 				});
 			}
@@ -524,6 +542,14 @@
 				});
 				return startEvent;
 			}*/
+
+			function cambiarEstadoCompuerta(){
+				if($("#esDivergente").is(":checked")){
+					$("#divVariables").removeClass('d-none');
+				}else{
+					$("#divVariables").addClass('d-none');
+				}
+			}
 			
 			
 			
