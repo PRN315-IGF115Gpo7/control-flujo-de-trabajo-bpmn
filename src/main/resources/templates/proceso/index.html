@@ -63,7 +63,12 @@
                                         <td>
                                             <button class="btn btn-sm btn-primary" th:attr="data-editar=${proceso.idProceso}">
                                                 <i class="fas fa-pencil-alt"> </i>                                           
-                                            </button>         
+                                            </button>
+                                            
+                                            <a class="btn btn-sm btn-secondary" th:href="@{/proceso/{id}/procesos-respondidos (id=${proceso.idProceso})}">  
+							                    <i class="fas fa-list-ul"></i>
+						                    </a>  
+                                                     
                                         </td>
                                     </th:block>
                                 </tr>
