@@ -1,13 +1,23 @@
 package com.gpo7.proceso.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "instancias_procesos")
@@ -28,6 +38,10 @@ public class InstanciaProceso {
 	@ManyToOne
 	@JoinColumn(name = "proceso_id")
 	private Proceso proceso;
+	
+	@OneToMany(mappedBy = "instanciaProceso", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<InstanciaActividad> instanciasActividad = new ArrayList();
 		
 	public InstanciaProceso() {}
 
@@ -70,5 +84,16 @@ public class InstanciaProceso {
 
 	public void setProceso(Proceso proceso) {
 		this.proceso = proceso;
+	}
+	
+	public Integer getActividadesRespondidas() {
+		Integer count = 0;
+		for(InstanciaActividad ia : this.instanciasActividad) {
+			if(ia.getFinalizada()) {
+				count++;
+			}
+		}
+		
+		return count;
 	}
 }

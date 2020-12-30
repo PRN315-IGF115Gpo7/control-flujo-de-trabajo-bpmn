@@ -53,4 +53,10 @@ public class ElementoBpmnServiceImpl implements ElementoBpmnService{
 		return elementoBpmnJpaRepository.findByIdElementoDiagramaBpmnAndProceso(idElementoDiagramaBpmn, proceso);
 	}
 
+	@Override
+	public ElementoBpmn findByProcesoAndElement(Proceso proceso, String element) {
+		// TODO Auto-generated method stub
+		return elementoBpmnJpaRepository.findByProcesoAndElement(proceso, element);
+	}
+	
 }

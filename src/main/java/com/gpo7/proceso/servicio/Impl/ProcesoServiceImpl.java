@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.repository.ProcesoJpaRepository;
 import com.gpo7.proceso.servicio.ProcesoService;
@@ -46,4 +47,11 @@ public class ProcesoServiceImpl implements ProcesoService{
 		// TODO Auto-generated method stub
 		return procesoJpaRepository.findById(proceso_id).orElse(null);
 	}
+
+	@Override
+	public List<Proceso> procesosActivos(Boolean activo, Integer cargo_id) {
+		// TODO Auto-generated method stub
+		return procesoJpaRepository.procesosActivos(activo, cargo_id);
+	}
+	
 }

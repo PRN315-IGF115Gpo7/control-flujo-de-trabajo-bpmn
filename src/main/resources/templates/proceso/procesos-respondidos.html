@@ -3,18 +3,18 @@
 
 <head>
 
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 </head>
 
 <body>
 
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Procesos respondidos</h1>
+    <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Procesos respondidos</h1>
 
-	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+    <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
         <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
         <li class="breadcrumb-item active">Procesos respondidos</li>
     </ol>
@@ -25,41 +25,42 @@
             <div class="col-md-9 offset-1">
                 <div class="card">
 
-                    <div class="card-body"></div>
-                    <table id="example1" class="table table-bordered table-striped">
-                     <div class="text-center" th:if="${#lists.isEmpty(instanciaProcesos)}">No hay respuestas de procesos en el sistema.</div>
-              <!-- Validacion para el caso cuando no hay procesos respondidos --> 
-                    <div th:if="${!#lists.isEmpty(instanciaProcesos)}">
-                    
-             
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Descripcion</th>
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <div class="text-center" th:if="${#lists.isEmpty(instanciaProcesos)}">No hay respuestas de procesos en el sistema.</div>
+                      
+                            <div th:if="${!#lists.isEmpty(instanciaProcesos)}">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Descripcion</th>
+                                        <th>Respondido por</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="instanciaProceso : ${instanciaProcesos}">
+                                        <td class="nombre" th:text="${instanciaProceso.proceso.procesoNombre}"></td>
+                                        <td class="descripcion" th:text="${instanciaProceso.proceso.procesoDescripcion}"></td>
+                                        <td th:text="${instanciaProceso.usuario.nombreCompleto}"></td>
+                                        <td>
+                                            <a class="btn btn-sm btn-secondary" title="Ver respuestas" href="#"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Descripcion</th>
+                                        <th>Respondido por</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </tfoot>
                                 
-                            </tr>
-                        </thead>
-                        <tbody>
-                        
-                            <tr th:each="instanciaProceso : ${instanciaProcesos}">
-                                    <td class="nombre" th:text="${instanciaProceso.proceso.procesoNombre}"></td>
-                                    <td class="descripcion" th:text="${instanciaProceso.proceso.procesoDescripcion}"></td>
-                                    
-                                      
+                               </div>
                                
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Descripcion</th>
-                                
-                            </tr>
-                        </tfoot>
-                        
-                       </div>
-                       
-                    </table>
+                            </table>
+                    </div>
                 </div>
             </div>
         </div>

@@ -14,5 +14,6 @@ import com.gpo7.proceso.entity.ElementoFormulario;
 public interface ElementoBpmnFormularioJpaRepository extends JpaRepository<ElementoBpmnFormulario, Serializable>{
 
 	public List<ElementoBpmnFormulario> findByElementoBpmn(ElementoBpmn elementoBpmn);
+	public abstract List<ElementoBpmnFormulario> findByElementoFormularioAndPermitirEscritura(ElementoFormulario elementoForm, boolean permitirEescritura);
 	public ElementoBpmnFormulario findByElementoBpmnAndElementoFormulario(ElementoBpmn elementoBpmn, ElementoFormulario elementoFormulario);
 }

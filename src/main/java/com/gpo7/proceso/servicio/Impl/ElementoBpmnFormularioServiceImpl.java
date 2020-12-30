@@ -51,4 +51,11 @@ public class ElementoBpmnFormularioServiceImpl implements ElementoBpmnFormulario
 		return (ElementoBpmnFormulario) this.elementoBpmnFormularioRepository.findByElementoBpmnAndElementoFormulario(elementoBpmn, elementoFormulario);
 	}
 
+	@Override
+	public List<ElementoBpmnFormulario> findByElementoFormularioAndPermitirEscritura(ElementoFormulario elementoForm,
+			boolean permitirEescritura) {
+		// TODO Auto-generated method stub
+		return elementoBpmnFormularioRepository.findByElementoFormularioAndPermitirEscritura(elementoForm, permitirEescritura);
+	}
+
 }

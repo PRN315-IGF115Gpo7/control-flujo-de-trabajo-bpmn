@@ -52,8 +52,7 @@ public class Proceso {
 	@ManyToOne
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
-	
-	
+
 	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"proceso"})
     private List<Variable> variables =  new ArrayList();
@@ -62,6 +61,11 @@ public class Proceso {
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JsonIgnore
 	private List<InstanciaProceso> instanciasProceso = new ArrayList();
+	
+	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@JsonIgnore
+	private List<ElementoBpmn> elementosBpmn = new ArrayList();
 
 	/**
 	 * 
@@ -163,4 +167,13 @@ public class Proceso {
 	    }
 	    return count;
 	}
+
+	public List<ElementoBpmn> getElementosBpmn() {
+		return elementosBpmn;
+	}
+
+	public void setElementosBpmn(List<ElementoBpmn> elementosBpmn) {
+		this.elementosBpmn = elementosBpmn;
+	}
+	
 }

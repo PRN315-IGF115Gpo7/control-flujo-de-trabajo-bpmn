@@ -2,6 +2,7 @@ package com.gpo7.proceso.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -26,18 +28,26 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gpo7.proceso.entity.Permiso;
 import com.gpo7.proceso.entity.Cargo;
+import com.gpo7.proceso.entity.ElementoBpmn;
+import com.gpo7.proceso.entity.ElementoBpmnFormulario;
 import com.gpo7.proceso.entity.ElementoFormulario;
+import com.gpo7.proceso.entity.InstanciaActividad;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Proceso;
+import com.gpo7.proceso.entity.Respuesta;
 import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.entity.TipoDato;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
 import com.gpo7.proceso.servicio.CargoService;
+import com.gpo7.proceso.servicio.ElementoBpmnFormularioService;
+import com.gpo7.proceso.servicio.ElementoBpmnService;
 import com.gpo7.proceso.servicio.ElementoFormularioService;
+import com.gpo7.proceso.servicio.InstanciaActividadService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.ProcesoService;
+import com.gpo7.proceso.servicio.RespuestaService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.TipoDatoService;
 import com.gpo7.proceso.servicio.UsuarioService;
@@ -47,12 +57,19 @@ import com.gpo7.proceso.servicio.VariableService;
 @RequestMapping("/proceso")
 public class ProcesoController {
 
+	//Views
 	private static final String INDEX_VIEW = "proceso/index";
 	private static final String CREATE_VIEW = "proceso/create";
 	private static final String DIAGRAM_VIEW = "proceso/diagram";
 	private static final String HISTORIAL_VIEW = "proceso/historial";
 	private static final String ACTIVE_PROCESS_VIEW = "proceso/procesos-activos";
 	private static final String REPLY_PROCESS_VIEW = "proceso/procesos-respondidos";
+	private static final String REPLY_ACTIVITY_VIEW = "proceso/responder-actividad";
+	
+	//BPMN elements
+	private static final String START_EVENT = "bpmn:StartEvent";
+	private static final String END_EVENT = "bpmn:EndEvent";
+	private static final String EXCLUSIVE_GATEWAY = "bpmn:ExclusiveGateway";
 	
 	@Autowired
 	@Qualifier("procesoServiceImpl")
@@ -82,7 +99,22 @@ public class ProcesoController {
 	@Qualifier("elementoFormularioServiceImpl")
 	private ElementoFormularioService elementoFormularioService;
 	
+	@Autowired
+	@Qualifier("instanciaActividadServiceImpl")
+	private InstanciaActividadService instanciaActividadService;
 	
+	@Autowired
+	@Qualifier("elementoBpmnServiceImpl")
+	private ElementoBpmnService elementoBpmnService;
+	
+	@Autowired
+	@Qualifier("respuestaServiceImpl")
+	private RespuestaService respuestaService;
+	
+	@Autowired
+	@Qualifier("elementoBpmnFormularioServiceImpl")
+	private ElementoBpmnFormularioService elementoBpmnFormularioService;
+		
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping("/create")
 	public ModelAndView create() {
@@ -244,24 +276,21 @@ public class ProcesoController {
 		}
 	}
 	
-	
 	@GetMapping("/procesos-activos")
 	public ModelAndView activeProcess() {
 		ModelAndView mav = new ModelAndView(ACTIVE_PROCESS_VIEW);
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 		
-	    mav.addObject("instanciaProcesos", instanciaProcesoService.findByUsuarioAndFinalizado(usuario, false));
-	    mav.addObject("instanciaProceso", new InstanciaProceso());
-
-	    mav.addObject("usuarios", usuario);
+		List<Proceso> procesos = procesoService.procesosActivos(true, usuario.getCargo().getIdCargo());
+		
+	    mav.addObject("procesos", procesos);
 	    
 	    return mav;
 	}
 	
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping("/{id}/procesos-respondidos")
-	
 	public ModelAndView replyProcess(@PathVariable int id) {
 		ModelAndView mav = new ModelAndView(REPLY_PROCESS_VIEW);
 		
@@ -273,7 +302,6 @@ public class ProcesoController {
 		
 		return mav;		
 	}
-	
 	
 	@PostMapping("/update")
 	public String update(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult results, RedirectAttributes redirAttrs) {		
@@ -291,5 +319,119 @@ public class ProcesoController {
 			redirAttrs.addFlashAttribute("success", "El proceso fue modificado con éxito");
 		}
 		return "redirect:/proceso/index";
+	}
+	
+	@GetMapping("/{id}/responder-actividad")
+	public ModelAndView responderProceso(@PathVariable("id") Integer id) {
+		ModelAndView mav = new ModelAndView(REPLY_ACTIVITY_VIEW);
+		Proceso proceso = procesoService.findById(id);
+		//ElementoBpmn currActivity = null;
+		
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuario = usuarioService.findByUsername(user.getUsername());
+		InstanciaProceso instanciaProceso = instanciaProcesoService.findByProcesoAndUsuario(proceso, usuario);
+		
+		//Si es primera vez que ingresa al proceso se crea la instancia del proceso y actividades
+		if(instanciaProceso == null) {
+			instanciaProceso = crearInstancia(proceso, usuario);
+		}
+		
+		InstanciaActividad currActivity = instanciaActividadService.getCurrActivity(false, instanciaProceso.getInstanciaProcesoId());
+		
+		if(currActivity == null) {
+			return new ModelAndView("redirect:/proceso/procesos-activos");
+		}
+		
+		ElementoBpmn elementoBpmn = currActivity.getElementoBpmn();
+		for(ElementoBpmnFormulario ebf : elementoBpmn.getElementoBpmnFormularios()) {
+			if(!ebf.isPermitirEscritura()) {
+				
+				ElementoBpmnFormulario ebfEscritura = elementoBpmnFormularioService.findByElementoFormularioAndPermitirEscritura(ebf.getElementoFormulario(), true).get(0);
+				InstanciaActividad prevActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebfEscritura.getElementoBpmn(), currActivity.getInstanciaProceso());
+				Respuesta respuesta = respuestaService.findByInstanciaActividadAndElementoBpmnFormulario(prevActivity, ebfEscritura);
+				ebf.setRespuesta(respuesta.getRespuesta());
+			}
+		}
+		
+		mav.addObject("currActivity", currActivity);
+		mav.addObject("activityElements", elementoBpmn);
+		
+		return mav;
+	}
+	
+	public InstanciaProceso crearInstancia(Proceso proceso, Usuario usuario) {
+		InstanciaProceso instanciaProceso = new InstanciaProceso();
+		instanciaProceso.setProceso(proceso);
+		instanciaProceso.setUsuario(usuario);
+		instanciaProceso.setFinalizado(false);
+		
+		instanciaProcesoService.store(instanciaProceso);
+		
+		for(ElementoBpmn eb : proceso.getElementosBpmn()) {
+			
+			if(eb.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:StartEvent") ||
+					eb.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:EndEvent")) {
+				continue;
+			}
+			
+			InstanciaActividad ia = new InstanciaActividad();
+			
+			ia.setElementoBpmn(eb);
+			ia.setInstanciaProceso(instanciaProceso);
+			ia.setFinalizada(false);
+			
+			instanciaActividadService.store(ia);
+		}
+		
+		return instanciaProceso;
+	}
+
+	@PostMapping("/persistir-respuestas")
+	public String persistirRespuestas(@RequestParam Map<String, String> requestParams) {
+		int instanciaActId =  Integer.parseInt(requestParams.get("instanciaActividadId"));
+				
+		InstanciaActividad currActivity = instanciaActividadService.findById(instanciaActId);
+		
+		if(requestParams.get("nextActivity") != null) {
+			//int elementBpmnId = Integer.parseInt(requestParams.get("nextActivity"));
+			//ElementoBpmn elementoBpmn = elementoBpmnService.findById(elementBpmnId);
+			List<ElementoBpmn> ebs = currActivity.getElementoBpmn().getReference_next();
+			
+			for(ElementoBpmn eb : ebs) {
+				InstanciaProceso ip = currActivity.getInstanciaProceso();
+				InstanciaActividad ia = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(eb, ip);
+				
+				if(ia.getInstanciaActividadId() != instanciaActId) {
+					ia.setFinalizada(true);
+					instanciaActividadService.update(ia);
+				}
+			}
+		}else {
+			for(ElementoBpmnFormulario ebf : currActivity.getElementoBpmn().getElementoBpmnFormularios()) {
+				String name = ebf.getElementoFormulario().getLabel();
+				String value = requestParams.get(name);
+				
+				Respuesta respuesta = new Respuesta();
+				respuesta.setRespuesta(value);
+				respuesta.setElementoBpmnFormulario(ebf);
+				respuesta.setInstanciaActividad(currActivity);
+				
+				respuestaService.store(respuesta);
+			}
+		}
+		
+		currActivity.setFinalizada(true);
+		instanciaActividadService.update(currActivity);
+		
+		ElementoBpmn eb = currActivity.getElementoBpmn();
+		
+		if(eb.getReference_next().get(0).getTipoElementoBpmn().getNombreTipoElementoBpmn().equals(END_EVENT)) {
+			InstanciaProceso instanciaProceso = currActivity.getInstanciaProceso();
+			instanciaProceso.setFinalizado(true);
+			
+			instanciaProcesoService.update(instanciaProceso);
+		}
+		
+		return "redirect:/proceso/procesos-activos";
 	}
 }

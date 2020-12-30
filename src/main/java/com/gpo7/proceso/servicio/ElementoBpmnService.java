@@ -14,4 +14,5 @@ public interface ElementoBpmnService {
 	public ElementoBpmn update(ElementoBpmn elementoBpmn);
 	public void createOrReplace(ElementoBpmn elementoBpmn);
 	public ElementoBpmn findByIdElementoDiagramaBpmnAndProceso(String idElementoDiagramaBpmn, Proceso proceso);
+	public abstract ElementoBpmn findByProcesoAndElement(Proceso proceso, String element);
 }

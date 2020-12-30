@@ -36,6 +36,23 @@ public class InstanciaProcesoServiceImpl implements InstanciaProcesoService{
 		// TODO Auto-generated method stub
 		return instanciaProcesoJpaRepository.findByProcesoAndFinalizado(proceso, finalizado);
 	}
-	
-	
+
+	@Override
+	public InstanciaProceso findByProcesoAndUsuario(Proceso proceso, Usuario usuario) {
+		// TODO Auto-generated method stub
+		return instanciaProcesoJpaRepository.findByProcesoAndUsuario(proceso, usuario);
+	}
+
+	@Override
+	public InstanciaProceso store(InstanciaProceso instanciaProceso) {
+		// TODO Auto-generated method stub
+		return instanciaProcesoJpaRepository.save(instanciaProceso);
+	}
+
+	@Override
+	public InstanciaProceso update(InstanciaProceso instanciaProceso) {
+		// TODO Auto-generated method stub
+		return instanciaProcesoJpaRepository.save(instanciaProceso);
+	}
+
 }

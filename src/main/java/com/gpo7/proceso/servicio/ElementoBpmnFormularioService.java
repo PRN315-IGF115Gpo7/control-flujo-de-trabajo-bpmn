@@ -14,5 +14,6 @@ public interface ElementoBpmnFormularioService {
 	public void destroy(ElementoBpmnFormulario elementoBpmnFormulario);
 	public List<ElementoBpmnFormulario> index();
 	public List<ElementoBpmnFormulario> findByElementoBpmn(ElementoBpmn elementoBpmn);
+	public abstract List<ElementoBpmnFormulario> findByElementoFormularioAndPermitirEscritura(ElementoFormulario elementoForm, boolean permitirEescritura);
 	public ElementoBpmnFormulario findByElementoBpmnAndElementoFormulario(ElementoBpmn elementoBpmn, ElementoFormulario elementoFormulario);
 }

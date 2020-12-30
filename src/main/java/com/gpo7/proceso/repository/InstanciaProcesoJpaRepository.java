@@ -18,4 +18,5 @@ public interface InstanciaProcesoJpaRepository extends JpaRepository<InstanciaPr
 
 	public abstract List<InstanciaProceso> findByUsuarioAndFinalizado(Usuario usuario, Boolean finalizado);
 	public abstract List<InstanciaProceso> findByProcesoAndFinalizado(Proceso proceso, Boolean finalizado);
+	public abstract InstanciaProceso findByProcesoAndUsuario(Proceso proceso, Usuario usuario);
 }

@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "elementos_bpmn_formulario")
@@ -28,6 +29,9 @@ public class ElementoBpmnFormulario {
 	
 	@Column(name = "permitir_escritura")
 	private boolean permitirEscritura;
+	
+	@Transient
+	private String respuesta;
 
 	public int getElementosBpmnFormularioId() {
 		return elementosBpmnFormularioId;
@@ -59,6 +63,14 @@ public class ElementoBpmnFormulario {
 
 	public void setPermitirEscritura(boolean permitirEscritura) {
 		this.permitirEscritura = permitirEscritura;
+	}
+	
+	public String getRespuesta() {
+		return respuesta;
+	}
+
+	public void setRespuesta(String respuesta) {
+		this.respuesta = respuesta;
 	}
 
 	public ElementoBpmnFormulario(int elementosBpmnFormularioId, ElementoBpmn elementoBpmn,

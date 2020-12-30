@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+</head>
+
+<body>
+
+    <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Reponder Actividad</h1>
+
+    <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/index}">Procesos Activos</a></li>
+        <li class="breadcrumb-item active">Responder Actividad</li>
+    </ol>
+
+    <div layout:fragment="content">
+
+        <br>
+        <div class="row ml-5">
+            <div class="col-md-6 offset-2">
+                <div class="card">
+                    <form method="POST" th:action="@{/proceso/persistir-respuestas}">
+                        <input name="instanciaActividadId" type="hidden"
+                            th:value="${currActivity.instanciaActividadId}">
+                        <div class="card-header text-left">
+                            <th:block th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                                <h3 class="card-title"><b>Compuerta de decisión</b></h3>
+                            </th:block>
+                            <th:block th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                                <h3 class="card-title">Actividad: <b>[[ ${activityElements.nombreElementoBpmn} ]]</b></h3>
+                            </th:block>
+                        </div>
+                        <div class="card-body">
+                            <th:block
+                                th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                                <th:block th:each="ebf : ${activityElements.elementoBpmnFormularios}">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">[[ ${ebf.elementoFormulario.label} ]]</label>
+                                        <input th:type="${ebf.elementoFormulario.elementoFormularioTipo}"
+                                            class="form-control" readonly th:value="${ebf.respuesta}">
+                                    </div>
+                                </th:block>
+                                <br>
+                                <div class="form-group">
+                                    <h5><label>[[ ${activityElements.nombreElementoBpmn} ]]</label></h5>
+                                    <div class="radio" th:each="nextElement : ${activityElements.reference_next}">
+                                        <label><input type="radio" th:name="nextActivity" th:value="${nextElement.idElementoBpmn}">  [[ ${nextElement.nombreElementoBpmn} ]] </label>
+                                    </div>
+                                    <small id="passwordHelpInline" class="text-muted">
+                                        En base a las variables presentadas seleccionar la siguiente actividad
+                                      </small>
+                                </div>
+                            </th:block>
+                            <th:block
+                                th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}"
+                                th:each="ebf : ${activityElements.elementoBpmnFormularios}">
+                                <div class="form-group">
+                                    <label>[[ ${ebf.elementoFormulario.label} ]]</label>
+                                    <input th:type="${ebf.elementoFormulario.elementoFormularioTipo}"
+                                        class="form-control" th:name="${ebf.elementoFormulario.label}">
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="card-footer text-right">
+                            <a th:href="@{/proceso/procesos-activos}" class="btn btn-secondary mx-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <section layout:fragment="scripts">
+    </section>
+
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 package com.gpo7.proceso.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "elementos_bpmn")
@@ -39,6 +46,10 @@ public class ElementoBpmn {
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_cargo")
     private Cargo cargo;
+	
+	@OneToMany(mappedBy = "elementoBpmn", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<ElementoBpmnFormulario> elementoBpmnFormularios = new ArrayList();
 	
 	/*
 	@ManyToMany
@@ -174,6 +185,14 @@ public class ElementoBpmn {
 
 	public void setReference_previous(List<ElementoBpmn> reference_previous) {
 		this.reference_previous = reference_previous;
+	}
+	
+	public List<ElementoBpmnFormulario> getElementoBpmnFormularios() {
+		return elementoBpmnFormularios;
+	}
+
+	public void setElementoBpmnFormularios(List<ElementoBpmnFormulario> elementoBpmnFormularios) {
+		this.elementoBpmnFormularios = elementoBpmnFormularios;
 	}
 
 	@Override

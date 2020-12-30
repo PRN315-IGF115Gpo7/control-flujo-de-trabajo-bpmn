@@ -3,18 +3,18 @@
 
 <head>
 
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 </head>
 
 <body>
 
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Procesos</h1>
+    <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Procesos</h1>
 
-	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+    <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
         <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
         <li class="breadcrumb-item active">Procesos</li>
     </ol>
@@ -27,15 +27,15 @@
                     <div class="card-body">
 
                         <ul th:if="${!#lists.isEmpty(errors)}" class="alert alert-danger ml-2 mr-2" role="alert">
-                            <li  class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+                            <li class="ml-2" th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
                         </ul>
-             
+
                         <div th:if="${success}">
-                           <div class="alert alert-success" th:text="${success}"></div>
+                            <div class="alert alert-success" th:text="${success}"></div>
                         </div>
-             
+
                         <div th:if="${mensaje}">
-                           <div class="alert alert-danger" th:text="${mensaje}"></div>
+                            <div class="alert alert-danger" th:text="${mensaje}"></div>
                         </div>
 
                         <table id="example1" class="table table-bordered table-striped">
@@ -59,16 +59,20 @@
                                         <th:block th:unless="${proceso.procesoActivo}">
                                             <td class="estado1" th:text="Inactivo"></td>
                                         </th:block>
-                                        <td class="respuestas" th:text="${proceso.contadorRespuestas(proceso.getInstanciasProceso(), true)}"></td>
+                                        <td class="respuestas"
+                                            th:text="${proceso.contadorRespuestas(proceso.getInstanciasProceso(), true)}">
+                                        </td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary" th:attr="data-editar=${proceso.idProceso}">
-                                                <i class="fas fa-pencil-alt"> </i>                                           
-                                            </button>
-                                            
-                                            <a class="btn btn-sm btn-secondary" th:href="@{/proceso/{id}/procesos-respondidos (id=${proceso.idProceso})}">  
-							                    <i class="fas fa-list-ul"></i>
-						                    </a>  
-                                                     
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-primary mx-1"
+                                                    th:attr="data-editar=${proceso.idProceso}">
+                                                    <i class="fas fa-pencil-alt"> </i>
+                                                </button>
+                                                <a class="btn btn-sm btn-secondary"
+                                                    th:href="@{/proceso/{id}/procesos-respondidos (id=${proceso.idProceso})}">
+                                                    <i class="fas fa-list-ul"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </th:block>
                                 </tr>
@@ -98,7 +102,7 @@
                         </button>
                     </div>
 
-                    <form method="POST" th:action="@{/proceso/update}" th:object="${proceso}">                     
+                    <form method="POST" th:action="@{/proceso/update}" th:object="${proceso}">
                         <div class="modal-body">
                             <input id="id" type="hidden" th:field="*{idProceso}">
                             <div class="mb-3">
@@ -108,8 +112,8 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Descripcion: </label>
-                                <input id="descripcion-p" th:field="*{procesoDescripcion}" type="text" class="form-control"
-                                    placeholder="Ingrese su descripcion" required>
+                                <input id="descripcion-p" th:field="*{procesoDescripcion}" type="text"
+                                    class="form-control" placeholder="Ingrese su descripcion" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -123,13 +127,13 @@
     </div>
     <section layout:fragment="scripts">
         <script>
-            $('[data-editar]').on('click', function() {
+            $('[data-editar]').on('click', function () {
                 $('#modalEditar').modal('show');
 
                 var id = $(this).data('editar');
                 var nombre = $(this).parent().siblings('td.nombre').text();
-                var descripcion = $(this).parent().siblings('td.descripcion').text();      
-                
+                var descripcion = $(this).parent().siblings('td.descripcion').text();
+
                 $('#id').val(id);
                 $('#nombre-p').val(nombre);
                 $('#descripcion-p').val(descripcion);
@@ -138,4 +142,5 @@
     </section>
 
 </body>
+
 </html>
