@@ -18,6 +18,7 @@ import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.ElementoBpmn;
 import com.gpo7.proceso.entity.ElementoBpmnFormulario;
 import com.gpo7.proceso.entity.ElementoFormulario;
+import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Privilegio;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.TipoElementoBpmn;
@@ -207,6 +208,18 @@ public class DataRestController {
 		this.elementoBpmnFormularioService.destroy(elementoBpmnFormulario);
 		
 		return "Exito";
+	}
+	
+	@GetMapping("/proceso/{id}/instancias")
+	public List<InstanciaProceso> getInstanciasByProceso(@PathVariable("id") Integer procesoId){
+		Proceso proceso = procesoService.findById(procesoId);
+		List<InstanciaProceso> instanciasProceso = proceso.getInstanciasProceso();
+		
+		for(InstanciaProceso ip : instanciasProceso) {
+			ip.setProceso(null);
+		}
+		
+		return instanciasProceso;
 	}
 	
 }

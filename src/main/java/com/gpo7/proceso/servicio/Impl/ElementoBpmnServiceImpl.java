@@ -60,8 +60,8 @@ public class ElementoBpmnServiceImpl implements ElementoBpmnService{
 	}
 
 	@Override
-	public ElementoBpmn getFirstActivityElement(String elementType, int procesoId) {
+	public ElementoBpmn getFirstActivityElement(String elementType, int procesoId, int cargoId) {
 		// TODO Auto-generated method stub
-		return elementoBpmnJpaRepository.getFirstActivityElement(elementType, procesoId);
+		return elementoBpmnJpaRepository.getFirstActivityElement(elementType, procesoId, cargoId);
 	}
 }

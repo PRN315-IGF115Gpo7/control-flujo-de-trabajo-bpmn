@@ -15,5 +15,5 @@ public interface ElementoBpmnService {
 	public void createOrReplace(ElementoBpmn elementoBpmn);
 	public ElementoBpmn findByIdElementoDiagramaBpmnAndProceso(String idElementoDiagramaBpmn, Proceso proceso);
 	public abstract ElementoBpmn findByProcesoAndElement(Proceso proceso, String element);
-	public abstract ElementoBpmn getFirstActivityElement(String elementType, int procesoId);
+	public abstract ElementoBpmn getFirstActivityElement(String elementType, int procesoId, int cargoId);
 }

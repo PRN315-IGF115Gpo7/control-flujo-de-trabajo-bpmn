@@ -11,4 +11,5 @@ public interface InstanciaActividadService {
 	public abstract InstanciaActividad findById(Integer idInstancia);
 	public abstract InstanciaActividad findByElementoBpmnAndInstanciaProceso(ElementoBpmn eb, InstanciaProceso ip);
 	public abstract InstanciaActividad getCurrActivity(Boolean finalizada, Integer instanciaProcId);
+	public abstract InstanciaActividad getActivityByCargo(int cargoId, int instanciaProcesoId);
 }

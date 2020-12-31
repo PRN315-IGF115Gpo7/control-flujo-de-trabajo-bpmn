@@ -46,4 +46,10 @@ public class InstanciaActividadServiceImpl implements InstanciaActividadService{
 		// TODO Auto-generated method stub
 		return instanciaActividadJpaRepository.findByElementoBpmnAndInstanciaProceso(eb, ip);
 	}
+
+	@Override
+	public InstanciaActividad getActivityByCargo(int cargoId, int instanciaProcesoId) {
+		// TODO Auto-generated method stub
+		return instanciaActividadJpaRepository.getActivityByCargo(cargoId, instanciaProcesoId);
+	}
 }

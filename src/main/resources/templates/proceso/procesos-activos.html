@@ -7,7 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+    <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
 </head>
 
 <body>
@@ -26,6 +27,10 @@
                 <div class="card">
                     <div class="card-body">
 
+                        <div th:if="${error}">
+                            <div class="alert alert-danger" th:text="${error}"></div>
+                        </div>
+
                         <table id="example1" class="table table-bordered table-striped">
                             <h3 class="text-center" th:if="${#lists.isEmpty(procesos)}">No hay procesos activos.</h3>
                             <th:block th:if="${!#lists.isEmpty(procesos)}">
@@ -43,9 +48,12 @@
                                     <td th:text="${proceso.procesoDescripcion}"></td>
                                     <td th:text="${proceso.nombreActividad}"></td>
                                     <td>
-                                        <a title="Responder Actividad" class="btn btn-sm btn-info" th:href="@{/proceso/{id}/responder-actividad (id=${proceso.idProceso})}">  
+                                        <button th:if="${proceso.cargo.idCargo == cargo.idCargo}" class="btn btn-sm btn-info" title="Responder Actividad" th:attr="data-owner=${proceso.idProceso}">
                                             <i class="fas fa-sign-in-alt"></i>
-                                        </a>
+                                        </button>
+                                        <button th:unless="${proceso.cargo.idCargo == cargo.idCargo}" class="btn btn-sm btn-info" title="Responder Actividad" th:attr="data-no-owner=${proceso.idProceso}">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -64,8 +72,86 @@
             </div>
         </div>
 
+        <div class="modal" tabindex="-1" role="dialog" id="modalOwner">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Responder actividad</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                        <div class="modal-body">
+                            <h5>Proceder a responder la actividad</h5>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <a id="btnOwner" href="" class="btn btn-primary">Continuar</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" tabindex="-1" role="dialog" id="modalNoOwner">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Responder actividad</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="" method="GET" id="noOwnerForm">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Seleccione el recurso</label>
+                                <select id="idInstanciaP" name="instanciaId" class="form-control select2bs4" style="width: 100%;">
+                                    
+                                </select>
+                              </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Continuar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
     <section layout:fragment="scripts">
+        <script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+        <script>
+            $(function() {
+				//Initialize Select2 Elements
+			    $('.select2bs4').select2({
+			      theme: 'bootstrap4'
+			    })
+			});
+
+            $('[data-owner]').on('click', function () {
+                idProceso = $(this).data('owner');
+                $('#btnOwner').prop('href', `/proceso/${idProceso}/responder-actividad`);
+                $('#modalOwner').modal('show');
+            });
+
+            $('[data-no-owner]').on('click', function () {
+                var idProceso = $(this).data('no-owner');
+                var html = '';
+
+                $.get(`/api/proceso/${idProceso}/instancias`, function(data){
+                    for (let i = 0; i < data.length; i++) {
+                        html += `<option value='${data[i].instanciaProcesoId}'>${data[i].usuario.nombreCompleto}</option>`;
+                    }
+                    
+                    $('#idInstanciaP').html(html);
+                    $('#noOwnerForm').prop('action', `/proceso/${idProceso}/responder-actividad`);
+                });
+
+                $('#modalNoOwner').modal('show');
+            });
+        </script>
     </section>
 
 </body>

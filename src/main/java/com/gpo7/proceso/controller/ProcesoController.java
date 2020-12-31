@@ -282,15 +282,21 @@ public class ProcesoController {
 			InstanciaProceso instanciaProceso = instanciaProcesoService.findByProcesoAndUsuario(p, usuario);
 			
 			if(instanciaProceso != null) {
-				InstanciaActividad currActivity = instanciaActividadService.getCurrActivity(false, instanciaProceso.getInstanciaProcesoId());
-				p.setNombreActividad(currActivity.getElementoBpmn().getNombreElementoBpmn());
+				InstanciaActividad currActivity = instanciaActividadService.getActivityByCargo(usuario.getCargo().getIdCargo(), instanciaProceso.getInstanciaProcesoId());
+				
+				if(currActivity == null) {
+					p.setNombreActividad("No hay más actividades");
+				}else {
+					p.setNombreActividad(currActivity.getElementoBpmn().getNombreElementoBpmn());
+				}
 			}else {
-				ElementoBpmn eb = elementoBpmnService.getFirstActivityElement(TASK, p.getIdProceso());
+				ElementoBpmn eb = elementoBpmnService.getFirstActivityElement(TASK, p.getIdProceso(), usuario.getCargo().getIdCargo());
 				p.setNombreActividad(eb.getNombreElementoBpmn());
 			}
 		}
 		
 	    mav.addObject("procesos", procesos);
+	    mav.addObject("cargo", usuario.getCargo());
 	    
 	    return mav;
 	}
@@ -312,7 +318,7 @@ public class ProcesoController {
 	@PostMapping("/update")
 	public String update(@Valid @ModelAttribute("proceso") Proceso proceso, BindingResult results, RedirectAttributes redirAttrs) {		
 		Proceso procesoMod = procesoService.findById(proceso.getIdProceso());
-		
+		 
 		procesoMod.setProcesoNombre(proceso.getProcesoNombre());
 		procesoMod.setProcesoDescripcion(proceso.getProcesoDescripcion());	
 		
@@ -328,23 +334,44 @@ public class ProcesoController {
 	}
 	
 	@GetMapping("/{id}/responder-actividad")
-	public ModelAndView responderProceso(@PathVariable("id") Integer id) {
-		ModelAndView mav = new ModelAndView(REPLY_ACTIVITY_VIEW);
-		Proceso proceso = procesoService.findById(id);
+	public ModelAndView responderActividad(@PathVariable("id") Integer procesoId,
+			@RequestParam(name = "instanciaId", required = false) Integer instanciaId,
+			RedirectAttributes redirAttrs) {
 		
+		ModelAndView mav = new ModelAndView(REPLY_ACTIVITY_VIEW);
+		Proceso proceso = procesoService.findById(procesoId);
+				
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 		InstanciaProceso instanciaProceso = instanciaProcesoService.findByProcesoAndUsuario(proceso, usuario);
 		
-		//Si es primera vez que ingresa al proceso se crea la instancia del proceso y actividades
-		if(instanciaProceso == null) {
+		//Si aún no hay instancias del proceso creadas y un participante intenta responder la actividad
+		if(instanciaId == null && !isProcessOwner(proceso)) {
+			redirAttrs.addFlashAttribute("error", "Aún no hay procesos para participar");
+			return new ModelAndView("redirect:/proceso/procesos-activos");
+		}
+		
+		//Si es primera vez que ingresa al proceso y es dueño se crea la instancia del proceso y actividades
+		if(instanciaProceso == null && isProcessOwner(proceso)) {
 			instanciaProceso = crearInstancia(proceso, usuario);
+		}
+		
+		//Si es diferente de null es porque es un participante del proceso no el dueño y se obtiene la instancia en la que va a participar
+		if(instanciaId != null) {
+			instanciaProceso = instanciaProcesoService.findById(instanciaId);
 		}
 		
 		InstanciaActividad currActivity = instanciaActividadService.getCurrActivity(false, instanciaProceso.getInstanciaProcesoId());
 		
 		//Si ya se respondió la última actividad
 		if(currActivity == null) {
+			redirAttrs.addFlashAttribute("error", "No hay más actividades disponibles");
+			return new ModelAndView("redirect:/proceso/procesos-activos");
+		}
+		
+		InstanciaActividad activityCargo = instanciaActividadService.getActivityByCargo(usuario.getCargo().getIdCargo(), instanciaProceso.getInstanciaProcesoId());
+		if(currActivity.getInstanciaActividadId() != activityCargo.getInstanciaActividadId()) {
+			redirAttrs.addFlashAttribute("error", "Esta actividad le pertenece a un usuario con cargo " + currActivity.getElementoBpmn().getCargo().getNombreCargo());
 			return new ModelAndView("redirect:/proceso/procesos-activos");
 		}
 		
@@ -377,9 +404,7 @@ public class ProcesoController {
 		for(ElementoBpmn eb : proceso.getElementosBpmn()) {
 			
 			//No se crean instancias de actividad para eventos de inicio fin y/o elementos que no tengan variables asignadas
-			if(eb.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:StartEvent") ||
-					eb.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:EndEvent") ||
-					eb.getElementoBpmnFormularios().isEmpty()) {
+			if(eb.getElementoBpmnFormularios().isEmpty()) {
 				continue;
 			}
 			
@@ -393,6 +418,13 @@ public class ProcesoController {
 		}
 		
 		return instanciaProceso;
+	}
+	
+	public boolean isProcessOwner(Proceso proceso) {
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuario = usuarioService.findByUsername(user.getUsername());
+		
+		return usuario.getCargo().getIdCargo() == proceso.getCargo().getIdCargo();
 	}
 
 	@PostMapping("/persistir-respuestas")
@@ -464,8 +496,7 @@ public class ProcesoController {
 	}
 	
 }
-/*
- * - Validar que solo el usuario que le corresponde resulva la actividad
+/* POR HACER:
  * - Validar campos vacíos
  * - Intentar poner diagrama al momento de responder la actividad
 */

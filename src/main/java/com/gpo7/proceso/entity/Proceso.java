@@ -18,8 +18,6 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -52,7 +50,13 @@ public class Proceso {
 	
 	@ManyToOne
 	@JoinColumn(name = "usuario_id")
+	@JsonIgnore
 	private Usuario usuario;
+	
+	@ManyToOne
+	@JoinColumn(name = "cargo_id")
+	@JsonIgnore
+	private Cargo cargo;
 
 	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"proceso"})
@@ -186,5 +190,12 @@ public class Proceso {
 	public void setNombreActividad(String nombreActividad) {
 		this.nombreActividad = nombreActividad;
 	}
-		
+
+	public Cargo getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(Cargo cargo) {
+		this.cargo = cargo;
+	}
 }

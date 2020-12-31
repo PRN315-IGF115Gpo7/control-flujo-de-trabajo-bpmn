@@ -1,7 +1,7 @@
 --Cargo
-INSERT INTO cargos (id_cargo, nombre_cargo, descripcion_cargo) VALUES(100, "Adminitrador", "Esta es una descripción del cargo");
-INSERT INTO cargos (id_cargo, nombre_cargo, descripcion_cargo) VALUES(101, "Diagramador", "Esta es una descripción del cargo");
-INSERT INTO cargos (id_cargo, nombre_cargo, descripcion_cargo) VALUES(102, "Participante", "Esta es una descripción del cargo");
+INSERT INTO cargos (id_cargo, nombre_cargo, descripcion_cargo) VALUES(100, "Docente", "Esta es una descripción del cargo");
+INSERT INTO cargos (id_cargo, nombre_cargo, descripcion_cargo) VALUES(101, "Secretaria", "Esta es una descripción del cargo");
+INSERT INTO cargos (id_cargo, nombre_cargo, descripcion_cargo) VALUES(102, "Estudiante", "Esta es una descripción del cargo");
 
 INSERT INTO usuarios (ID_USUARIO,ACCOUNT_EXPERIRED,ACCOUNT_LOCKED,EMAIL,ENABLED,INTENTOS,NOMBRE_COMPLETO,PASSWORD,PASSWORD_EXPIRED,USERNAME, CARGO_ID) VALUES (100,0,0,'mt16007@ues.edu.sv',1,0,'Usuario administrador','$2a$10$DO.xn3q1enS4z5XH2BHk1u/24c3R92S1Sqt/ClwxpsvvBCCh1DPu6',0,'admin', 100);
 INSERT INTO usuarios (ID_USUARIO,ACCOUNT_EXPERIRED,ACCOUNT_LOCKED,EMAIL,ENABLED,INTENTOS,NOMBRE_COMPLETO,PASSWORD,PASSWORD_EXPIRED,USERNAME, CARGO_ID) VALUES (101,0,0,'dc16009@ues.edu.sv',1,0,'Usuario diagramador','$2a$10$DO.xn3q1enS4z5XH2BHk1u/24c3R92S1Sqt/ClwxpsvvBCCh1DPu6',0,'diagramador', 101);

@@ -14,6 +14,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -34,6 +37,7 @@ public class Cargo {
 	private String descripcionCargo;
 
 	@OneToMany(mappedBy = "cargo", fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
 	@JsonIgnore
 	private List<Usuario> usuarios = new ArrayList();
 

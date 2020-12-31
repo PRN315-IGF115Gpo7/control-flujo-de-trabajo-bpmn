@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Proceso;
@@ -55,4 +54,9 @@ public class InstanciaProcesoServiceImpl implements InstanciaProcesoService{
 		return instanciaProcesoJpaRepository.save(instanciaProceso);
 	}
 
+	@Override
+	public InstanciaProceso findById(int instanciaProcesoId) {
+		// TODO Auto-generated method stub
+		return instanciaProcesoJpaRepository.findById(instanciaProcesoId).get();
+	}
 }
