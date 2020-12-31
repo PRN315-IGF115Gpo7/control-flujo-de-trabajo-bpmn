@@ -41,7 +41,7 @@
                                 <tr th:each="proceso : ${procesos}">
                                     <td th:text="${proceso.procesoNombre}"></td>
                                     <td th:text="${proceso.procesoDescripcion}"></td>
-                                    <td>No hay</td>
+                                    <td th:text="${proceso.nombreActividad}"></td>
                                     <td>
                                         <a title="Responder Actividad" class="btn btn-sm btn-info" th:href="@{/proceso/{id}/responder-actividad (id=${proceso.idProceso})}">  
                                             <i class="fas fa-sign-in-alt"></i>

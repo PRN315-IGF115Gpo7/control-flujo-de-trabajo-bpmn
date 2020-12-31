@@ -58,5 +58,10 @@ public class ElementoBpmnServiceImpl implements ElementoBpmnService{
 		// TODO Auto-generated method stub
 		return elementoBpmnJpaRepository.findByProcesoAndElement(proceso, element);
 	}
-	
+
+	@Override
+	public ElementoBpmn getFirstActivityElement(String elementType, int procesoId) {
+		// TODO Auto-generated method stub
+		return elementoBpmnJpaRepository.getFirstActivityElement(elementType, procesoId);
+	}
 }

@@ -30,43 +30,92 @@
                         <input name="instanciaActividadId" type="hidden"
                             th:value="${currActivity.instanciaActividadId}">
                         <div class="card-header text-left">
-                            <th:block th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                            <th:block
+                                th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
                                 <h3 class="card-title"><b>Compuerta de decisión</b></h3>
                             </th:block>
-                            <th:block th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
-                                <h3 class="card-title">Actividad: <b>[[ ${activityElements.nombreElementoBpmn} ]]</b></h3>
+                            <th:block
+                                th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                                <h3 class="card-title">Actividad: <b>[[ ${activityElements.nombreElementoBpmn} ]]</b>
+                                </h3>
                             </th:block>
                         </div>
                         <div class="card-body">
+                            <!--SI ES UNA COMPUERTA-->
                             <th:block
                                 th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                                
+                                <!--Variables que son solo de lectura-->
                                 <th:block th:each="ebf : ${activityElements.elementoBpmnFormularios}">
-                                    <div class="form-group">
+                                    <div class="form-group" th:unless="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
                                         <label for="exampleInputEmail1">[[ ${ebf.elementoFormulario.label} ]]</label>
                                         <input th:type="${ebf.elementoFormulario.elementoFormularioTipo}"
-                                            class="form-control" readonly th:value="${ebf.respuesta}">
+                                            class="form-control" disabled th:value="${ebf.respuesta}">
+                                    </div>
+                                    <div class="form-check" th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input"
+                                            th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}" disabled>
+                                        [[ ${ebf.elementoFormulario.label} ]]
+                                    </label>
                                     </div>
                                 </th:block>
+                                <!-- FIN - Variables que son solo de lectura-->
                                 <br>
+
+                                <!--Listado de actividades para elegir-->
                                 <div class="form-group">
                                     <h5><label>[[ ${activityElements.nombreElementoBpmn} ]]</label></h5>
                                     <div class="radio" th:each="nextElement : ${activityElements.reference_next}">
-                                        <label><input type="radio" th:name="nextActivity" th:value="${nextElement.idElementoBpmn}">  [[ ${nextElement.nombreElementoBpmn} ]] </label>
+                                        <label><input type="radio" th:name="nextActivity"
+                                                th:value="${nextElement.idElementoBpmn}"> [[
+                                            ${nextElement.nombreElementoBpmn} ]] </label>
                                     </div>
                                     <small id="passwordHelpInline" class="text-muted">
                                         En base a las variables presentadas seleccionar la siguiente actividad
-                                      </small>
+                                    </small>
                                 </div>
+                                <!-- FIN - Listado de actividades para elegir-->
+
                             </th:block>
+                            <!--FIN COMPUERTA-->
+
+                            <!--SI ES TAREA-->
                             <th:block
                                 th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}"
                                 th:each="ebf : ${activityElements.elementoBpmnFormularios}">
-                                <div class="form-group">
+                                
+                                <!-- Si no es de tipo Checkbox -->
+                                <div class="form-group"
+                                    th:unless="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
                                     <label>[[ ${ebf.elementoFormulario.label} ]]</label>
-                                    <input th:type="${ebf.elementoFormulario.elementoFormularioTipo}"
-                                        class="form-control" th:name="${ebf.elementoFormulario.label}">
+                                    <input th:if="${ebf.permitirEscritura}"
+                                        th:type="${ebf.elementoFormulario.elementoFormularioTipo}" class="form-control"
+                                        th:name="${ebf.elementoFormulario.label}">
+                                    <input th:unless="${ebf.permitirEscritura}"
+                                        th:type="${ebf.elementoFormulario.elementoFormularioTipo}" class="form-control"
+                                        th:value="${ebf.respuesta}" disabled>
                                 </div>
+                                <!-- FIN tipo Checkbox -->
+
+                                <!-- Si es de tipo Checkbox -->
+                                <div class="form-check"
+                                    th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
+                                    <label class="form-check-label" th:if="${ebf.permitirEscritura}">
+                                        <input type="checkbox" class="form-check-input"
+                                            th:name="${ebf.elementoFormulario.label}">
+                                        [[ ${ebf.elementoFormulario.label} ]]
+                                    </label>
+                                    <label class="form-check-label" th:unless="${ebf.permitirEscritura}">
+                                        <input type="checkbox" class="form-check-input"
+                                            th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}" disabled>
+                                        [[ ${ebf.elementoFormulario.label} ]]
+                                    </label>
+                                </div>
+                                <!-- FIN de tipo Checkbox -->
+
                             </th:block>
+                            <!--FIN TAREA-->
                         </div>
                         <div class="card-footer text-right">
                             <a th:href="@{/proceso/procesos-activos}" class="btn btn-secondary mx-2">Cancelar</a>

@@ -15,4 +15,7 @@ public interface ElementoBpmnJpaRepository extends JpaRepository<ElementoBpmn, S
 	
 	@Query(value = "SELECT eb.* FROM elementos_bpmn eb NATURAL JOIN tipos_elemento_bpmn teb WHERE eb.proceso_id = ?1 AND teb.tipo_elemento_bpmn_nombre = ?2", nativeQuery = true)
 	public abstract ElementoBpmn findByProcesoAndElement(Proceso proceso, String element);
+	
+	@Query(value = "SELECT eb.* FROM elementos_bpmn eb NATURAL JOIN tipos_elemento_bpmn teb WHERE teb.tipo_elemento_bpmn_nombre = ?1 AND eb.proceso_id = ?2 ORDER BY eb.elemento_bpmn_id ASC LIMIT 1", nativeQuery = true)
+	public abstract ElementoBpmn getFirstActivityElement(String elementType, int procesoId);
 }

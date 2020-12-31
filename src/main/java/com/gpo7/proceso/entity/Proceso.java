@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.Fetch;
@@ -67,6 +68,8 @@ public class Proceso {
 	@JsonIgnore
 	private List<ElementoBpmn> elementosBpmn = new ArrayList();
 
+	@Transient //No se guarda en la base
+	private String nombreActividad;
 	/**
 	 * 
 	 */
@@ -175,5 +178,13 @@ public class Proceso {
 	public void setElementosBpmn(List<ElementoBpmn> elementosBpmn) {
 		this.elementosBpmn = elementosBpmn;
 	}
-	
+
+	public String getNombreActividad() {
+		return nombreActividad;
+	}
+
+	public void setNombreActividad(String nombreActividad) {
+		this.nombreActividad = nombreActividad;
+	}
+		
 }

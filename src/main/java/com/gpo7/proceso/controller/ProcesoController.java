@@ -25,9 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
-import com.gpo7.proceso.entity.Permiso;
-import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.ElementoBpmn;
 import com.gpo7.proceso.entity.ElementoBpmnFormulario;
 import com.gpo7.proceso.entity.ElementoFormulario;
@@ -35,9 +32,7 @@ import com.gpo7.proceso.entity.InstanciaActividad;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.entity.Respuesta;
-import com.gpo7.proceso.entity.Rol;
 import com.gpo7.proceso.entity.TipoDato;
-import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
 import com.gpo7.proceso.servicio.CargoService;
@@ -48,7 +43,6 @@ import com.gpo7.proceso.servicio.InstanciaActividadService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.RespuestaService;
-import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.TipoDatoService;
 import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
@@ -67,9 +61,8 @@ public class ProcesoController {
 	private static final String REPLY_ACTIVITY_VIEW = "proceso/responder-actividad";
 	
 	//BPMN elements
-	private static final String START_EVENT = "bpmn:StartEvent";
 	private static final String END_EVENT = "bpmn:EndEvent";
-	private static final String EXCLUSIVE_GATEWAY = "bpmn:ExclusiveGateway";
+	private static final String TASK = "bpmn:Task";
 	
 	@Autowired
 	@Qualifier("procesoServiceImpl")
@@ -279,10 +272,23 @@ public class ProcesoController {
 	@GetMapping("/procesos-activos")
 	public ModelAndView activeProcess() {
 		ModelAndView mav = new ModelAndView(ACTIVE_PROCESS_VIEW);
+
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
-		
+				
 		List<Proceso> procesos = procesoService.procesosActivos(true, usuario.getCargo().getIdCargo());
+		
+		for(Proceso p : procesos) {
+			InstanciaProceso instanciaProceso = instanciaProcesoService.findByProcesoAndUsuario(p, usuario);
+			
+			if(instanciaProceso != null) {
+				InstanciaActividad currActivity = instanciaActividadService.getCurrActivity(false, instanciaProceso.getInstanciaProcesoId());
+				p.setNombreActividad(currActivity.getElementoBpmn().getNombreElementoBpmn());
+			}else {
+				ElementoBpmn eb = elementoBpmnService.getFirstActivityElement(TASK, p.getIdProceso());
+				p.setNombreActividad(eb.getNombreElementoBpmn());
+			}
+		}
 		
 	    mav.addObject("procesos", procesos);
 	    
@@ -313,7 +319,7 @@ public class ProcesoController {
 		if(results.hasErrors()) {
 			redirAttrs.addFlashAttribute("errors", results.getAllErrors());
 			return "redirect:/proceso/index";
-		}	
+		}
 		else {
 			procesoService.update(procesoMod);
 			redirAttrs.addFlashAttribute("success", "El proceso fue modificado con éxito");
@@ -325,7 +331,6 @@ public class ProcesoController {
 	public ModelAndView responderProceso(@PathVariable("id") Integer id) {
 		ModelAndView mav = new ModelAndView(REPLY_ACTIVITY_VIEW);
 		Proceso proceso = procesoService.findById(id);
-		//ElementoBpmn currActivity = null;
 		
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
@@ -338,10 +343,12 @@ public class ProcesoController {
 		
 		InstanciaActividad currActivity = instanciaActividadService.getCurrActivity(false, instanciaProceso.getInstanciaProcesoId());
 		
+		//Si ya se respondió la última actividad
 		if(currActivity == null) {
 			return new ModelAndView("redirect:/proceso/procesos-activos");
 		}
 		
+		//Agregar la respuestas a aquellas variables que solo son de lectura
 		ElementoBpmn elementoBpmn = currActivity.getElementoBpmn();
 		for(ElementoBpmnFormulario ebf : elementoBpmn.getElementoBpmnFormularios()) {
 			if(!ebf.isPermitirEscritura()) {
@@ -369,8 +376,10 @@ public class ProcesoController {
 		
 		for(ElementoBpmn eb : proceso.getElementosBpmn()) {
 			
+			//No se crean instancias de actividad para eventos de inicio fin y/o elementos que no tengan variables asignadas
 			if(eb.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:StartEvent") ||
-					eb.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:EndEvent")) {
+					eb.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:EndEvent") ||
+					eb.getElementoBpmnFormularios().isEmpty()) {
 				continue;
 			}
 			
@@ -392,25 +401,44 @@ public class ProcesoController {
 				
 		InstanciaActividad currActivity = instanciaActividadService.findById(instanciaActId);
 		
+		//Si se envía una actividad de tipo compuerta
 		if(requestParams.get("nextActivity") != null) {
-			//int elementBpmnId = Integer.parseInt(requestParams.get("nextActivity"));
-			//ElementoBpmn elementoBpmn = elementoBpmnService.findById(elementBpmnId);
 			List<ElementoBpmn> ebs = currActivity.getElementoBpmn().getReference_next();
+			InstanciaProceso ip = currActivity.getInstanciaProceso();
+			int ebNextId = Integer.parseInt(requestParams.get("nextActivity"));
+			
+			ElementoBpmn ebNext = elementoBpmnService.findById(ebNextId);
+			InstanciaActividad nextActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebNext, ip);
 			
 			for(ElementoBpmn eb : ebs) {
-				InstanciaProceso ip = currActivity.getInstanciaProceso();
 				InstanciaActividad ia = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(eb, ip);
 				
-				if(ia.getInstanciaActividadId() != instanciaActId) {
+				if(ia.getInstanciaActividadId() != nextActivity.getInstanciaActividadId()) {
 					ia.setFinalizada(true);
 					instanciaActividadService.update(ia);
 				}
 			}
+			//Si la actividad es de tipo tarea
 		}else {
 			for(ElementoBpmnFormulario ebf : currActivity.getElementoBpmn().getElementoBpmnFormularios()) {
+
+				if(!ebf.isPermitirEscritura()) {
+					continue;
+				}
+				
 				String name = ebf.getElementoFormulario().getLabel();
 				String value = requestParams.get(name);
 				
+				//Almacenando respuesta para un elemento de tipo checkbox
+				if(ebf.getElementoFormulario().getElementoFormularioTipo().equals("checkbox")){
+					if(value == null) {
+						value = "";
+					}else {
+						value = "checked";
+					}
+				}
+				
+				//Creando el objeto respuesta
 				Respuesta respuesta = new Respuesta();
 				respuesta.setRespuesta(value);
 				respuesta.setElementoBpmnFormulario(ebf);
@@ -434,4 +462,10 @@ public class ProcesoController {
 		
 		return "redirect:/proceso/procesos-activos";
 	}
+	
 }
+/*
+ * - Validar que solo el usuario que le corresponde resulva la actividad
+ * - Validar campos vacíos
+ * - Intentar poner diagrama al momento de responder la actividad
+*/

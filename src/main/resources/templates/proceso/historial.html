@@ -24,32 +24,33 @@
         <div class="row ml-3 mr-3">
             <div class="col-md-9 offset-1">
                 <div class="card">
-
-                    <div class="card-body"></div>
-                    <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Descripcion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="instancia : ${instancias}">
-                                <th:block th:if="${usuarios == instancia.usuario}">
-                                    <th:block th:if="${instancia.finalizado}">
-                                        <td class="nombre" th:text="${instancia.proceso.procesoNombre}"></td>
-                                        <td class="estado" th:text="${instancia.proceso.procesoDescripcion}"></td>  
-                                    </th:block>     
-                                </th:block>                 
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Descripcion</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <div class="text-center" th:if="${#lists.isEmpty(instancias)}">El historial de procesos se encuentra vacío.</div>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="instancia : ${instancias}">
+                                    <th:block th:if="${usuarios == instancia.usuario}">
+                                        <th:block th:if="${instancia.finalizado}">
+                                            <td class="nombre" th:text="${instancia.proceso.procesoNombre}"></td>
+                                            <td class="estado" th:text="${instancia.proceso.procesoDescripcion}"></td>  
+                                        </th:block>     
+                                    </th:block>                 
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
