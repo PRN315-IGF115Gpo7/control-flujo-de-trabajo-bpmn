@@ -2,9 +2,8 @@ package com.gpo7.proceso.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,8 +32,6 @@ import com.gpo7.proceso.servicio.PrivilegioService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.TipoElementoService;
 import com.gpo7.proceso.servicio.VariableService;
-
-import objects.ElementoDiagrama;
 
 @RestController
 @RequestMapping("/api")
@@ -210,6 +207,7 @@ public class DataRestController {
 		return "Exito";
 	}
 	
+	//Se obtienen las instancias del proceso para mostrarselas al participante del proceso al momento de responder uno
 	@GetMapping("/proceso/{id}/instancias")
 	public List<InstanciaProceso> getInstanciasByProceso(@PathVariable("id") Integer procesoId){
 		Proceso proceso = procesoService.findById(procesoId);
@@ -220,6 +218,16 @@ public class DataRestController {
 		}
 		
 		return instanciasProceso;
+	}
+	
+	@GetMapping("/proceso/{id}")
+	public byte[] getProceso(@PathVariable("id") int id) {
+		Proceso proceso = procesoService.findById(id);
+		proceso.setVariables(null);
+		 
+		byte[] bytesEncoded = Base64.encodeBase64(proceso.getProceoXml().getBytes());
+		
+		return bytesEncoded;
 	}
 	
 }

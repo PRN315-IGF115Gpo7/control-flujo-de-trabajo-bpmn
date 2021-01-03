@@ -9,6 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
     <link rel="stylesheet" th:href="@{/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}">
+
+    <link rel="stylesheet" th:href="@{/bpmn/css/diagram-js.css}">
+    <link rel="stylesheet" th:href="@{/bpmn/css/bpmn.css}">
+    <link rel="stylesheet" th:href="@{/css/configurar-actividad.css}">
+
+    <script th:src="@{/bpmn/js/bpmn-viewer.development.js}"></script>
+    <script th:src="@{/bpmn/js/bpmn-modeler.development.js}"></script>
 </head>
 
 <body>
@@ -122,13 +129,14 @@
     </div>
     <section layout:fragment="scripts">
         <script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+        
         <script>
-            $(function() {
-				//Initialize Select2 Elements
-			    $('.select2bs4').select2({
-			      theme: 'bootstrap4'
-			    })
-			});
+            $(function () {
+                //Initialize Select2 Elements
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            });
 
             $('[data-owner]').on('click', function () {
                 idProceso = $(this).data('owner');
@@ -140,11 +148,11 @@
                 var idProceso = $(this).data('no-owner');
                 var html = '';
 
-                $.get(`/api/proceso/${idProceso}/instancias`, function(data){
+                $.get(`/api/proceso/${idProceso}/instancias`, function (data) {
                     for (let i = 0; i < data.length; i++) {
                         html += `<option value='${data[i].instanciaProcesoId}'>${data[i].usuario.nombreCompleto}</option>`;
                     }
-                    
+
                     $('#idInstanciaP').html(html);
                     $('#noOwnerForm').prop('action', `/proceso/${idProceso}/responder-actividad`);
                 });

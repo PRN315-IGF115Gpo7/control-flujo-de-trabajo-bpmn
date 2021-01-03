@@ -48,8 +48,8 @@ public class InstanciaActividadServiceImpl implements InstanciaActividadService{
 	}
 
 	@Override
-	public InstanciaActividad getActivityByCargo(int cargoId, int instanciaProcesoId) {
+	public InstanciaActividad getActivityByCargo(int cargoId, int instanciaProcesoId, boolean finalizada) {
 		// TODO Auto-generated method stub
-		return instanciaActividadJpaRepository.getActivityByCargo(cargoId, instanciaProcesoId);
+		return instanciaActividadJpaRepository.getActivityByCargo(cargoId, instanciaProcesoId, finalizada);
 	}
 }

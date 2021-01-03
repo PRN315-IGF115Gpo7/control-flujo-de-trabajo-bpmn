@@ -41,6 +41,12 @@
                             </th:block>
                         </div>
                         <div class="card-body">
+
+                            <!--Mensaje de validación-->
+                            <div th:if="${error}">
+                                <div class="alert alert-danger" th:text="${error}"></div>
+                            </div>
+
                             <!--SI ES UNA COMPUERTA-->
                             <th:block
                                 th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
@@ -68,7 +74,7 @@
                                     <h5><label>[[ ${activityElements.nombreElementoBpmn} ]]</label></h5>
                                     <div class="radio" th:each="nextElement : ${activityElements.reference_next}">
                                         <label><input type="radio" th:name="nextActivity"
-                                                th:value="${nextElement.idElementoBpmn}"> [[
+                                                th:value="${nextElement.idElementoBpmn}" required> [[
                                             ${nextElement.nombreElementoBpmn} ]] </label>
                                     </div>
                                     <small id="passwordHelpInline" class="text-muted">
@@ -91,7 +97,7 @@
                                     <label>[[ ${ebf.elementoFormulario.label} ]]</label>
                                     <input th:if="${ebf.permitirEscritura}"
                                         th:type="${ebf.elementoFormulario.elementoFormularioTipo}" class="form-control"
-                                        th:name="${ebf.elementoFormulario.label}">
+                                        th:name="${ebf.elementoFormulario.label}" required>
                                     <input th:unless="${ebf.permitirEscritura}"
                                         th:type="${ebf.elementoFormulario.elementoFormularioTipo}" class="form-control"
                                         th:value="${ebf.respuesta}" disabled>
@@ -101,14 +107,18 @@
                                 <!-- Si es de tipo Checkbox -->
                                 <div class="form-check"
                                     th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
-                                    <label class="form-check-label" th:if="${ebf.permitirEscritura}">
+                                    <!--Se permite escritura-->
+                                    <label th:if="${ebf.permitirEscritura}" class="form-check-label">
                                         <input type="checkbox" class="form-check-input"
-                                            th:name="${ebf.elementoFormulario.label}">
+                                            th:name="${ebf.elementoFormulario.label}" required>
                                         [[ ${ebf.elementoFormulario.label} ]]
                                     </label>
-                                    <label class="form-check-label" th:unless="${ebf.permitirEscritura}">
-                                        <input type="checkbox" class="form-check-input"
-                                            th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}" disabled>
+                                    <!--No se permite escritura-->
+                                    <label th:unless="${ebf.permitirEscritura}" class="form-check-label mb-2">
+                                        <input th:if="${ebf.respuesta == 'checked'}" type="checkbox" class="form-check-input"
+                                            th:name="${ebf.elementoFormulario.label}" checked disabled>
+                                        <input th:unless="${ebf.respuesta == 'checked'}" type="checkbox" class="form-check-input"
+                                            th:name="${ebf.elementoFormulario.label}" disabled>
                                         [[ ${ebf.elementoFormulario.label} ]]
                                     </label>
                                 </div>
