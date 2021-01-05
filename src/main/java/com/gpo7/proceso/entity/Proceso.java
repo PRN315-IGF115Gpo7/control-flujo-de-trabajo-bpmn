@@ -72,8 +72,6 @@ public class Proceso {
 	@JsonIgnore
 	private List<ElementoBpmn> elementosBpmn = new ArrayList();
 
-	@Transient //No se guarda en la base
-	private String nombreActividad;
 	/**
 	 * 
 	 */
@@ -181,14 +179,6 @@ public class Proceso {
 
 	public void setElementosBpmn(List<ElementoBpmn> elementosBpmn) {
 		this.elementosBpmn = elementosBpmn;
-	}
-
-	public String getNombreActividad() {
-		return nombreActividad;
-	}
-
-	public void setNombreActividad(String nombreActividad) {
-		this.nombreActividad = nombreActividad;
 	}
 
 	public Cargo getCargo() {

@@ -61,6 +61,7 @@ public class ProcesoController {
 	private static final String REPLY_ACTIVITY_VIEW = "proceso/responder-actividad";
 
 	// BPMN elements
+	private static final String START_EVENT = "bpmn:StartEvent";
 	private static final String END_EVENT = "bpmn:EndEvent";
 	private static final String TASK = "bpmn:Task";
 	private static final String EXCLUSIVE_GATEWAY = "bpmn:ExclusiveGateway";
@@ -273,30 +274,11 @@ public class ProcesoController {
 	@GetMapping("/procesos-activos")
 	public ModelAndView activeProcess() {
 		ModelAndView mav = new ModelAndView(ACTIVE_PROCESS_VIEW);
-
+		
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
-
+		
 		List<Proceso> procesos = procesoService.procesosActivos(true, usuario.getCargo().getIdCargo());
-
-		for (Proceso p : procesos) {
-			InstanciaProceso instanciaProceso = instanciaProcesoService.findByProcesoAndUsuario(p, usuario);
-
-			if (instanciaProceso != null) {
-				InstanciaActividad currActivity = instanciaActividadService.getActivityByCargo(
-						usuario.getCargo().getIdCargo(), instanciaProceso.getInstanciaProcesoId(), false);
-
-				if (currActivity == null) {
-					p.setNombreActividad("No hay más actividades");
-				} else {
-					p.setNombreActividad(currActivity.getElementoBpmn().getNombreElementoBpmn());
-				}
-			} else {
-				ElementoBpmn eb = elementoBpmnService.getFirstActivityElement(TASK, p.getIdProceso(),
-						usuario.getCargo().getIdCargo());
-				p.setNombreActividad(eb.getNombreElementoBpmn());
-			}
-		}
 
 		mav.addObject("procesos", procesos);
 		mav.addObject("cargo", usuario.getCargo());
@@ -345,6 +327,10 @@ public class ProcesoController {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 		InstanciaProceso instanciaProceso = instanciaProcesoService.findByProcesoAndUsuario(proceso, usuario);
+		
+		ElementoBpmn firstElement = elementoBpmnService.findByProcesoAndElement(proceso, START_EVENT);
+		proceso.setCargo(firstElement.getCargo());
+		procesoService.update(proceso);
 
 		// Si aún no hay instancias del proceso creadas y un participante intenta
 		// responder la actividad
@@ -353,7 +339,7 @@ public class ProcesoController {
 			return new ModelAndView("redirect:/proceso/procesos-activos");
 		}
 
-		// Si es primera vez que ingresa al proceso y es dueño se crea la instancia del
+		// Si es primerpublica vez que ingresa al proceso y es dueño se crea la instancia del
 		// proceso y actividades
 		if (instanciaProceso == null && isProcessOwner(proceso)) {
 			instanciaProceso = crearInstancia(proceso, usuario);
@@ -398,6 +384,8 @@ public class ProcesoController {
 		}
 
 		mav.addObject("currActivity", currActivity);
+		mav.addObject("currElement", currActivity.getElementoBpmn().getIdElementoDiagramaBpmn());
+		mav.addObject("diagramXml", proceso.getProceoXml());
 		mav.addObject("activityElements", elementoBpmn);
 
 		return mav;

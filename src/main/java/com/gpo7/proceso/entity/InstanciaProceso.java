@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,6 +40,9 @@ public class InstanciaProceso {
 	@OneToMany(mappedBy = "instanciaProceso", fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<InstanciaActividad> instanciasActividad = new ArrayList();
+	
+	@Transient //No se guarda en la base
+	private String nombreActividad;
 		
 	public InstanciaProceso() {}
 
@@ -92,5 +96,13 @@ public class InstanciaProceso {
 		}
 		
 		return count;
+	}
+
+	public String getNombreActividad() {
+		return nombreActividad;
+	}
+
+	public void setNombreActividad(String nombreActividad) {
+		this.nombreActividad = nombreActividad;
 	}
 }

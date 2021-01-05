@@ -6,6 +6,9 @@ import java.util.List;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,7 @@ import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.ElementoBpmn;
 import com.gpo7.proceso.entity.ElementoBpmnFormulario;
 import com.gpo7.proceso.entity.ElementoFormulario;
+import com.gpo7.proceso.entity.InstanciaActividad;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Privilegio;
 import com.gpo7.proceso.entity.Proceso;
@@ -28,9 +32,12 @@ import com.gpo7.proceso.servicio.CargoService;
 import com.gpo7.proceso.servicio.ElementoBpmnFormularioService;
 import com.gpo7.proceso.servicio.ElementoBpmnService;
 import com.gpo7.proceso.servicio.ElementoFormularioService;
+import com.gpo7.proceso.servicio.InstanciaActividadService;
+import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.PrivilegioService;
 import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.TipoElementoService;
+import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
 
 @RestController
@@ -72,6 +79,18 @@ public class DataRestController {
 	@Autowired
 	@Qualifier("cargoServiceImpl")
 	private CargoService cargoService;
+	
+	@Autowired
+	@Qualifier("instanciaProcesoServiceImpl")
+	private InstanciaProcesoService instanciaProcesoService;
+	
+	@Autowired
+	@Qualifier("instanciaActividadServiceImpl")
+	private InstanciaActividadService instanciaActividadService;
+	
+	@Autowired
+	@Qualifier("usuarioServiceImpl")
+	private UsuarioService usuarioService;
 	
 	@GetMapping("/rol/{idRol}/recurso/{idRecurso}/no-asignados")
 	public List<Privilegio> privilegiosNoAsignadosByRecurso(@PathVariable("idRecurso") int idRecurso, @PathVariable("idRol") int idRol){
@@ -213,7 +232,15 @@ public class DataRestController {
 		Proceso proceso = procesoService.findById(procesoId);
 		List<InstanciaProceso> instanciasProceso = proceso.getInstanciasProceso();
 		
-		for(InstanciaProceso ip : instanciasProceso) {
+		for (InstanciaProceso ip : instanciasProceso) {
+			InstanciaActividad currActivity = instanciaActividadService.getCurrActivity(false, ip.getInstanciaProcesoId());
+			
+			if (currActivity == null) {
+				ip.setNombreActividad("Finalizado");
+			} else {
+				ip.setNombreActividad(currActivity.getElementoBpmn().getNombreElementoBpmn());
+			}
+			
 			ip.setProceso(null);
 		}
 		
@@ -230,4 +257,22 @@ public class DataRestController {
 		return bytesEncoded;
 	}
 	
+	@GetMapping("/proceso/{idProc}/elementos")
+	public List<ElementoBpmn> getElementosByProcesoAndCargo(@PathVariable("idProc") int idProc){
+		Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.findByUsername(loggedInUser.getName());
+		
+		List<ElementoBpmn> elementosBpmn = elementoBpmnService.findByProcesoAndCargo(idProc, usuario.getCargo().getIdCargo());
+		
+		for(ElementoBpmn eb : elementosBpmn) {
+			eb.setCargo(null);
+			eb.setProceso(null);
+			eb.setReference_next(null);
+			eb.setReference_previous(null);
+			eb.setElementoBpmnFormularios(null);
+			eb.setTipoElementoBpmn(null);
+		}
+		
+		return elementosBpmn;
+	}
 }

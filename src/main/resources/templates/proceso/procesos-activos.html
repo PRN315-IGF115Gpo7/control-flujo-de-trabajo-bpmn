@@ -16,6 +16,13 @@
 
     <script th:src="@{/bpmn/js/bpmn-viewer.development.js}"></script>
     <script th:src="@{/bpmn/js/bpmn-modeler.development.js}"></script>
+
+    <style>
+        .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
+            stroke: #202122 !important; /* color elements as green */
+            fill: #5BC0DE !important; /* color elements as green */
+        }
+    </style>
 </head>
 
 <body>
@@ -45,7 +52,6 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Descripcion</th>
-                                    <th>Actividad</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -53,14 +59,18 @@
                                 <tr th:each="proceso : ${procesos}">
                                     <td th:text="${proceso.procesoNombre}"></td>
                                     <td th:text="${proceso.procesoDescripcion}"></td>
-                                    <td th:text="${proceso.nombreActividad}"></td>
                                     <td>
-                                        <button th:if="${proceso.cargo.idCargo == cargo.idCargo}" class="btn btn-sm btn-info" title="Responder Actividad" th:attr="data-owner=${proceso.idProceso}">
-                                            <i class="fas fa-sign-in-alt"></i>
-                                        </button>
-                                        <button th:unless="${proceso.cargo.idCargo == cargo.idCargo}" class="btn btn-sm btn-info" title="Responder Actividad" th:attr="data-no-owner=${proceso.idProceso}">
-                                            <i class="fas fa-sign-in-alt"></i>
-                                        </button>
+                                        <div class="btn-group">
+                                            <button th:if="${proceso.cargo.idCargo == cargo.idCargo}" class="btn btn-sm btn-info" title="Responder Actividad" th:attr="data-owner=${proceso.idProceso}">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                            </button>
+                                            <button th:unless="${proceso.cargo.idCargo == cargo.idCargo}" class="btn btn-sm btn-info" title="Responder Actividad" th:attr="data-no-owner=${proceso.idProceso}">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-secondary mx-2" title="Ver diagrama" th:attr="data-diagram=${proceso.idProceso}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -68,7 +78,6 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Descripcion</th>
-                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </tfoot>
@@ -126,10 +135,88 @@
             </div>
         </div>
 
+        <!--Modal para mostrar el diagrama-->
+        <div class="modal m-5" tabindex="-1" role="document" id="modalDiagram">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="btn-group">
+                            <h5><span class="badge badge-info mr-3">Mis actividades</span></h5>
+                            <button class="btn btn-sm btn-light" id="zoomIn" title="Zoom in"><i class="fas fa-plus"></i></button>
+                            <button class="btn btn-sm btn-light" id="zoomOut" title="Zoom out"><i class="fas fa-minus"></i></button>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="modalBody" class="modal-body text-center" style="height: 400px;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
     <section layout:fragment="scripts">
         <script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
         
+        <script>
+            $('[data-diagram]').on('click', function () {
+                $('#modalBody').html('<div id="canvas" style="height: 100%;"></div>');
+
+                var baseUrl = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+                var diagramUrl = `${baseUrl}/bpmn/base.bpmn`;
+                var procesoId = $(this).data('diagram');
+
+                // modeler instance
+                var bpmnModeler = new BpmnJS({
+                    container: '#canvas',
+                    keyboard: {
+                        bindTo: window
+                    }
+                });
+
+                $('#zoomIn').on('click', function(){
+                    bpmnModeler.get('zoomScroll').stepZoom(1);
+                })
+
+                $('#zoomOut').on('click', function(){
+                    bpmnModeler.get('zoomScroll').stepZoom(-1);
+                })
+
+                $.get('/api/proceso/' + procesoId, function (data) {
+                    var xml = atob(data);
+
+                    // load external diagram file via AJAX and open it
+                    $.get(diagramUrl, openDiagram(xml), 'text');
+
+                    async function openDiagram(bpmnXML) {
+
+                        try {
+                            await bpmnModeler.importXML(bpmnXML);
+                            var canvas = bpmnModeler.get('canvas');
+                            
+                            $.get(`/api/proceso/${procesoId}/elementos`, function(data){
+                                data.forEach(eb => {
+                                    canvas.addMarker(eb.idElementoDiagramaBpmn, 'highlight');
+                                });
+                            });
+                            
+                            canvas.zoom('fit-viewport');
+                        } catch (err) {
+                            console.error('could not import BPMN 2.0 diagram', err);
+                        }
+
+                    }
+                });
+
+                $('.djs-palette, .bjs-powered-by').hide();
+                $('#modalDiagram').modal('show');
+            });
+
+        </script>
+
         <script>
             $(function () {
                 //Initialize Select2 Elements
@@ -150,7 +237,7 @@
 
                 $.get(`/api/proceso/${idProceso}/instancias`, function (data) {
                     for (let i = 0; i < data.length; i++) {
-                        html += `<option value='${data[i].instanciaProcesoId}'>${data[i].usuario.nombreCompleto}</option>`;
+                        html += `<option value='${data[i].instanciaProcesoId}'>${data[i].usuario.nombreCompleto}  →  ${data[i].nombreActividad}</option>`;
                     }
 
                     $('#idInstanciaP').html(html);

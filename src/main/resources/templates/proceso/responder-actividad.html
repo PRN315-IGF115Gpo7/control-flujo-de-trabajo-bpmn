@@ -7,7 +7,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/bpmn/css/diagram-js.css}">
+    <link rel="stylesheet" th:href="@{/bpmn/css/bpmn.css}">
+    <link rel="stylesheet" th:href="@{/css/configurar-actividad.css}">
 
+    <script th:src="@{/bpmn/js/bpmn-viewer.development.js}"></script>
+    <script th:src="@{/bpmn/js/bpmn-modeler.development.js}"></script>
+
+    <style>
+        .highlight:not(.djs-connection) .djs-visual> :nth-child(1) {
+            stroke: #202122 !important;
+            /* color elements as green */
+            fill: #34eb0f !important;
+            /* color elements as green */
+        }
+    </style>
 </head>
 
 <body>
@@ -21,24 +35,32 @@
     </ol>
 
     <div layout:fragment="content">
-
-        <br>
-        <div class="row ml-5">
-            <div class="col-md-6 offset-2">
+        <div class="row">
+            <div class="col-md-5 offset-3" id="respuestas">
                 <div class="card">
                     <form method="POST" th:action="@{/proceso/persistir-respuestas}">
                         <input name="instanciaActividadId" type="hidden"
                             th:value="${currActivity.instanciaActividadId}">
                         <div class="card-header text-left">
-                            <th:block
-                                th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
-                                <h3 class="card-title"><b>Compuerta de decisión</b></h3>
-                            </th:block>
-                            <th:block
-                                th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
-                                <h3 class="card-title">Actividad: <b>[[ ${activityElements.nombreElementoBpmn} ]]</b>
-                                </h3>
-                            </th:block>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <th:block
+                                        th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                                        <h3 class="card-title"><b>Compuerta de decisión</b></h3>
+                                    </th:block>
+                                    <th:block
+                                        th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+                                        <h3 class="card-title">Actividad: <b>[[ ${activityElements.nombreElementoBpmn}
+                                                ]]</b>
+                                        </h3>
+                                    </th:block>
+                                </div>
+                                <div class="col-md-4 text-right">
+                                    <span id="show" title="Ver diagrama"><i class="fas fa-eye"></i></span>
+                                    <span id="hide" style="display: none;" title="Ocultar diagrama"><i
+                                            class="fas fa-eye-slash"></i></span>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
 
@@ -50,20 +72,23 @@
                             <!--SI ES UNA COMPUERTA-->
                             <th:block
                                 th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
-                                
+
                                 <!--Variables que son solo de lectura-->
                                 <th:block th:each="ebf : ${activityElements.elementoBpmnFormularios}">
-                                    <div class="form-group" th:unless="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
+                                    <div class="form-group"
+                                        th:unless="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
                                         <label for="exampleInputEmail1">[[ ${ebf.elementoFormulario.label} ]]</label>
                                         <input th:type="${ebf.elementoFormulario.elementoFormularioTipo}"
                                             class="form-control" disabled th:value="${ebf.respuesta}">
                                     </div>
-                                    <div class="form-check" th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
-                                    <label class="form-check-label">
-                                        <input type="checkbox" class="form-check-input"
-                                            th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}" disabled>
-                                        [[ ${ebf.elementoFormulario.label} ]]
-                                    </label>
+                                    <div class="form-check"
+                                        th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input"
+                                                th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}"
+                                                disabled>
+                                            [[ ${ebf.elementoFormulario.label} ]]
+                                        </label>
                                     </div>
                                 </th:block>
                                 <!-- FIN - Variables que son solo de lectura-->
@@ -90,7 +115,7 @@
                             <th:block
                                 th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}"
                                 th:each="ebf : ${activityElements.elementoBpmnFormularios}">
-                                
+
                                 <!-- Si no es de tipo Checkbox -->
                                 <div class="form-group"
                                     th:unless="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
@@ -115,10 +140,11 @@
                                     </label>
                                     <!--No se permite escritura-->
                                     <label th:unless="${ebf.permitirEscritura}" class="form-check-label mb-2">
-                                        <input th:if="${ebf.respuesta == 'checked'}" type="checkbox" class="form-check-input"
-                                            th:name="${ebf.elementoFormulario.label}" checked disabled>
-                                        <input th:unless="${ebf.respuesta == 'checked'}" type="checkbox" class="form-check-input"
-                                            th:name="${ebf.elementoFormulario.label}" disabled>
+                                        <input th:if="${ebf.respuesta == 'checked'}" type="checkbox"
+                                            class="form-check-input" th:name="${ebf.elementoFormulario.label}" checked
+                                            disabled>
+                                        <input th:unless="${ebf.respuesta == 'checked'}" type="checkbox"
+                                            class="form-check-input" th:name="${ebf.elementoFormulario.label}" disabled>
                                         [[ ${ebf.elementoFormulario.label} ]]
                                     </label>
                                 </div>
@@ -134,10 +160,88 @@
                     </form>
                 </div>
             </div>
+            <div class="col-md-7 border border-secondary" id="diagramContainer"
+                style="min-height: 400px; display: none; position: relative;">
+                <div class="btn-group" style="z-index:100; position: fixed;">
+                    <button class="btn btn-sm btn-light" id="zoomIn" title="Zoom in"><i class="fas fa-plus"></i></button>
+                    <button class="btn btn-sm btn-light" id="zoomOut" title="Zoom out"><i class="fas fa-minus"></i></button>
+                </div>
+                <div id="canvas" style="height: 100%;"></div>
+            </div>
         </div>
 
     </div>
     <section layout:fragment="scripts">
+        <script th:inline="javascript">
+            $(document).ready(function () {
+                /*<![CDATA[*/
+                let elementoBpmn = /*[[${currElement}]]*/ null;
+                let xml = /*[[${diagramXml}]]*/ null;
+                /*]]>*/
+
+                var baseUrl = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+                var diagramUrl = `${baseUrl}/bpmn/base.bpmn`;
+
+                // modeler instance
+                var bpmnModeler = new BpmnJS({
+                    container: '#canvas',
+                    keyboard: {
+                        bindTo: window
+                    }
+                });
+
+                $('#zoomIn').on('click', function(){
+                    bpmnModeler.get('zoomScroll').stepZoom(1);
+                })
+
+                $('#zoomOut').on('click', function(){
+                    bpmnModeler.get('zoomScroll').stepZoom(-1);
+                })
+
+                // load external diagram file via AJAX and open it
+                $.get(diagramUrl, openDiagram(xml), 'text');
+
+                async function openDiagram(bpmnXML) {
+
+                    try {
+                        await bpmnModeler.importXML(bpmnXML);
+                        var canvas = bpmnModeler.get('canvas');
+
+                        bpmnModeler.get('zoomScroll').reset();
+                        var shape = bpmnModeler.get('elementRegistry').get(elementoBpmn);
+
+                        canvas.addMarker(elementoBpmn, 'highlight');
+                        bpmnModeler.get('canvas').zoom(1.5, shape);
+                    } catch (err) {
+                        console.error('could not import BPMN 2.0 diagram', err);
+                    }
+
+                }
+                $('.djs-palette, .bjs-powered-by').hide();
+            });
+
+            // component method
+            /*function zoomIn() {
+                this.BpmnJS.get('zoomScroll').stepZoom(1);
+            }*/
+
+            $('#show').on('click', function () {
+                $(this).hide();
+                $('#hide').show();
+                $('body').prop("class", "sidebar-mini layout-fixed sidebar-collapse");
+                $('#respuestas').prop("class", "col-md-5");
+                $('#diagramContainer').toggle(500);
+            });
+
+            $('#hide').on('click', function () {
+                $(this).hide();
+                $('#show').show();
+                $('#diagramContainer').toggle(500, function () {
+                    $('body').prop("class", "sidebar-mini layout-fixed");
+                    $('#respuestas').prop("class", "col-md-5 offset-3")
+                });
+            });
+        </script>
     </section>
 
 </body>

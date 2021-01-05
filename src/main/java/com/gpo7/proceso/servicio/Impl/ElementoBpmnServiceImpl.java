@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.ElementoBpmn;
 import com.gpo7.proceso.entity.Proceso;
 import com.gpo7.proceso.repository.ElementoBpmnJpaRepository;
@@ -63,5 +64,11 @@ public class ElementoBpmnServiceImpl implements ElementoBpmnService{
 	public ElementoBpmn getFirstActivityElement(String elementType, int procesoId, int cargoId) {
 		// TODO Auto-generated method stub
 		return elementoBpmnJpaRepository.getFirstActivityElement(elementType, procesoId, cargoId);
+	}
+
+	@Override
+	public List<ElementoBpmn> findByProcesoAndCargo(int idProc, int idCargo) {
+		// TODO Auto-generated method stub
+		return elementoBpmnJpaRepository.findByProcesoAndCargo(idProc, idCargo);
 	}
 }
