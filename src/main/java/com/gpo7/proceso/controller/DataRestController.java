@@ -8,13 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.gpo7.proceso.entity.Cargo;
 import com.gpo7.proceso.entity.ElementoBpmn;
@@ -39,6 +40,8 @@ import com.gpo7.proceso.servicio.ProcesoService;
 import com.gpo7.proceso.servicio.TipoElementoService;
 import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
+
+import objects.ElementoDiagrama;
 
 @RestController
 @RequestMapping("/api")
@@ -91,6 +94,9 @@ public class DataRestController {
 	@Autowired
 	@Qualifier("usuarioServiceImpl")
 	private UsuarioService usuarioService;
+	
+	// BPMN elements
+	private static final String START_EVENT = "bpmn:StartEvent";
 	
 	@GetMapping("/rol/{idRol}/recurso/{idRecurso}/no-asignados")
 	public List<Privilegio> privilegiosNoAsignadosByRecurso(@PathVariable("idRecurso") int idRecurso, @PathVariable("idRol") int idRol){
@@ -184,6 +190,18 @@ public class DataRestController {
 		this.elementoBpmnFormularioService.store(elementoBpmnFormulario);
 		
 		return "Exito";
+	}
+	
+	@PostMapping("/finalizar-proceso")
+	public RedirectView finalizarProceso(
+			@RequestParam("procesoId") int procesoId) {
+		Proceso proceso = this.procesoService.findById(procesoId);
+		ElementoBpmn firstElement = elementoBpmnService.findByProcesoAndElement(proceso, START_EVENT);
+		proceso.setCargo(firstElement.getCargo());
+		proceso.setProcesoActivo(true);
+		procesoService.update(proceso);
+		System.out.println("Hola");
+		return new RedirectView("/proceso/index");
 	}
 	
 	@GetMapping("/obtener-variables-elemento/{procesoId}/{elementoBpmnId}")
