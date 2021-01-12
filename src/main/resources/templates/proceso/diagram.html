@@ -13,6 +13,11 @@
   
   <script th:src="@{/bpmn/js/bpmn-viewer.development.js}"></script>
   <script th:src="@{/bpmn/js/bpmn-modeler.development.js}"></script>
+  
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" th:href="@{/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css}">
+  <!-- Toastr -->
+  <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
 </head>
 
 <body>
@@ -27,12 +32,9 @@
 	
 	<div style="position: relative;">
 		<h5 id="nombre-proceso" ></h5>
-		<button class="btn btn-success btn-validar"><i class="far fa-check-square fa-lg"></i></button>
-		<button class="btn btn-primary btn-automatizar" disabled><i class="fas fa-cog fa-lg"></i></button>
-		<button id="btn-guardar-cambios" class="btn btn-dark btn-guardar"><i class="far fa-save fa-lg"></i></button>
-		
-		
-		
+		<button class="btn btn-success btn-validar" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
+		<button class="btn btn-primary btn-automatizar" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
+		<button id="btn-guardar-cambios" class="btn btn-dark btn-guardar" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
 	</div>
 	
 	<div id="canvas" style="height: 100%"></div>
@@ -46,7 +48,10 @@
 				<input type="hidden" id="hiddenElementoBpmnId" value=""/>
 				<div class="form-group">
 					<label id="tipo-elemento-bpmn"></label>
-					<input class="form-control" id="nombre-actividad" disabled/>
+					<div class="row">
+					<div class="col-md-9"><input class="form-control" id="nombre-actividad"/></div>
+					<div class="col-md-3 pl-4"><button id="btn-guardar-name" class="btn btn-dark" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button></div>
+					</div>
 				</div>
 				<div id="esDivergenteDiv" class="custom-control custom-checkbox mb-2">
 					<input type="checkbox" class="custom-control-input" id="esDivergente" onclick="cambiarEstadoCompuerta()"> 
@@ -115,6 +120,10 @@
 
 
 	<section layout:fragment="scripts">
+		<!-- Toastr -->
+		<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+		<!-- SweetAlert2 -->
+		<script th:src="@{/plugins/sweetalert2/sweetalert2.min.js}"></script>
 	
 		<script th:inline="javascript">
 		
@@ -168,12 +177,9 @@
 				await bpmnModeler.importXML(xmlBase);
 				// access modeler components
 				var canvas = bpmnModeler.get('canvas');
-				//var overlays = bpmnModeler.get('overlays');
 				
 				//Evento click de los elementos
 				canvas._eventBus.on('element.click', function(e) {
-					// e.element = the model element
-					// e.gfx = the graphical element
 					hideForm();
 					
 					//Set Elemento seleccionado
@@ -226,7 +232,6 @@
 				});
 				
 				canvas._eventBus.on("shape.added", function(e){
-					console.log("add");
 					if(e.element.type === "bpmn:Task" || e.element.type === "bpmn:ExclusiveGateway" ||
 							e.element.type === "bpmn:StartEvent" || e.element.type === "bpmn:EndEvent"){
 						createElementoBpmn(e.element.id, e.element.id, e.element.type, proceso.idProceso);
@@ -234,6 +239,11 @@
 							e.element.businessObject.name = e.element.id;
 						}
 					}
+					if(e.element.type === "bpmn:Lane"){
+						e.element.businessObject.name = e.element.id;
+					}
+					
+					$("#btn-guardar-cambios").removeAttr("disabled");
 				});
 				
 				// zoom to fit full viewport
@@ -265,15 +275,52 @@
 			
 			$("#btn-guardar-cambios").click(function(){
 				setProcesoXml();
+				$("#btn-guardar-cambios").attr("disabled", true);
+				toastr.success("Cambios Realizados Correctamente"); 
 			});
 			
 			$("#btn-set-participante").click(function(){
 				setParticipante();
 			});
 			
+			$("#btn-guardar-name").click(function(){
+				var name = $("#nombre-actividad").val();
+				if(name != ""){
+					createElementoBpmn(elementoSeleccionado.id, name, elementoSeleccionado.type, proceso.idProceso);
+					var canvas = bpmnModeler.get('canvas');
+					var modeling = bpmnModeler.get('modeling');
+					var e = canvas._elementRegistry.get(elementoSeleccionado.id);
+					modeling.updateProperties(e,{
+						"name": name
+					});
+					setProcesoXml();
+					$("#btn-guardar-name").attr("disabled", true);
+					toastr.success("Nombre de actividad actualizado con éxito")
+				}else{
+					toastr.warning("Es necesario identificar con un nombre a la actividad"); 
+				}
+				
+			});
+			
+			$("#nombre-actividad").keyup(function(){
+				$("#btn-guardar-name").removeAttr("disabled");
+			});
+			
+			
 			$(".btn-validar").click(function(){
 				setProcesoXml();
 				validarProceso();
+				console.log("finalizar btn");
+			});
+			
+			$(".btn-automatizar").click(function(){
+				setProcesoXml();
+				automatizarProceso();
+				setTimeout(function() { 
+					finalizarProceso();
+					console.log("finalizado");
+			    }, 2000);
+				toastr.success("Proceso Finalizado"); 
 			})
 		       
 			
@@ -284,6 +331,7 @@
 				$(".config-actividad").removeClass("show-form");
 				$("#set-participante").addClass("not-show");
 				$("#agregar-variable").addClass("not-show");
+				$("#btn-guardar-name").attr("disabled", true);
 			}
 			
 			/*
@@ -349,6 +397,7 @@
 					"id" : elementoSeleccionado.id,
 					"id_cargo" : $("#idEntidad").val()
 				});
+				toastr.success("Se ha asignado participante de manera correcta");
 			}
 			
 
@@ -451,12 +500,97 @@
 				});
 			}
 			
-			function validarProceso(){
+			async function validarProceso(){
+				var resultados = [];
+				var elementos = bpmnModeler.get('elementRegistry').getAll();
+				var i = 0;
+				var j = 0;
+				var elemento;
+				var elementosBpmnsNext;
+				var cantElelementosEventStart = 0;
+				var cantElelementosEventEnd = 0;
+				
+				for(i = 0; i < elementos.length; i++){
+					elemento = elementos[i];
+					if(elemento != undefined){
+						
+						if(elemento.type === "bpmn:Task" || elemento.type === "bpmn:ExclusiveGateway" ||
+								elemento.type === "bpmn:StartEvent"){
+							
+							//validar que se posea elementos siguientes
+							elementosBpmnsNext = getElementsNext(elemento);
+							if(elementosBpmnsNext.length <= 0){
+								resultados.push(`El elemento ${elemento.businessObject.name} debe poseer un elemento siguiente`);
+							}
+							
+							//validar que las actividades tengan al menos una variable
+							if(elemento.type === "bpmn:Task"){
+								var result = await getCantidadVariables(elemento.id)
+								if(result){
+									resultados.push(`El elemento ${elemento.id} debe poseer al menos una variable asignada`);
+								}
+							}
+						}
+						
+						//Verificar que se tenga particapante seleccionado
+						if(elemento.type === "bpmn:Lane"){
+							var existeParticipante = false;
+							for (j = 0; j < participantes.length; j++) {
+								if(participantes[j]["id"] === elemento.id){
+									existeParticipante = true;
+									break
+								}
+							}
+							if(!existeParticipante){
+								resultados.push(`No se ha seleccionado participante para el elemento Lane: ${elemento.businessObject.name}`);
+							}
+						}
+						
+						if(elemento.type === "bpmn:EndEvent")
+							cantElelementosEventEnd++;
+						
+						if(elemento.type === "bpmn:StartEvent")
+							cantElelementosEventStart++;
+					}
+				}
+				
+				if(cantElelementosEventStart != 1) 
+					resultados.push("Debe de existir unicamente un evento de inicio");
+				if(cantElelementosEventEnd != 1) 
+					resultados.push("Debe de existir al menos un evento de finalización");
+				
+				if(resultados.length==0){
+					toastr.success("Proceso Configurado Correctamente"); 
+					$(".btn-automatizar").removeAttr("disabled");
+				}else{
+					var htmlObservaciones =`<ul>`;
+					var i = 0;
+					for(i = 0; i < resultados.length; i++) htmlObservaciones += `<li>${resultados[i]}</li>`;
+					htmlObservaciones += `</ul>`;
+					$(document).Toasts('create', {
+				        class: 'bg-warning', 
+				        title: 'Configuración Incorrecta',
+				        subtitle: 'Observciones',
+				        body: htmlObservaciones
+	      			});
+				}
+				console.log("finalizar resultados");
+
+				return resultados;
+			}
 			
+			async function getCantidadVariables(id){
+				var result = await $.get("/api/obtener-variables-elemento/" + proceso.idProceso + "/" + id);
+				return (result.length <=0);
+			}
+			
+		    function automatizarProceso(){
+				var elemento;
+				var elementosBpmnsNext
 				var elementos = bpmnModeler.get('elementRegistry').getAll();
 				var i = 0;
 				for(i = 0; i <= elementos.length; i++){
-					var elemento = elementos[i];
+					elemento = elementos[i];
 					if(elemento != undefined){
 						if(elemento.type === "bpmn:Task" || elemento.type === "bpmn:ExclusiveGateway" ||
 								elemento.type === "bpmn:StartEvent" || elemento.type === "bpmn:EndEvent"){
@@ -470,23 +604,18 @@
 								}
 								$.post("/api/elemento-bpmn/update-participante", body , function(data, status){
 									console.log("Estado: " + status);
-									console.log(data);
 								});
 								
-								$(".btn-automatizar").removeAttr("disabled");
 							}else{
-								alert('No ha seleccionado participante');
 								break;
 							}
 							
-							var elementosBpmnsNext = getElementsNext(elemento);
-							
+							//set elementos siguientes
+							elementosBpmnsNext = getElementsNext(elemento);
 							if(elementosBpmnsNext != undefined){
 								var j = 0;
 								for(j = 0; j <= elementosBpmnsNext.length; j++){
 									if(elementosBpmnsNext[j] != undefined){
-										console.log("entra for");
-										console.log("J " + elementosBpmnsNext[j]);
 										var body = {
 												"id_diagrama_elemento_bpmn" : elemento.id,
 												"id_proceso" : proceso.idProceso,
@@ -494,19 +623,21 @@
 										}
 										$.post("/api/elemento-bpmn/update-elemento-next", body , function(data, status){
 											console.log("Estado: " + status);
-											console.log(data);
 										});
 									}
 								}
-								
 							}
-						}
-							
+						}	
 					}
 				}
 				
 			}
-			
+		    
+		    function finalizarProceso(){
+		    	$.post("/api/finalizar-proceso", {"procesoId" : proceso.idProceso}, function(data, status){
+		    		$(location).attr('href',window.location.origin + '/proceso/index');
+		    	});
+		    }
 			
 			function getCargo(idLane){
 				var idCargo = 0;
@@ -523,14 +654,12 @@
 				var sequencesFlow = elemento.businessObject.outgoing;
 				var i = 0;
 				if(sequencesFlow != undefined){
-					for(i = 0; i <= sequencesFlow.length; i++){
+					for(i = 0; i < sequencesFlow.length; i++){
 						if(sequencesFlow[i] != undefined){
-							console.log(sequencesFlow[i].targetRef.id);
 							elementsNext.push(sequencesFlow[i].targetRef.id);
 						}
 					}
 				}
-				console.log(elementsNext);
 				return elementsNext;
 			}
 			
@@ -550,10 +679,6 @@
 					$("#divVariables").addClass('d-none');
 				}
 			}
-			
-			
-			
-			
 		</script>
     	<svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>
 	</section>

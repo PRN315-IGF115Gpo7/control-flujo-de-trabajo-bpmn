@@ -2,7 +2,6 @@ package com.gpo7.proceso.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,9 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -51,26 +47,11 @@ public class ElementoBpmn {
 	@JsonIgnore
 	private List<ElementoBpmnFormulario> elementoBpmnFormularios = new ArrayList();
 	
-	/*
 	@ManyToMany
-	@JoinTable(name="sequences",
-	 joinColumns=@JoinColumn(name="elemento_bpmn_anterior"),
-	 inverseJoinColumns=@JoinColumn(name="elemento_bpmn_siguiente")
-	)
-	private List<ElementoBpmn> siguientes;
+	private List<ElementoBpmn> reference_next;
 
-	@ManyToMany
-	@JoinTable(name="sequences",
-	 joinColumns=@JoinColumn(name="elemento_bpmn_siguiente"),
-	 inverseJoinColumns=@JoinColumn(name="elemento_bpmn_anterior")
-	)
-	private List<ElementoBpmn> anteriores;*/
-	
-	 @ManyToMany
-	 private List<ElementoBpmn> reference_next;
-
-	 @ManyToMany(mappedBy="reference_next")
-	 private List<ElementoBpmn> reference_previous;
+	@ManyToMany(mappedBy="reference_next")
+	private List<ElementoBpmn> reference_previous;
 	
 	/**
 	 * 
@@ -96,8 +77,6 @@ public class ElementoBpmn {
 		this.proceso = proceso;
 	}
 	
-	
-
 	/**
 	 * @param nombreElementoBpmn
 	 * @param idElementoDiagramaBpmn
@@ -137,13 +116,9 @@ public class ElementoBpmn {
 		this.tipoElementoBpmn = tipoElementoBpmn;
 	}
 
-
-
 	public String getIdElementoDiagramaBpmn() {
 		return idElementoDiagramaBpmn;
 	}
-
-
 
 	public void setIdElementoDiagramaBpmn(String idElementoDiagramaBpmn) {
 		this.idElementoDiagramaBpmn = idElementoDiagramaBpmn;
@@ -152,8 +127,6 @@ public class ElementoBpmn {
 	public void addElementoNext(ElementoBpmn elementoBpmn) {
 		this.reference_next.add(elementoBpmn);
 	}
-
-
 
 	public Proceso getProceso() {
 		return proceso;
@@ -201,7 +174,4 @@ public class ElementoBpmn {
 				+ ", idElementoDiagramaBpmn=" + idElementoDiagramaBpmn + ", tipoElementoBpmn=" + tipoElementoBpmn
 				+ ", proceso=" + proceso + "]";
 	}
-
-	
-	
 }
