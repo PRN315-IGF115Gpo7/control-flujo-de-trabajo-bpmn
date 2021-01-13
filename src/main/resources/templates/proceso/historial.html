@@ -31,6 +31,7 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Descripcion</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,6 +40,11 @@
                                         <th:block th:if="${instancia.finalizado}">
                                             <td class="nombre" th:text="${instancia.proceso.procesoNombre}"></td>
                                             <td class="estado" th:text="${instancia.proceso.procesoDescripcion}"></td>  
+                                            <td>
+                                            	<a class="btn btn-sm btn-primary mx-2 text-white" title="Ver Resultados" th:href="@{/proceso/instancia/{id}/resultados(id=${instancia.instanciaProcesoId})}">
+                                                	<i class="fas fa-list-ol"></i>
+                                            	</a>
+                                            </td>
                                         </th:block>     
                                     </th:block>                 
                                 </tr>
@@ -47,6 +53,7 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Descripcion</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </tfoot>
                         </table>

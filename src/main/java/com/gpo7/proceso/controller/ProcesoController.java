@@ -59,6 +59,8 @@ public class ProcesoController {
 	private static final String ACTIVE_PROCESS_VIEW = "proceso/procesos-activos";
 	private static final String REPLY_PROCESS_VIEW = "proceso/procesos-respondidos";
 	private static final String REPLY_ACTIVITY_VIEW = "proceso/responder-actividad";
+	private static final String RESULTADOS_VIEW = "proceso/resultados";
+	private static final String RESPUESTAS_VIEW = "proceso/respuestas";
 
 	// BPMN elements
 	private static final String START_EVENT = "bpmn:StartEvent";
@@ -172,19 +174,23 @@ public class ProcesoController {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 
-		proceso.setVariables(variables);
+		//Variables almacenadas
+		List<Variable> variablesStored = new ArrayList<Variable>();
+		
+		for (Variable variable : variables) {
+			variable.setProceso(proceso);
+			Variable variableStored = variableService.store(variable);
+			variablesStored.add(variableStored);
+			
+			// Funcion para Crear Elemento_Formulario
+			crearElementoFormulario(variableStored);
+		}
+		
+		proceso.setVariables(variablesStored);
 		proceso.setUsuario(usuario);
 		proceso.setEsAutomatizado(true);
 		proceso.setProcesoActivo(true);
 		procesoService.store(proceso);
-
-		for (Variable variable : variables) {
-			variable.setProceso(proceso);
-			Variable variableStored = variableService.store(variable);
-
-			// Funcion para Crear Elemento_Formulario
-			crearElementoFormulario(variableStored);
-		}
 
 		return "redirect:/proceso/diagram/" + proceso.getIdProceso();
 	}
@@ -533,6 +539,31 @@ public class ProcesoController {
 		}
 
 		return false;
+	}
+	
+	@GetMapping({ "/instancia/{id}/resultados" })
+	public ModelAndView verResultados(@PathVariable("id") Integer instanciaProcesoId) {
+		ModelAndView mav = new ModelAndView(RESULTADOS_VIEW);
+
+		InstanciaProceso instanciaProceso = this.instanciaProcesoService.findById(instanciaProcesoId);
+		List<InstanciaActividad> instanciasActividades = this.instanciaActividadService.findByInstanciaProceso(instanciaProceso);
+		
+		mav.addObject("usuario", instanciaProceso.getUsuario());
+		mav.addObject("proceso", instanciaProceso.getProceso());
+		//mav.addObject("xml", instanciaProceso.getProceso().getProceoXml());
+		mav.addObject("instanciasActividades", instanciasActividades);
+		return mav;
+	}
+	
+	@GetMapping({ "/actividad/instancia/{id}/respuestas" })
+	public ModelAndView verRespuestas(@PathVariable("id") Integer instanciaActividadId) {
+		ModelAndView mav = new ModelAndView(RESPUESTAS_VIEW);
+
+		InstanciaActividad instanciaActividad = this.instanciaActividadService.findById(instanciaActividadId);
+		List<Respuesta> respuestas = this.respuestaService.findByInstanciaActividad(instanciaActividad);
+		mav.addObject("respuestas", respuestas);
+		
+		return mav;
 	}
 
 }

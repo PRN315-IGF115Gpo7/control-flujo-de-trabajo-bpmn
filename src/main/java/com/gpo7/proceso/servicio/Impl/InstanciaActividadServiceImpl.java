@@ -1,5 +1,7 @@
 package com.gpo7.proceso.servicio.Impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -51,5 +53,11 @@ public class InstanciaActividadServiceImpl implements InstanciaActividadService{
 	public InstanciaActividad getActivityByCargo(int cargoId, int instanciaProcesoId, boolean finalizada) {
 		// TODO Auto-generated method stub
 		return instanciaActividadJpaRepository.getActivityByCargo(cargoId, instanciaProcesoId, finalizada);
+	}
+
+	@Override
+	public List<InstanciaActividad> findByInstanciaProceso(InstanciaProceso ip) {
+		// TODO Auto-generated method stub
+		return this.instanciaActividadJpaRepository.findByInstanciaProceso(ip);
 	}
 }

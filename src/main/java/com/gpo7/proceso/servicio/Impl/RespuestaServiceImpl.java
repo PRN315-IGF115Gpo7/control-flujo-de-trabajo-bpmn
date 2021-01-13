@@ -1,5 +1,7 @@
 package com.gpo7.proceso.servicio.Impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -28,5 +30,11 @@ public class RespuestaServiceImpl implements RespuestaService{
 			ElementoBpmnFormulario ebf) {
 		// TODO Auto-generated method stub
 		return respuestaJpaRepository.findByInstanciaActividadAndElementoBpmnFormulario(ia, ebf);
+	}
+
+	@Override
+	public List<Respuesta> findByInstanciaActividad(InstanciaActividad instanciaActividad) {
+		// TODO Auto-generated method stub
+		return this.respuestaJpaRepository.findByInstanciaActividad(instanciaActividad);
 	}
 }
