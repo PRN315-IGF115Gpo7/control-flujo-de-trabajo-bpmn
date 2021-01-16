@@ -24,6 +24,9 @@
 </head>
 
 <body class="hold-transition login-page">
+  <div style="position: fixed; bottom: 20px; left: 20px;">
+    <a th:href="@{/proceso/bpmn-diagram}"><i class="fas fa-project-diagram"></i> Realizar diagrama</a>
+  </div>
 <div class="login-box">
 <input type="hidden" name="" th:if="${email_success}" id="email_success" th:value="${email_success}">
   <!-- /.login-logo -->

@@ -61,6 +61,7 @@ public class ProcesoController {
 	private static final String REPLY_ACTIVITY_VIEW = "proceso/responder-actividad";
 	private static final String RESULTADOS_VIEW = "proceso/resultados";
 	private static final String RESPUESTAS_VIEW = "proceso/respuestas";
+	private static final String FREE_DIAGRAM_VIEW = "proceso/free-diagram";
 
 	// BPMN elements
 	private static final String START_EVENT = "bpmn:StartEvent";
@@ -575,6 +576,13 @@ public class ProcesoController {
 		InstanciaActividad instanciaActividad = this.instanciaActividadService.findById(instanciaActividadId);
 		List<Respuesta> respuestas = this.respuestaService.findByInstanciaActividad(instanciaActividad);
 		mav.addObject("respuestas", respuestas);
+		
+		return mav;
+	}
+	
+	@GetMapping("bpmn-diagram")
+	public ModelAndView freeDiagram() {
+		ModelAndView mav = new ModelAndView(FREE_DIAGRAM_VIEW);
 		
 		return mav;
 	}

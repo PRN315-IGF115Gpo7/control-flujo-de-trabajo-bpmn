@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" th:href="@{/bpmn/css/diagram-js.css}">
+    <link rel="stylesheet" th:href="@{/bpmn/css/bpmn.css}">
+    <link rel="stylesheet" th:href="@{/css/configurar-actividad.css}">
+    
+    <script th:src="@{/bpmn/js/bpmn-viewer.development.js}"></script>
+    <script th:src="@{/bpmn/js/bpmn-modeler.development-complete.js}"></script>
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+
+    <style>
+        html,
+        body,
+        #canvas {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas"></div>
+</body>
+
+<script>
+
+    var baseUrl = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    var diagramUrl = `${baseUrl}/bpmn/base.bpmn`;
+
+    // modeler instance
+    var bpmnModeler = new BpmnJS({
+        container: '#canvas',
+        keyboard: {
+            bindTo: window
+        }
+    });
+
+    /**
+     * Open diagram in our modeler instance.
+     *
+     * @param {String} bpmnXML diagram to display
+     */
+    async function openDiagram(bpmnXML) {
+
+        // import diagram
+        try {
+
+            await bpmnModeler.importXML(bpmnXML);
+
+            var canvas = bpmnModeler.get('canvas');
+            canvas.zoom('fit-viewport');
+
+            canvas.addMarker('SCAN_OK', 'needs-discussion');
+        } catch (err) {
+
+            console.error('could not import BPMN 2.0 diagram', err);
+        }
+    }
+
+    $.get(diagramUrl, openDiagram, 'text');
+</script>
+<svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>
+
+</html>

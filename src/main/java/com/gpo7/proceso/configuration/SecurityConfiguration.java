@@ -34,9 +34,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 				//Recuperacion de contraseña
 				"/forgot-password**",
 				"/reset-password**",
-				"/usuario/send-unlock-email"
+				"/usuario/send-unlock-email",
+				"/proceso/bpmn-diagram"
 				).permitAll()
-		.antMatchers("/css/**","/imgs/**","/js/**","/dist/**","/plugins/**").permitAll()
+		.antMatchers("/css/**","/imgs/**","/js/**","/dist/**","/plugins/**","/bpmn/**").permitAll()
 		.anyRequest().authenticated()
 		.and()
 		.formLogin().loginPage("/login").loginProcessingUrl("/login-check")
