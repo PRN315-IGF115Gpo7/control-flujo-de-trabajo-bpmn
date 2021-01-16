@@ -176,6 +176,12 @@ public class ProcesoController {
 
 		//Variables almacenadas
 		List<Variable> variablesStored = new ArrayList<Variable>();
+			
+		//proceso.setVariables(variablesStored);
+		proceso.setUsuario(usuario);
+		proceso.setEsAutomatizado(true);
+		proceso.setProcesoActivo(true);
+		procesoService.store(proceso);
 		
 		for (Variable variable : variables) {
 			variable.setProceso(proceso);
@@ -185,12 +191,6 @@ public class ProcesoController {
 			// Funcion para Crear Elemento_Formulario
 			crearElementoFormulario(variableStored);
 		}
-		
-		proceso.setVariables(variablesStored);
-		proceso.setUsuario(usuario);
-		proceso.setEsAutomatizado(true);
-		proceso.setProcesoActivo(true);
-		procesoService.store(proceso);
 
 		return "redirect:/proceso/diagram/" + proceso.getIdProceso();
 	}
@@ -459,17 +459,23 @@ public class ProcesoController {
 			int ebNextId = Integer.parseInt(requestParams.get("nextActivity"));
 
 			ElementoBpmn ebNext = elementoBpmnService.findById(ebNextId);
-			InstanciaActividad nextActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebNext,
-					ip);
+			
+			if(ebNext.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals(END_EVENT)) {
+				finalizarProceso(ip);
+			}else {
+				InstanciaActividad nextActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebNext, ip);
+				for (ElementoBpmn eb : ebs) {
+					InstanciaActividad ia = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(eb, ip);
 
-			for (ElementoBpmn eb : ebs) {
-				InstanciaActividad ia = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(eb, ip);
-
-				if (ia.getInstanciaActividadId() != nextActivity.getInstanciaActividadId()) {
-					ia.setFinalizada(true);
-					instanciaActividadService.update(ia);
+					if(ia != null) {
+						if (ia.getInstanciaActividadId() != nextActivity.getInstanciaActividadId()) {
+							ia.setFinalizada(true);
+							instanciaActividadService.update(ia);
+						}
+					}
 				}
 			}
+
 			// Si la actividad es de tipo tarea
 		} else {
 			for (ElementoBpmnFormulario ebf : currActivity.getElementoBpmn().getElementoBpmnFormularios()) {
@@ -539,6 +545,13 @@ public class ProcesoController {
 		}
 
 		return false;
+	}
+	
+	public void finalizarProceso(InstanciaProceso ip) {
+		for(InstanciaActividad ia : ip.getInstanciasActividad()) {
+			ia.setFinalizada(true);
+			instanciaActividadService.update(ia);
+		}
 	}
 	
 	@GetMapping({ "/instancia/{id}/resultados" })
