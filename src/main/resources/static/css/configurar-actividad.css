@@ -20,26 +20,6 @@
 	display: none;
 }
 
-.btn-validar{
-	position: absolute; 
-	top: 0; 
-	right: 0; 
-	margin-right:55px;
-}
-
-.btn-guardar{
-	position: absolute; 
-	top: 0; 
-	right: 0;
-	margin-right:110px;
-}
-
-.btn-automatizar{
-	position: absolute; 
-	top: 0; 
-	right: 0;
-}
-
 @media (max-width: 768px) {
     .config-actividad {
         min-width: 250px;

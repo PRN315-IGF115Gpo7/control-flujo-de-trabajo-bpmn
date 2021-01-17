@@ -31,10 +31,17 @@
 	<div layout:fragment="content" style="height: 100vh;">
 	
 	<div style="position: relative;">
-		<h5 id="nombre-proceso" ></h5>
-		<button class="btn btn-success btn-validar" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
-		<button class="btn btn-primary btn-automatizar" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
-		<button id="btn-guardar-cambios" class="btn btn-dark btn-guardar" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
+		<div class="row">
+			<div class="col-md-9"><h5 id="nombre-proceso" ></h5></div>
+			<div class="col-md-3">
+				<button id="btn-guardar-cambios" class="btn btn-dark" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
+				<button id="btn-validar" class="btn btn-success" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
+				<button id="btn-automatizar" class="btn btn-primary" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
+			</div>
+		</div>
+		
+		
+		
 	</div>
 	
 	<div id="canvas" style="height: 100%"></div>
@@ -294,7 +301,6 @@
 						"name": name
 					});
 					setProcesoXml();
-					$("#btn-guardar-name").attr("disabled", true);
 					toastr.success("Nombre de actividad actualizado con éxito")
 				}else{
 					toastr.warning("Es necesario identificar con un nombre a la actividad"); 
@@ -307,20 +313,19 @@
 			});
 			
 			
-			$(".btn-validar").click(function(){
+			$("#btn-validar").click(function(){
 				setProcesoXml();
 				validarProceso();
 				console.log("finalizar btn");
 			});
 			
-			$(".btn-automatizar").click(function(){
+			$("#btn-automatizar").click(function(){
+				$("#btn-automatizar").append(`<span class="spinner-border spinner-border-sm ml-1" role="status" aria-hidden="true"></span>`);
 				setProcesoXml();
-				automatizarProceso();
 				setTimeout(function() { 
 					finalizarProceso();
-					console.log("finalizado");
+					toastr.success("Proceso Finalizado");
 			    }, 2000);
-				toastr.success("Proceso Finalizado"); 
 			})
 		       
 			
@@ -373,6 +378,7 @@
 						console.log("Estado: " + status);
 						console.log(data);
 					});
+					$("#btn-guardar-name").attr("disabled", true);
 				}catch (err) {
 					xml = null;
 				}
@@ -561,7 +567,7 @@
 				
 				if(resultados.length==0){
 					toastr.success("Proceso Configurado Correctamente"); 
-					$(".btn-automatizar").removeAttr("disabled");
+					$("#btn-automatizar").removeAttr("disabled");
 				}else{
 					var htmlObservaciones =`<ul>`;
 					var i = 0;
