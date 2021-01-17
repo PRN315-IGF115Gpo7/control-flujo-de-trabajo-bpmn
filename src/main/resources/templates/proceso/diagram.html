@@ -67,7 +67,7 @@
 						<select class="form-control" id="idVariables">
 							<option value="">Seleccione una opción</option>
 						</select>
-						<small id="textNoVars" class="form-text text-danger d-none">Aun no hay variables que se hayan asignado para escritura.</small>
+						<small id="textNoVars" class="form-text text-danger d-none">Aún no hay variables que se hayan asignado para escritura.</small>
 					</div>
 					<div id="permitirEscrituraChkbx" class="form-group">
 						<div class="custom-control custom-checkbox">
@@ -136,10 +136,10 @@
 					 <div class="form-group">
 					 	<label for="varTD">Tipo de Dato:</label>
 					 	<select class="form-control" id="varTD">
-					 	  <option value="0">Seleccion una opcion</option>
+					 	  <option value="0">Seleccione una opción</option>
 						  <option th:each="tipoDato: ${tiposDatos}" th:value="${tipoDato.idTipoDato}" th:utext="${tipoDato.tipoDatoNombre}"></option>
 						</select>
-						<small id="noTipoDato" class="form-text text-danger d-none">Seleccione un tipo de dato valido.</small>
+						<small id="noTipoDato" class="form-text text-danger d-none">Seleccione un tipo de dato válido.</small>
 					 </div>
 		        </form>
 		      </div>
