@@ -3,6 +3,7 @@ package com.gpo7.proceso.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -58,16 +59,16 @@ public class Proceso {
 	@JsonIgnore
 	private Cargo cargo;
 
-	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties({"proceso"})
     private List<Variable> variables =  new ArrayList();
 	
-	@OneToMany(mappedBy = "proceso", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "proceso", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JsonIgnore
 	private List<InstanciaProceso> instanciasProceso = new ArrayList();
 	
-	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JsonIgnore
 	private List<ElementoBpmn> elementosBpmn = new ArrayList();
@@ -172,6 +173,7 @@ public class Proceso {
 	    }
 	    return count;
 	}
+	
 
 	public List<ElementoBpmn> getElementosBpmn() {
 		return elementosBpmn;

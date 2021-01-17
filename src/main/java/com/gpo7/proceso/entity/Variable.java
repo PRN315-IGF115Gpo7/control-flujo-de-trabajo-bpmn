@@ -1,5 +1,6 @@
 package com.gpo7.proceso.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class Variable {
 	@JoinColumn(name = "tipo_dato_id")
 	private TipoDato tipoDato;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "proceso_id")
 	private Proceso proceso;
 

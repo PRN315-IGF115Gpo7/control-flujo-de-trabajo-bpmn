@@ -1,5 +1,6 @@
 package com.gpo7.proceso.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,11 +20,11 @@ public class ElementoBpmnFormulario {
 	@Column(name = "elementos_bpmn_formulario_id")
 	private int elementosBpmnFormularioId;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "elemento_bpmn_id")
 	private ElementoBpmn elementoBpmn;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "elemento_formulario_id")
 	private ElementoFormulario elementoFormulario;
 	

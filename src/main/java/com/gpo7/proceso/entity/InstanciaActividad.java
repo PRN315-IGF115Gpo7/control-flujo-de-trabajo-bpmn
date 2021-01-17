@@ -1,5 +1,6 @@
 package com.gpo7.proceso.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,11 +21,11 @@ public class InstanciaActividad {
 	
 	private Boolean finalizada;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "elemento_bpmn_id")
 	private ElementoBpmn elementoBpmn;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "instancia_proceso_id")
 	private InstanciaProceso instanciaProceso;
 

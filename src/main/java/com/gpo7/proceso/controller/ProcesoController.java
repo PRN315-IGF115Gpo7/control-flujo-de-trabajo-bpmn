@@ -47,6 +47,8 @@ import com.gpo7.proceso.servicio.TipoDatoService;
 import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
 
+import objects.ProcesoStruct;
+
 @Controller
 @RequestMapping("/proceso")
 public class ProcesoController {
@@ -126,15 +128,27 @@ public class ProcesoController {
 
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping({ "/index", "" })
-	public ModelAndView index() {
+	public ModelAndView index(@RequestParam(name="delete_success", required=false) String delete_success) {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
 
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 
-		mav.addObject("procesos", procesoService.getAll());
+		List<ProcesoStruct> procesosStructs = new ArrayList<ProcesoStruct>();
+		
+		for(Proceso proceso : procesoService.getAll()) {
+			boolean eliminar = true;
+			if(procesoService.cantidadRespuestas(proceso.getIdProceso()) > 0) {
+				eliminar = false;
+			}
+			procesosStructs.add(new ProcesoStruct(proceso, eliminar));
+		}
+		
+		mav.addObject("procesos", procesosStructs);
 		mav.addObject("proceso", new Proceso());
 		mav.addObject("usuarios", usuario);
+		mav.addObject("delete_success", delete_success);
+		
 		return mav;
 	}
 
@@ -580,6 +594,13 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(FREE_DIAGRAM_VIEW);
 		
 		return mav;
+	}
+	
+	@PostMapping("/eliminar")
+	public String eliminarProceso(@RequestParam("procesoId") int procesoId){
+		this.procesoService.deleteById(procesoId);
+		
+		return "redirect:/proceso/index?delete_success";
 	}
 
 }

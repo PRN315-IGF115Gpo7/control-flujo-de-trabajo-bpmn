@@ -3,6 +3,7 @@ package com.gpo7.proceso.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,7 +36,7 @@ public class ElementoBpmn {
     @JoinColumn(name="tipo_elemento_bpmn_id")
     private TipoElementoBpmn tipoElementoBpmn;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="proceso_id")
     private Proceso proceso;
 	
@@ -43,7 +44,7 @@ public class ElementoBpmn {
     @JoinColumn(name="id_cargo")
     private Cargo cargo;
 	
-	@OneToMany(mappedBy = "elementoBpmn", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "elementoBpmn", fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<ElementoBpmnFormulario> elementoBpmnFormularios = new ArrayList();
 	
