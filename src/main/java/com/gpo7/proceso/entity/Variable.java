@@ -29,9 +29,6 @@ public class Variable {
 	@JoinColumn(name = "proceso_id")
 	private Proceso proceso;
 
-	//Para determinar si se permite escritura en este variable
-	private boolean esEscritura; 
-	
 	public Variable() {
 	}
 
@@ -75,11 +72,4 @@ public class Variable {
 		this.proceso = proceso;
 	}	
 	
-	public boolean isEsEscritura() {
-		return esEscritura;
-	}
-
-	public void setEsEscritura(boolean esEscritura) {
-		this.esEscritura = esEscritura;
-	}
 }

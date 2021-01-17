@@ -64,6 +64,7 @@
 						<select class="form-control" id="idVariables">
 							<option value="">Seleccione una opción</option>
 						</select>
+						<small id="textNoVars" class="form-text text-danger d-none">Aun no hay variables que se hayan asignado para escritura.</small>
 					</div>
 					<div id="permitirEscrituraChkbx" class="form-group">
 						<div class="custom-control custom-checkbox">
@@ -184,7 +185,7 @@
 					
 					//Set Elemento seleccionado
 					elementoSeleccionado = e.element;
-					
+					$("#textNoVars").addClass('d-none');
 					switch(e.element.type) {
 					case "bpmn:Task":
 						$("#esDivergenteDiv").addClass("d-none");
@@ -420,13 +421,14 @@
 					"esEscritura": esEscritura}, 
 					function(data, status){
 					console.log("Estado: " + status);
-					console.log(data);
 					$('#varsForm').trigger("reset");
 					inicializarVariables(elementoBpmnId);
 				});
 			}
 
+			//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 			function inicializarVariables(elementoBpmnId, elementoBpmnType){
+				
 				$.get("/api/obtener-variables-elemento/" + proceso.idProceso + "/" + elementoBpmnId,
 				function(data, status){
 					console.log("Estado: " + status);
@@ -434,21 +436,26 @@
 
 					var htmlVariablesSelect = '<option value="">Seleccione una opción</option>';
 					if(variables != null){
+						var countVars = 0;
 						for (var i = 0; i < variables.length; ++i) {
 							var agregado = false;
 							
 							if(data){
 								for(var j = 0; j < data.length; j++){
-									if(variables[i].idVariable == data[j].idVariable){
+									if(variables[i].idVariable == data[j].variable.idVariable){
 										agregado = true;
 									}
 								}
 							}
 
 							if(! agregado){
+								countVars++;
 								htmlVariablesSelect += `<option value=${variables[i].idVariable}>${variables[i].variableNombre}</option>`;
 							}
 						}
+						if(countVars == 0)
+							$("#textNoVars").removeClass('d-none');
+						
 						$("#idVariables").html(htmlVariablesSelect);
 					}
 
@@ -459,28 +466,29 @@
 							$("#divVariables").removeClass('d-none');
 						}
 						for (var i = 0; i < data.length; ++i) {
-							
-							var badge_class = "primary";
-							
-							if(data[i].tipoDato.tipoDatoNombre == "String" || data[i].tipoDato.tipoDatoNombre == "Date"){
-								badge_class = "danger";
-							}else if(data[i].tipoDato.tipoDatoNombre == "Boolean"){
-								badge_class = "secondary";
-							}
+							if(data[i].mostrar){
+								var badge_class = "primary";
+								
+								if(data[i].variable.tipoDato.tipoDatoNombre == "String" || data[i].variable.tipoDato.tipoDatoNombre == "Date"){
+									badge_class = "danger";
+								}else if(data[i].variable.tipoDato.tipoDatoNombre == "Boolean"){
+									badge_class = "secondary";
+								}
 
-							var row = "<tr>"; 
-							row += "<td>" + (i+1) + ".</td>";
-							row += "<td>" + data[i].variableNombre + "</td>";
-                      		row += `<td><span class="badge bg-${badge_class}">` + data[i].tipoDato.tipoDatoNombre + '</span></td>';
-							if(data[i].esEscritura){  
-                      			row += '<td style="vertical-align:middle; text-align:center"><span title="Escritura"><i class="fas fa-user-edit"></i></span></td>';	
-							}else{
-								row += '<td style="vertical-align:middle; text-align:center"><span title="Lectura"><i class="fas fa-eye"></i></span></td>';
-							}
-							row += `<td style="vertical-align:middle; text-align:center"><button class="btn btn-sm btn-danger" onclick="eliminarVariable(event, ${data[i].idVariable}, '${elementoBpmnId}');"><i class="fas fa-trash"></i></button></td>`;
-							row += "</tr>";
+								var row = "<tr>"; 
+								row += "<td>" + (i+1) + ".</td>";
+								row += "<td>" + data[i].variable.variableNombre + "</td>";
+	                      		row += `<td><span class="badge bg-${badge_class}">` + data[i].variable.tipoDato.tipoDatoNombre + '</span></td>';
+								if(data[i].esEscritura){  
+	                      			row += '<td style="vertical-align:middle; text-align:center"><span title="Escritura"><i class="fas fa-user-edit"></i></span></td>';	
+								}else{
+									row += '<td style="vertical-align:middle; text-align:center"><span title="Lectura"><i class="fas fa-eye"></i></span></td>';
+								}
+								row += `<td style="vertical-align:middle; text-align:center"><button class="btn btn-sm btn-danger" onclick="eliminarVariable(event, ${data[i].variable.idVariable}, '${elementoBpmnId}');"><i class="fas fa-trash"></i></button></td>`;
+								row += "</tr>";
 
-							htmlVariablesTable += row;
+								htmlVariablesTable += row;	
+							}
 						}
 						$("#variablesBodyTable").html(htmlVariablesTable);
 					}else{

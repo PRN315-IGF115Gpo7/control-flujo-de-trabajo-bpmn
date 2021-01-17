@@ -42,6 +42,7 @@ import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
 
 import objects.ElementoDiagrama;
+import objects.VariableStructDiagram;
 
 @RestController
 @RequestMapping("/api")
@@ -204,21 +205,66 @@ public class DataRestController {
 		return new RedirectView("/proceso/index");
 	}
 	
+	//AQUIIIIIIIIIIIIIIIII
 	@GetMapping("/obtener-variables-elemento/{procesoId}/{elementoBpmnId}")
-	public List<Variable> obtenerVariablesElemento(@PathVariable("procesoId") int procesoId,
+	public List<VariableStructDiagram> obtenerVariablesElemento(@PathVariable("procesoId") int procesoId,
 			@PathVariable("elementoBpmnId") String elementoBpmnId){
 		
 		Proceso proceso = this.procesoService.findById(procesoId);
 		ElementoBpmn elementoBpmn = this.elementoBpmnService.findByIdElementoDiagramaBpmnAndProceso(elementoBpmnId, proceso);
+		List<VariableStructDiagram> variables = new ArrayList<VariableStructDiagram>();
+		List<Variable> varsProceso = this.variableService.findByProceso(proceso);
 		
 		List<ElementoBpmnFormulario> elementosBpmnFormulario = this.elementoBpmnFormularioService.findByElementoBpmn(elementoBpmn);
-		List<Variable> variables = new ArrayList<Variable>();
 				
 		if(elementosBpmnFormulario != null) {
 			for(ElementoBpmnFormulario elementoBpmnFormulario : elementosBpmnFormulario) {
 				Variable variable = elementoBpmnFormulario.getElementoFormulario().getVariable();
-				variable.setEsEscritura(elementoBpmnFormulario.isPermitirEscritura());
-				variables.add(variable);
+				//Es de escritura o no (arreglar)
+				variables.add(new VariableStructDiagram(variable, elementoBpmnFormulario.isPermitirEscritura(), true));
+			}
+		}
+		
+		//Si es Compuerta, entonces se debe de averiguar cuales variables ya se han asignado previamente
+		//para escritura
+		if(elementoBpmn.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:ExclusiveGateway")) {
+			
+			List<Variable> varsWritten = new ArrayList<Variable>(); 
+			List<ElementoBpmn> elementosBpmnProceso = this.elementoBpmnService.findByProceso(proceso);
+			if(elementosBpmnProceso.size() > 0) {
+				for(ElementoBpmn elBpmn : elementosBpmnProceso) {
+					if(elBpmn.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:Task")) {
+						List<ElementoBpmnFormulario> ebfs = 
+								this.elementoBpmnFormularioService.findByElementoBpmnAndPermitirEscritura(elBpmn, true);
+						for(ElementoBpmnFormulario ebf : ebfs) {
+							varsWritten.add(ebf.getElementoFormulario().getVariable());
+						}
+					}
+				}
+			}
+			
+			//Ahora vamos a recorrer todas las variables y ver si estas no han sido aun puestas para escritura
+			//De cumplir esta condicion, entonces la agregamos al array de *variables*, que son las que no se mostraran 
+			//en el combobox para poder asignarlas en modo de lectura
+			if(varsWritten.size() > 0) {
+				for(Variable varProceso : varsProceso) {
+					boolean written = false;
+					for(Variable varWritten : varsWritten) {
+						if(varProceso.getIdVariable() == varWritten.getIdVariable())
+							written = true;
+					}
+					//Si la variable de proceso no se ha escrito, entonces la agregamos a *variables*
+					if(! written) {
+						variables.add(new VariableStructDiagram(varProceso, false, false));
+					}
+				}
+			}else {
+				//Si no se ha asignado ninguna de escritura, entonces no se debe mostrar ninguna variable
+				//en el combobox, por eso las mandamos todas
+				for(Variable varProceso: varsProceso) {
+					variables.add(new VariableStructDiagram(varProceso, false, false));
+				}
+				return variables;
 			}
 		}
 				

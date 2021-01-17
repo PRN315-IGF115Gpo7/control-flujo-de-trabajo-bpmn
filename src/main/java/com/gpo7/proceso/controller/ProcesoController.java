@@ -175,10 +175,6 @@ public class ProcesoController {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 
-		//Variables almacenadas
-		List<Variable> variablesStored = new ArrayList<Variable>();
-			
-		//proceso.setVariables(variablesStored);
 		proceso.setUsuario(usuario);
 		proceso.setEsAutomatizado(true);
 		proceso.setProcesoActivo(true);
@@ -186,11 +182,9 @@ public class ProcesoController {
 		
 		for (Variable variable : variables) {
 			variable.setProceso(proceso);
-			Variable variableStored = variableService.store(variable);
-			variablesStored.add(variableStored);
 			
 			// Funcion para Crear Elemento_Formulario
-			crearElementoFormulario(variableStored);
+			crearElementoFormulario(variableService.store(variable));
 		}
 
 		return "redirect:/proceso/diagram/" + proceso.getIdProceso();

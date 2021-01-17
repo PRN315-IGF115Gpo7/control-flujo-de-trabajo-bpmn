@@ -18,4 +18,5 @@ public interface ElementoBpmnService {
 	public abstract ElementoBpmn findByProcesoAndElement(Proceso proceso, String element);
 	public abstract ElementoBpmn getFirstActivityElement(String elementType, int procesoId, int cargoId);
 	public abstract List<ElementoBpmn> findByProcesoAndCargo(int idProc, int idCargo);
+	public List<ElementoBpmn> findByProceso(Proceso proceso);
 }

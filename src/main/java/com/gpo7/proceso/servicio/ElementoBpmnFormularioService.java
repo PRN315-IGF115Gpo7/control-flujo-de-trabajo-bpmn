@@ -16,4 +16,5 @@ public interface ElementoBpmnFormularioService {
 	public List<ElementoBpmnFormulario> findByElementoBpmn(ElementoBpmn elementoBpmn);
 	public abstract List<ElementoBpmnFormulario> findByElementoFormularioAndPermitirEscritura(ElementoFormulario elementoForm, boolean permitirEescritura);
 	public ElementoBpmnFormulario findByElementoBpmnAndElementoFormulario(ElementoBpmn elementoBpmn, ElementoFormulario elementoFormulario);
+	public List<ElementoBpmnFormulario> findByElementoBpmnAndPermitirEscritura(ElementoBpmn elementoBpmn, boolean permitirEescritura);
 }
