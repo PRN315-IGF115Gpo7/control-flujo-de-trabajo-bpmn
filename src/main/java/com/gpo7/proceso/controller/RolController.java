@@ -2,7 +2,6 @@ package com.gpo7.proceso.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -20,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gpo7.proceso.entity.Privilegio;
+import com.gpo7.proceso.entity.Recurso;
+import com.gpo7.proceso.entity.Rol;
+import com.gpo7.proceso.entity.RolRecursoPrivilegio;
 import com.gpo7.proceso.servicio.PrivilegioService;
 import com.gpo7.proceso.servicio.RecursoService;
 import com.gpo7.proceso.servicio.RolRecursoPrivilegioService;
@@ -27,12 +30,6 @@ import com.gpo7.proceso.servicio.RolService;
 
 import objects.RolePrivilege;
 import objects.RoleResource;
-
-import com.gpo7.proceso.entity.Cargo;
-import com.gpo7.proceso.entity.Privilegio;
-import com.gpo7.proceso.entity.Recurso;
-import com.gpo7.proceso.entity.Rol;
-import com.gpo7.proceso.entity.RolRecursoPrivilegio;
 
 
 @Controller
@@ -108,11 +105,12 @@ public class RolController {
 		
 		if(rol.getUsuarios().isEmpty() || rol.getRolesRecursosPrivilegios().isEmpty()) {
 			rolService.destroy(rol);
+			redirAttrs.addFlashAttribute("success", "El rol fue eliminado con éxito");
 		}else {
 			redirAttrs.addFlashAttribute("mensaje", "Este rol no puede ser eliminado porque ya fue asignado");
 		}
 		
-		return "redirect:/rol/index?delete_success";
+		return "redirect:/rol/index";
 	}
 	
 	@PreAuthorize("hasAuthority('ROLRECURSOPRIVILEGIO_CREATE')")

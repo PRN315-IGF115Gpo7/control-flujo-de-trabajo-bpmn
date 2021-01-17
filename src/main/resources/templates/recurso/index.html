@@ -3,59 +3,49 @@
 
 <head>
 
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 </head>
 
-<body> 
+<body>
 
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Recurso</h1>
+  <h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Recurso</h1>
 
-	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
-        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
-        <li class="breadcrumb-item active">Recurso</li>
-    </ol>
+  <ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+    <li class="breadcrumb-item active">Recurso</li>
+  </ol>
 
-	<div layout:fragment="content">
+  <div layout:fragment="content">
 
     <div class="row ml-3 mr-3">
-			<div class="col-md-9 offset-1">
-				<div class="card">
-	         <div class="card-header text-right">
+      <div class="col-md-7 offset-2">
+        <div class="card">
+          <div class="card-header text-right">
 
-						<button class="btn btn-sm btn-primary" id="btnAgregar">
-							<i class="fas fa-plus-circle mr-1 text-white"></i>
-							<span class="text-white">Agregar Recurso</span>
-						</button>
-	           <h3 class="card-title"></h3>
-	          </div>
+            <button class="btn btn-sm btn-primary" id="btnAgregar">
+              <i class="fas fa-plus-circle mr-1 text-white"></i>
+              <span class="text-white">Agregar Recurso</span>
+            </button>
+            <h3 class="card-title"></h3>
+          </div>
 
-					<div class="card-body">
+          <div class="card-body">
 
-            <!--<div th:if="${mensaje}">
-              <div class="alert alert-danger" th:text="${mensaje}"></div>
-            </div>-->
-            <div th:if="${store_success}">
-              <div class="alert alert-success">
-              	Recurso almacenado con éxito!
-              </div>
+            <div th:if="${error}">
+              <div class="alert alert-danger" th:text="${error}"></div>
             </div>
-            <div th:if="${update_success}">
-              <div class="alert alert-success">
-              	Recurso actualizado con éxito!
-              </div>
-            </div>
-            <div th:if="${delete_success}">
-              <div class="alert alert-success">
-              	Recurso eliminado con éxito!
-              </div>
+            <div th:if="${success}">
+              <div class="alert alert-success" th:text="${success}"></div>
             </div>
 
-						<table id="example1" class="table table-bordered table-striped">
-							<thead>
+            <table id="example1" class="table table-bordered table-striped">
+              <div class="text-center" th:if="${#lists.isEmpty(recursos)}">No hay recursos registrados en el sistema.</div>
+              <div th:if="${!#lists.isEmpty(recursos)}">
+                <thead>
                   <tr>
                     <th>Recurso</th>                    
                     <th>Acciones</th>
@@ -63,18 +53,17 @@
 							</thead>
 							<tbody>
 
-				  <tr th:each="newRecurso : ${recursos}">
-                  <td class="recurso" th:text="${newRecurso.recurso}"></td>
-                  
-                  <td>
-                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${newRecurso.idRecurso}">
-                      <i class="fas fa-pencil-alt"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${newRecurso.idRecurso}">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-				  </tr>
+              <tr th:each="newRecurso : ${recursos}">
+                <td class="recurso" th:text="${newRecurso.recurso}"></td>
+                <td>
+                  <button class="btn btn-sm btn-primary" th:attr="data-editar=${newRecurso.idRecurso}">
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${newRecurso.idRecurso}">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
 
 							</tbody>
 							<tfoot>
@@ -85,6 +74,7 @@
                   </tr>
 
 							</tfoot>
+              </div>
 						</table>
 					</div>
 					<!-- /.card-body -->
@@ -187,34 +177,34 @@
   
 	<section layout:fragment="scripts">
     <script>
-    //Para Crear un Recurso
-    $('#btnAgregar').on('click', function(){
+      //Para Crear un Recurso
+      $('#btnAgregar').on('click', function () {
 
-      //Lanzar modal
-      $('#modalAgregar').modal('show');
-    })
-    //FIN-Crear un Recurso
+        //Lanzar modal
+        $('#modalAgregar').modal('show');
+      })
+      //FIN-Crear un Recurso
 
-     //Para editar el Recurso
-     $('[data-editar]').on('click', function(){
- 
-       //Obteniendo datos de la tabla
-       var id = $(this).data('editar');
-       var recurso = $(this).parent().siblings('td.recurso').text();
-       
-       
-       //Asignando datos a la modal
-       $('#id').val(id);
-       $('#recurso-c').val(recurso);
-       
-       
-       //Lanzar modal
-       $('#modalEditar').modal('show');
-       })
-       //FIN-Editar un cargo
+      //Para editar el Recurso
+      $('[data-editar]').on('click', function () {
 
-       //Para eliminar un cargo
-      $('[data-eliminar]').on('click', function(){
+        //Obteniendo datos de la tabla
+        var id = $(this).data('editar');
+        var recurso = $(this).parent().siblings('td.recurso').text();
+
+
+        //Asignando datos a la modal
+        $('#id').val(id);
+        $('#recurso-c').val(recurso);
+
+
+        //Lanzar modal
+        $('#modalEditar').modal('show');
+      })
+      //FIN-Editar un cargo
+
+      //Para eliminar un cargo
+      $('[data-eliminar]').on('click', function () {
 
         var idRecurso = $(this).data('eliminar');
 
