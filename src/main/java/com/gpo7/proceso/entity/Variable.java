@@ -3,12 +3,16 @@ package com.gpo7.proceso.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "variables")
@@ -29,6 +33,10 @@ public class Variable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "proceso_id")
 	private Proceso proceso;
+	
+	@OneToOne(mappedBy = "variable", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private ElementoFormulario elementoFormulario = new ElementoFormulario();
 
 	public Variable() {
 	}
