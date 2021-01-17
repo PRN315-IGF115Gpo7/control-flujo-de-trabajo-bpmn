@@ -105,4 +105,12 @@ public class InstanciaProceso {
 	public void setNombreActividad(String nombreActividad) {
 		this.nombreActividad = nombreActividad;
 	}
+
+	public List<InstanciaActividad> getInstanciasActividad() {
+		return instanciasActividad;
+	}
+
+	public void setInstanciasActividad(List<InstanciaActividad> instanciasActividad) {
+		this.instanciasActividad = instanciasActividad;
+	}
 }

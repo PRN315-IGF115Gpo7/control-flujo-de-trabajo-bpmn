@@ -59,6 +59,9 @@ public class ProcesoController {
 	private static final String ACTIVE_PROCESS_VIEW = "proceso/procesos-activos";
 	private static final String REPLY_PROCESS_VIEW = "proceso/procesos-respondidos";
 	private static final String REPLY_ACTIVITY_VIEW = "proceso/responder-actividad";
+	private static final String RESULTADOS_VIEW = "proceso/resultados";
+	private static final String RESPUESTAS_VIEW = "proceso/respuestas";
+	private static final String FREE_DIAGRAM_VIEW = "proceso/free-diagram";
 
 	// BPMN elements
 	private static final String START_EVENT = "bpmn:StartEvent";
@@ -172,16 +175,20 @@ public class ProcesoController {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 
-		proceso.setVariables(variables);
+		//Variables almacenadas
+		List<Variable> variablesStored = new ArrayList<Variable>();
+			
+		//proceso.setVariables(variablesStored);
 		proceso.setUsuario(usuario);
 		proceso.setEsAutomatizado(true);
 		proceso.setProcesoActivo(true);
 		procesoService.store(proceso);
-
+		
 		for (Variable variable : variables) {
 			variable.setProceso(proceso);
 			Variable variableStored = variableService.store(variable);
-
+			variablesStored.add(variableStored);
+			
 			// Funcion para Crear Elemento_Formulario
 			crearElementoFormulario(variableStored);
 		}
@@ -453,17 +460,23 @@ public class ProcesoController {
 			int ebNextId = Integer.parseInt(requestParams.get("nextActivity"));
 
 			ElementoBpmn ebNext = elementoBpmnService.findById(ebNextId);
-			InstanciaActividad nextActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebNext,
-					ip);
+			
+			if(ebNext.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals(END_EVENT)) {
+				finalizarProceso(ip);
+			}else {
+				InstanciaActividad nextActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebNext, ip);
+				for (ElementoBpmn eb : ebs) {
+					InstanciaActividad ia = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(eb, ip);
 
-			for (ElementoBpmn eb : ebs) {
-				InstanciaActividad ia = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(eb, ip);
-
-				if (ia.getInstanciaActividadId() != nextActivity.getInstanciaActividadId()) {
-					ia.setFinalizada(true);
-					instanciaActividadService.update(ia);
+					if(ia != null) {
+						if (ia.getInstanciaActividadId() != nextActivity.getInstanciaActividadId()) {
+							ia.setFinalizada(true);
+							instanciaActividadService.update(ia);
+						}
+					}
 				}
 			}
+
 			// Si la actividad es de tipo tarea
 		} else {
 			for (ElementoBpmnFormulario ebf : currActivity.getElementoBpmn().getElementoBpmnFormularios()) {
@@ -533,6 +546,45 @@ public class ProcesoController {
 		}
 
 		return false;
+	}
+	
+	public void finalizarProceso(InstanciaProceso ip) {
+		for(InstanciaActividad ia : ip.getInstanciasActividad()) {
+			ia.setFinalizada(true);
+			instanciaActividadService.update(ia);
+		}
+	}
+	
+	@GetMapping({ "/instancia/{id}/resultados" })
+	public ModelAndView verResultados(@PathVariable("id") Integer instanciaProcesoId) {
+		ModelAndView mav = new ModelAndView(RESULTADOS_VIEW);
+
+		InstanciaProceso instanciaProceso = this.instanciaProcesoService.findById(instanciaProcesoId);
+		List<InstanciaActividad> instanciasActividades = this.instanciaActividadService.findByInstanciaProceso(instanciaProceso);
+		
+		mav.addObject("usuario", instanciaProceso.getUsuario());
+		mav.addObject("proceso", instanciaProceso.getProceso());
+		//mav.addObject("xml", instanciaProceso.getProceso().getProceoXml());
+		mav.addObject("instanciasActividades", instanciasActividades);
+		return mav;
+	}
+	
+	@GetMapping({ "/actividad/instancia/{id}/respuestas" })
+	public ModelAndView verRespuestas(@PathVariable("id") Integer instanciaActividadId) {
+		ModelAndView mav = new ModelAndView(RESPUESTAS_VIEW);
+
+		InstanciaActividad instanciaActividad = this.instanciaActividadService.findById(instanciaActividadId);
+		List<Respuesta> respuestas = this.respuestaService.findByInstanciaActividad(instanciaActividad);
+		mav.addObject("respuestas", respuestas);
+		
+		return mav;
+	}
+	
+	@GetMapping("bpmn-diagram")
+	public ModelAndView freeDiagram() {
+		ModelAndView mav = new ModelAndView(FREE_DIAGRAM_VIEW);
+		
+		return mav;
 	}
 
 }

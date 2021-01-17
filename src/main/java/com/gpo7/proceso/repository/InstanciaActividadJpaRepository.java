@@ -1,6 +1,7 @@
 package com.gpo7.proceso.repository;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,5 @@ public interface InstanciaActividadJpaRepository extends JpaRepository<Instancia
 	@Query(value = "SELECT ia.* FROM  instancias_actividades ia NATURAL JOIN elementos_bpmn eb WHERE eb.id_cargo = ?1 AND ia.instancia_proceso_id = ?2 AND ia.finalizada = ?3 ORDER BY ia.elemento_bpmn_id ASC LIMIT 1", nativeQuery = true)
 	public abstract InstanciaActividad getActivityByCargo(int cargoId, int instanciaProcesoId, boolean finalizada);
 	public abstract InstanciaActividad findByElementoBpmnAndInstanciaProceso(ElementoBpmn eb, InstanciaProceso ip);
+	public abstract List<InstanciaActividad> findByInstanciaProceso(InstanciaProceso ip);
 }

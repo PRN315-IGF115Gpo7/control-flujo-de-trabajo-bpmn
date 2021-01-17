@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layouts/layout}">
+
+<head>
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  
+  <link rel="stylesheet" th:href="@{/bpmn/css/diagram-js.css}">
+  <link rel="stylesheet" th:href="@{/bpmn/css/bpmn.css}">
+  <link rel="stylesheet" th:href="@{/css/configurar-actividad.css}">
+  <script th:src="@{/bpmn/js/bpmn-viewer.development.js}"></script>
+  <script th:src="@{/bpmn/js/bpmn-modeler.development.js}"></script>
+  <style>
+        .highlight:not(.djs-connection) .djs-visual> :nth-child(1) {
+            stroke: #202122 !important;
+            /* color elements as green */
+            fill: #34eb0f !important;
+            /* color elements as green */
+        }
+    </style>
+
+</head>
+
+<body>
+
+	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Resultados de Instancia de Proceso</h1>
+
+	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+        <li class="breadcrumb-item active">Resultados</li>
+    </ol>
+
+    <div layout:fragment="content">
+
+        <div class="row ml-3 mr-3">
+            <div class="col-md-9 offset-1">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Tipo Elemento</th>
+                                    <th>Responsable</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="instanciaActividad : ${instanciasActividades}">
+	                                <td class="nombre" th:text="${instanciaActividad.elementoBpmn.nombreElementoBpmn}"></td>
+	                                <td th:if="${instanciaActividad.elementoBpmn.tipoElementoBpmn.nombreTipoElementoBpmn} == 'bpmn:Task'"><span style="width:80px" class="badge badge-success">Actividad</span></td>
+	                                <td th:if="${instanciaActividad.elementoBpmn.tipoElementoBpmn.nombreTipoElementoBpmn} != 'bpmn:Task'"><span style="width:80px" class="badge badge-warning">Compuerta</span></td> 
+	                                <td class="responsable" th:text="${instanciaActividad.elementoBpmn.cargo.nombreCargo}"></td>  
+	                                <td>
+	                                	<a class="btn btn-sm btn-primary text-white" title="Ver Respuestas" th:href="@{/proceso/actividad/instancia/{id}/respuestas(id=${instanciaActividad.instanciaActividadId})}">
+	                                    	<i class="far fa-edit"></i>
+	                                	</a>
+	                                	<button class="btn btn-sm btn-secondary text-white" title="Ver Ubicacion en Diagrama"
+	                                		th:attr="data-elementoBpmn=${instanciaActividad.elementoBpmn.idElementoDiagramaBpmn}"
+	                                		onclick="mostrarDiagrama(this)">
+	                                    	<i class="fas fa-eye"></i>
+	                                	</button>
+	                                </td>               
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Tipo Elemento</th>
+                                    <th>Responsable</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal para ver Diagrama -->
+
+		<div id="modalDiagrama" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+                    <div class="btn-group">
+                        <h5><span class="badge badge-info mr-3">Elemento Actual del Proceso</span></h5>
+                        <button class="btn btn-sm btn-light" id="zoomIn" title="Zoom in"><i class="fas fa-plus"></i></button>
+                        <button class="btn btn-sm btn-light" id="zoomOut" title="Zoom out"><i class="fas fa-minus"></i></button>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+		      	<div id="modalBody" class="modal-body text-center" style="height: 400px;">
+                        
+                </div>
+		    </div>
+		  </div>
+		</div>
+    </div> 
+    <section layout:fragment="scripts">
+        <script th:inline="javascript">
+            function mostrarDiagrama(param) {
+                /*<![CDATA[*/
+                let xml = /*[[${proceso.getProceoXml()}]]*/ null;
+                /*]]>*/
+                
+                var elementoBpmn = $(param).attr("data-elementoBpmn");
+                $('#modalBody').html('<div id="canvas" style="height: 100%;"></div>');
+                
+                var baseUrl = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+                var diagramUrl = `${baseUrl}/bpmn/base.bpmn`;
+
+                // modeler instance
+                var bpmnModeler = new BpmnJS({
+                    container: '#canvas',
+                    keyboard: {
+                        bindTo: window
+                    }
+                });
+
+                $('#zoomIn').on('click', function(){
+                    bpmnModeler.get('zoomScroll').stepZoom(1);
+                })
+
+                $('#zoomOut').on('click', function(){
+                    bpmnModeler.get('zoomScroll').stepZoom(-1);
+                })
+
+                // load external diagram file via AJAX and open it
+                $.get(diagramUrl, openDiagram(xml), 'text');
+
+                async function openDiagram(bpmnXML) {
+
+                    try {
+                        await bpmnModeler.importXML(bpmnXML);
+                        var canvas = bpmnModeler.get('canvas');
+
+                        bpmnModeler.get('zoomScroll').reset();
+                        var shape = bpmnModeler.get('elementRegistry').get(elementoBpmn);
+
+                        canvas.addMarker(elementoBpmn, 'highlight');
+                        bpmnModeler.get('canvas').zoom(1.5, shape);
+                    } catch (err) {
+                        console.error('could not import BPMN 2.0 diagram', err);
+                    }
+
+                }
+                $('.djs-palette, .bjs-powered-by').hide();
+                $("#modalDiagrama").modal('show');
+            }
+        </script>
+    </section>
