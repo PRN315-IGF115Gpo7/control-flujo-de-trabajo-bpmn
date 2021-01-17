@@ -218,6 +218,7 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(DIAGRAM_VIEW);
 		mav.addObject("proceso", procesoService.findById(procesoId));
 		mav.addObject("cargos", cargoService.getAll());
+		mav.addObject("tiposDatos", this.tipoDatoService.getAll());
 		return mav;
 	}
 

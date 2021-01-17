@@ -25,6 +25,7 @@ import com.gpo7.proceso.entity.InstanciaActividad;
 import com.gpo7.proceso.entity.InstanciaProceso;
 import com.gpo7.proceso.entity.Privilegio;
 import com.gpo7.proceso.entity.Proceso;
+import com.gpo7.proceso.entity.TipoDato;
 import com.gpo7.proceso.entity.TipoElementoBpmn;
 import com.gpo7.proceso.entity.Usuario;
 import com.gpo7.proceso.entity.Variable;
@@ -37,6 +38,7 @@ import com.gpo7.proceso.servicio.InstanciaActividadService;
 import com.gpo7.proceso.servicio.InstanciaProcesoService;
 import com.gpo7.proceso.servicio.PrivilegioService;
 import com.gpo7.proceso.servicio.ProcesoService;
+import com.gpo7.proceso.servicio.TipoDatoService;
 import com.gpo7.proceso.servicio.TipoElementoService;
 import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
@@ -83,6 +85,10 @@ public class DataRestController {
 	@Autowired
 	@Qualifier("cargoServiceImpl")
 	private CargoService cargoService;
+	
+	@Autowired
+	@Qualifier("tipoDatoServiceImpl")
+	private TipoDatoService tipoDatoService;
 	
 	@Autowired
 	@Qualifier("instanciaProcesoServiceImpl")
@@ -205,7 +211,7 @@ public class DataRestController {
 		return new RedirectView("/proceso/index");
 	}
 	
-	//AQUIIIIIIIIIIIIIIIII
+	
 	@GetMapping("/obtener-variables-elemento/{procesoId}/{elementoBpmnId}")
 	public List<VariableStructDiagram> obtenerVariablesElemento(@PathVariable("procesoId") int procesoId,
 			@PathVariable("elementoBpmnId") String elementoBpmnId){
@@ -338,5 +344,47 @@ public class DataRestController {
 		}
 		
 		return elementosBpmn;
+	}
+	
+	@PostMapping("/agregar-variable")
+	public Variable agregarVariable(
+			@RequestParam("procesoId") int procesoId,
+			@RequestParam("nombre") String nombre,
+			@RequestParam("tipoDatoId") int tipoDatoId
+			){
+		
+		Proceso proceso = procesoService.findById(procesoId);
+		TipoDato tipoDato = tipoDatoService.findById(tipoDatoId);
+		
+		Variable var = new Variable();
+		var.setVariableNombre(nombre);
+		var.setTipoDato(tipoDato);
+		var.setProceso(proceso);
+		crearElementoFormulario(variableService.store(var));
+		
+		return var;
+	}
+	
+	public void crearElementoFormulario(Variable variable) {
+		ElementoFormulario elementoFormulario = new ElementoFormulario();
+		elementoFormulario.setLabel(variable.getVariableNombre());
+		elementoFormulario.setVariable(variable);
+		String tipoElementoFormulario = "";
+
+		switch (variable.getTipoDato().getTipoDatoNombre()) {
+		case "String":
+			tipoElementoFormulario = "text";
+			break;
+		case "Date":
+			tipoElementoFormulario = "date";
+			break;
+		case "Boolean":
+			tipoElementoFormulario = "checkbox";
+			break;
+		default:
+			tipoElementoFormulario = "number";
+		}
+		elementoFormulario.setElementoFormularioTipo(tipoElementoFormulario);
+		this.elementoFormularioService.store(elementoFormulario);
 	}
 }

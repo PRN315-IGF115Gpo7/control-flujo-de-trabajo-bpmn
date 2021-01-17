@@ -40,6 +40,13 @@
 	right: 0;
 }
 
+.btn-addVariable{
+	position: absolute; 
+	top: 0; 
+	right: 0;
+	margin-right:165px;
+}
+
 @media (max-width: 768px) {
     .config-actividad {
         min-width: 250px;

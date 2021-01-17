@@ -35,6 +35,9 @@
 		<button class="btn btn-success btn-validar" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
 		<button class="btn btn-primary btn-automatizar" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
 		<button id="btn-guardar-cambios" class="btn btn-dark btn-guardar" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
+		<button class="btn btn-dark btn-addVariable" title="Agregar Variable" data-toggle="modal" data-target="#exampleModal">
+			<i class="fas fa-plus-circle"></i>
+		</button>
 	</div>
 	
 	<div id="canvas" style="height: 100%"></div>
@@ -75,8 +78,6 @@
 						</div>
 					</div>
 					<button class="btn btn-primary btn-sm" onclick="agregarVariable(event)">Agregar</button>
-			
-					</form>
 				
 					<div class="card mt-3">
 					<div class="card-header">
@@ -100,7 +101,9 @@
 						</table>
 					</div>
 				</div>
-              <!-- /.card-body -->
+			  <!-- /.card-body -->
+			  		</div>
+				</form>
             </div>
 		</div>
 		<div id="set-participante" class="not-show">
@@ -113,12 +116,41 @@
         	<button class="btn btn-primary btn-sm" id="btn-set-participante">Establecer</button>
 	        
 		</div>
-		
+			<!-- Modal para agregar variable -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Agregar Variable</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        <form>
+		        	<div class="form-group">
+					    <label for="varNombre">Nombre:</label>
+					    <input type="text" class="form-control" id="varNombre" placeholder="Ingrese el nombre..." required="required">
+					 	<small id="noNombre" class="form-text text-danger d-none">El nombre es requerido.</small>
+					 </div>
+					 <div class="form-group">
+					 	<label for="varTD">Tipo de Dato:</label>
+					 	<select class="form-control" id="varTD">
+					 	  <option value="0">Seleccion una opcion</option>
+						  <option th:each="tipoDato: ${tiposDatos}" th:value="${tipoDato.idTipoDato}" th:utext="${tipoDato.tipoDatoNombre}"></option>
+						</select>
+						<small id="noTipoDato" class="form-text text-danger d-none">Seleccione un tipo de dato valido.</small>
+					 </div>
+		        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+		        <button type="submit" class="btn btn-primary" onclick="agregarVariableProceso(event)">Guardar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 	</div>
-	
-      
-	</div>
-
 
 	<section layout:fragment="scripts">
 		<!-- Toastr -->
@@ -425,14 +457,12 @@
 					inicializarVariables(elementoBpmnId);
 				});
 			}
-
-			//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			
 			function inicializarVariables(elementoBpmnId, elementoBpmnType){
 				
 				$.get("/api/obtener-variables-elemento/" + proceso.idProceso + "/" + elementoBpmnId,
 				function(data, status){
 					console.log("Estado: " + status);
-					console.log(data);
 
 					var htmlVariablesSelect = '<option value="">Seleccione una opción</option>';
 					if(variables != null){
@@ -461,12 +491,10 @@
 
 					var htmlVariablesTable = '';
 					if(data.length > 0){
-						if(elementoBpmnType == "bpmn:ExclusiveGateway"){
-							$("#esDivergente").prop("checked", true);
-							$("#divVariables").removeClass('d-none');
-						}
+						var countVarsShow = 0;
 						for (var i = 0; i < data.length; ++i) {
 							if(data[i].mostrar){
+								countVarsShow++;
 								var badge_class = "primary";
 								
 								if(data[i].variable.tipoDato.tipoDatoNombre == "String" || data[i].variable.tipoDato.tipoDatoNombre == "Date"){
@@ -490,6 +518,12 @@
 								htmlVariablesTable += row;	
 							}
 						}
+						
+						if(elementoBpmnType == "bpmn:ExclusiveGateway" && countVarsShow > 0){
+							$("#esDivergente").prop("checked", true);
+							$("#divVariables").removeClass('d-none');
+						}
+						
 						$("#variablesBodyTable").html(htmlVariablesTable);
 					}else{
 						$("#variablesBodyTable").html("");
@@ -686,6 +720,46 @@
 				}else{
 					$("#divVariables").addClass('d-none');
 				}
+			}
+			
+			function agregarVariableProceso(e){
+				e.preventDefault();
+				var varNombreVal = $("#varNombre").val();
+				var varTDVal = $("#varTD").val();
+				var valid = true;
+				
+				if(varNombreVal == ""){
+					valid = false;
+					$("#noNombre").removeClass("d-none");
+				}
+				
+				if(varTDVal == 0){
+					valid = false;
+					$("#noTipoDato").removeClass("d-none");
+				}
+				
+				if(!valid){
+					return;
+				}
+				
+				$("#exampleModal").modal('hide');
+				
+				$.post("/api/agregar-variable", {
+					"procesoId" : proceso.idProceso,
+					"nombre": varNombreVal,
+					"tipoDatoId": varTDVal
+					}, 
+					function(data, status){
+						console.log(data);
+						toastr.success("La variable se creo exitosamente"); 
+						$("#varNombre").val("");
+						$("#varTD").val(0);
+						variables.push(data);
+		    	})
+		    	.fail(function() {
+		    		toastr.error("Hubo un error al intentar guardar variable");
+				  });
+					
 			}
 		</script>
     	<svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>
