@@ -119,7 +119,7 @@ public class DataRestController {
 	}
 	
 	@PostMapping("/elemento-bpmn/create")
-	public String createOrReplaceElementoBpmnPost(
+	public ElementoBpmn createOrReplaceElementoBpmnPost(
 			@RequestParam("id_diagrama_elemento_bpmn") String idElementoDiagramaBpmn,
 			@RequestParam("nombre_elemento_bpmn") String nombreElementoBpmn,
 			@RequestParam("tipo_elemento_bpmn") String tipoElementoBpmn,
@@ -134,7 +134,7 @@ public class DataRestController {
 			elementoBpmn.setNombreElementoBpmn(nombreElementoBpmn);
 		}
 		elementoBpmnService.createOrReplace(elementoBpmn);
-		return "Exito: " + elementoBpmn.getIdElementoBpmn();
+		return elementoBpmn;
 	}
 	
 	@PostMapping("/proceso/update-xml")
