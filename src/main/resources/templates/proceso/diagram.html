@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<title>BPMN</title>
 
   <!-- necessary stylesheets -->
 
@@ -30,23 +30,18 @@
 
 	<div layout:fragment="content" style="height: 100vh;">
 	
-	<div style="position: relative;">
-		<div class="row">
-			<div class="col-md-9"><h5 id="nombre-proceso" ></h5></div>
-			<div class="col-md-3">
-				<button id="btn-guardar-cambios" class="btn btn-dark" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
-				<button id="btn-validar" class="btn btn-success" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
-				<button id="btn-automatizar" class="btn btn-primary" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
-			</div>
+	<div class="row p-4">
+		<div class="col-md-6"><h5 id="nombre-proceso" ></h5></div>
+		<div class="col-md-6 text-right">
+			<button id="btn-guardar-cambios" class="btn btn-dark" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
+			<button id="btn-validar" class="btn btn-success" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
+			<button id="btn-automatizar" class="btn btn-primary" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
 		</div>
-		
-		
-		
 	</div>
-	
+		
 	<div id="canvas" style="height: 100%"></div>
 	
-	<div class="config-actividad">
+	<div id="config-actividad" class="config-actividad">
 		
 		<i class="fas fa-arrow-left fa-lg mb-3" id="close-form"></i>
 		
@@ -184,7 +179,7 @@
 				await bpmnModeler.importXML(xmlBase);
 				// access modeler components
 				var canvas = bpmnModeler.get('canvas');
-				
+				console.log(canvas._eventBus);
 				//Evento click de los elementos
 				canvas._eventBus.on('element.click', function(e) {
 					hideForm();
@@ -196,7 +191,7 @@
 					case "bpmn:Task":
 						$("#esDivergenteDiv").addClass("d-none");
 						$("#divVariables").removeClass("d-none");
-						$(".config-actividad").addClass("show-form");
+						$("#config-actividad").addClass("show-form");
 						$("#agregar-variable").removeClass("not-show");
 						$("#tipo-elemento-bpmn").empty();
 						$("#tipo-elemento-bpmn").append("Nombre de Actividad");
@@ -214,7 +209,7 @@
 						$("#esDivergenteDiv").removeClass("d-none");
 						$("#esDivergente").prop("checked", false);
 						$("#divVariables").addClass("d-none");
-						$(".config-actividad").addClass("show-form");
+						$("#config-actividad").addClass("show-form");
 						$("#agregar-variable").removeClass("not-show");
 						$("#tipo-elemento-bpmn").empty();
 						$("#tipo-elemento-bpmn").append("Nombre de Compuerta");
@@ -227,10 +222,24 @@
 						$("#permitirEscrituraChkbx").addClass('d-none');
 						$("#hiddenElementoBpmnId").val(e.element.id);
 						inicializarVariables(e.element.id, "bpmn:ExclusiveGateway");
-						
+						break;
+					case "bpmn:StartEvent":
+					case "bpmn:EndEvent":
+						$("#esDivergenteDiv").addClass("d-none");
+						$("#divVariables").addClass("d-none");
+						$("#config-actividad").addClass("show-form");
+						$("#agregar-variable").removeClass("not-show");
+						$("#tipo-elemento-bpmn").empty();
+						$("#tipo-elemento-bpmn").append("Nombre de Evento");
+						if(e.element.businessObject.name){
+							$("#nombre-actividad").val(e.element.businessObject.name);
+						}else{
+							$("#nombre-actividad").val("");
+						}
+						$("#permitirEscrituraChkbx").removeClass('d-none');
 						break;
 					case "bpmn:Lane":
-						$(".config-actividad").addClass("show-form");
+						$("#config-actividad").addClass("show-form");
 						$("#set-participante").removeClass("not-show");
 						break;
 					default:
@@ -251,6 +260,17 @@
 					}
 					
 					$("#btn-guardar-cambios").removeAttr("disabled");
+				});
+				
+				canvas._eventBus.on("element.changed", function(e){
+					console.log("cambio");
+					var name = e.element.businessObject.name;
+					if(name != ""){
+						createElementoBpmn(e.element.id, name, e.element.type, proceso.idProceso);
+						setProcesoXml();
+					}else{
+						toastr.warning("Es necesario identificar con un nombre a la actividad"); 
+					}
 				});
 				
 				// zoom to fit full viewport
@@ -333,7 +353,7 @@
 			* Función que permite ocultar el formulario de configuración de actividades
 			*/
 			function hideForm(){
-				$(".config-actividad").removeClass("show-form");
+				$("#config-actividad").removeClass("show-form");
 				$("#set-participante").addClass("not-show");
 				$("#agregar-variable").addClass("not-show");
 				$("#btn-guardar-name").attr("disabled", true);
@@ -383,7 +403,7 @@
 					xml = null;
 				}
 			}
-			
+
 			
 			function setParticipante(){
 				participantes.forEach(function(elemento, indice){
@@ -519,14 +539,18 @@
 				for(i = 0; i < elementos.length; i++){
 					elemento = elementos[i];
 					if(elemento != undefined){
-						
 						if(elemento.type === "bpmn:Task" || elemento.type === "bpmn:ExclusiveGateway" ||
-								elemento.type === "bpmn:StartEvent"){
+								elemento.type === "bpmn:StartEvent" || elemento.type === "bpmn:EndEvent"){
 							
 							//validar que se posea elementos siguientes
 							elementosBpmnsNext = getElementsNext(elemento);
-							if(elementosBpmnsNext.length <= 0){
+							if(elementosBpmnsNext.length <= 0 && elemento.type != "bpmn:EndEvent"){
 								resultados.push(`El elemento ${elemento.businessObject.name} debe poseer un elemento siguiente`);
+							}
+							
+							//poseer nombre
+							if(!elemento.businessObject.name){
+								resultados.push(`El elemento ${elemento.id} debe poseer nombre`);
 							}
 							
 							//validar que las actividades tengan al menos una variable
@@ -580,8 +604,6 @@
 				        body: htmlObservaciones
 	      			});
 				}
-				console.log("finalizar resultados");
-
 				return resultados;
 			}
 			
