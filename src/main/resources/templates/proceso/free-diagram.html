@@ -45,19 +45,18 @@
 </head>
 
 <body>
-	<div class="row p-4" >
-		<div class="col-md-12 text-right">
-			<button id="btn-export-xml" class="btn btn-dark m-1" title="Exportar XML"><i class="far fa-file fa-lg"></i><span class="ml-1">XML</span></button>
-			<button id="btn-export-image" class="btn btn-dark m-1" title="Exportar Imagen SVG"><i class="far fa-file-image fa-lg"></i> <span class="ml-1">SVG</span></button>
+	<div>
+		<div class="col-md-12 text-right" style="position: fixed; right: 20px; top: 20px; z-index: 100;">
+			<button id="btn-export-xml" class="btn btn-sm btn-dark m-1" title="Exportar XML"><i class="far fa-file fa-lg"></i><span class="ml-1">XML</span></button>
+			<button id="btn-export-image" class="btn btn-sm btn-dark m-1" title="Exportar Imagen SVG"><i class="far fa-file-image fa-lg"></i> <span class="ml-1">SVG</span></button>
 			<input id="fileChooser" type="file" style="display:none;">
-			<button id="btn-import-xml" class="btn btn-success m-1" title="Importar XML"><i class="fas fa-file-upload fa-lg"></i><span class="ml-1">IMPORT XML</span></button>	
+			<button id="btn-import-xml" class="btn btn-sm btn-success m-1" title="Importar XML"><i class="fas fa-file-upload fa-lg"></i><span class="ml-1">IMPORT XML</span></button>	
 		</div>
 	</div>
     <div id="canvas"></div>
 </body>
 
 <script>
-
     var baseUrl = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
     var diagramUrl = `${baseUrl}/bpmn/base.bpmn`;
 
@@ -99,6 +98,7 @@
     }
 
     $.get(diagramUrl, openDiagram, 'text');
+    $('.djs-palette').prop("class", "djs-palette two-column open mt-5");
     
  	var fileChooser = document.getElementById('fileChooser');
     
