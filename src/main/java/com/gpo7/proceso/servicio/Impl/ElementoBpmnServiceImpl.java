@@ -71,4 +71,10 @@ public class ElementoBpmnServiceImpl implements ElementoBpmnService{
 		// TODO Auto-generated method stub
 		return elementoBpmnJpaRepository.findByProcesoAndCargo(idProc, idCargo);
 	}
+
+	@Override
+	public List<ElementoBpmn> findByProceso(Proceso proceso) {
+		// TODO Auto-generated method stub
+		return this.elementoBpmnJpaRepository.findByProceso(proceso);
+	}
 }

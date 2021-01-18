@@ -58,4 +58,10 @@ public class ElementoBpmnFormularioServiceImpl implements ElementoBpmnFormulario
 		return elementoBpmnFormularioRepository.findByElementoFormularioAndPermitirEscritura(elementoForm, permitirEescritura);
 	}
 
+	@Override
+	public List<ElementoBpmnFormulario> findByElementoBpmnAndPermitirEscritura(ElementoBpmn elementoBpmn,
+			boolean permitirEescritura) {
+		return this.elementoBpmnFormularioRepository.findByElementoBpmnAndPermitirEscritura(elementoBpmn, permitirEescritura);
+	}
+
 }

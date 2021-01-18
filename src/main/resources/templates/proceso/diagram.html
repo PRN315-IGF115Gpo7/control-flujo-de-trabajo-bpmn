@@ -33,9 +33,12 @@
 	<div class="row p-4">
 		<div class="col-md-6"><h5 id="nombre-proceso" ></h5></div>
 		<div class="col-md-6 text-right">
-			<button id="btn-guardar-cambios" class="btn btn-dark" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
-			<button id="btn-validar" class="btn btn-success" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
-			<button id="btn-automatizar" class="btn btn-primary" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
+			<button class="btn btn-dark m-1" title="Agregar Variable" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus-circle"></i></button>
+			<button id="btn-guardar-cambios" class="btn btn-dark m-1" disabled title="Guardar Cambios"><i class="far fa-save fa-lg"></i></button>
+			<button id="btn-validar" class="btn btn-success m-1" title="Validar Proceso"><i class="far fa-check-square fa-lg"></i></button>
+			<button id="btn-automatizar" class="btn btn-primary m-1" disabled title="Automatizar Proceso"><i class="fas fa-cog fa-lg"></i></button>
+			
+			
 		</div>
 	</div>
 		
@@ -66,6 +69,7 @@
 						<select class="form-control" id="idVariables">
 							<option value="">Seleccione una opción</option>
 						</select>
+						<small id="textNoVars" class="form-text text-danger d-none">Aún no hay variables que se hayan asignado para escritura.</small>
 					</div>
 					<div id="permitirEscrituraChkbx" class="form-group">
 						<div class="custom-control custom-checkbox">
@@ -76,8 +80,6 @@
 						</div>
 					</div>
 					<button class="btn btn-primary btn-sm" onclick="agregarVariable(event)">Agregar</button>
-			
-					</form>
 				
 					<div class="card mt-3">
 					<div class="card-header">
@@ -101,25 +103,56 @@
 						</table>
 					</div>
 				</div>
-              <!-- /.card-body -->
+			  <!-- /.card-body -->
+			  		</div>
+				</form>
             </div>
+			<div id="set-participante" class="not-show">
+				<div class="form-group">
+		          	<label>Seleccione la entidad responsable</label>
+		          	<select class="form-control" id="idEntidad">
+		            	<option value="">Seleccione una opción</option>
+		          	</select>
+	        	</div>
+	        	<button class="btn btn-primary btn-sm" id="btn-set-participante">Establecer</button>
+		        
+			</div>
 		</div>
-		<div id="set-participante" class="not-show">
-			<div class="form-group">
-	          	<label>Seleccione la entidad responsable</label>
-	          	<select class="form-control" id="idEntidad">
-	            	<option value="">Seleccione una opción</option>
-	          	</select>
-        	</div>
-        	<button class="btn btn-primary btn-sm" id="btn-set-participante">Establecer</button>
-	        
+			<!-- Modal para agregar variable -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Agregar Variable</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        <form>
+		        	<div class="form-group">
+					    <label for="varNombre">Nombre:</label>
+					    <input type="text" class="form-control" id="varNombre" placeholder="Ingrese el nombre..." required="required">
+					 	<small id="noNombre" class="form-text text-danger d-none">El nombre es requerido.</small>
+					 </div>
+					 <div class="form-group">
+					 	<label for="varTD">Tipo de Dato:</label>
+					 	<select class="form-control" id="varTD">
+					 	  <option value="0">Seleccione una opción</option>
+						  <option th:each="tipoDato: ${tiposDatos}" th:value="${tipoDato.idTipoDato}" th:utext="${tipoDato.tipoDatoNombre}"></option>
+						</select>
+						<small id="noTipoDato" class="form-text text-danger d-none">Seleccione un tipo de dato válido.</small>
+					 </div>
+		        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+		        <button type="submit" class="btn btn-primary" onclick="agregarVariableProceso(event)">Guardar</button>
+		      </div>
+		    </div>
+		  </div>
 		</div>
-		
 	</div>
-	
-      
-	</div>
-
 
 	<section layout:fragment="scripts">
 		<!-- Toastr -->
@@ -186,7 +219,7 @@
 					
 					//Set Elemento seleccionado
 					elementoSeleccionado = e.element;
-					
+					$("#textNoVars").addClass('d-none');
 					switch(e.element.type) {
 					case "bpmn:Task":
 						$("#esDivergenteDiv").addClass("d-none");
@@ -251,9 +284,7 @@
 					if(e.element.type === "bpmn:Task" || e.element.type === "bpmn:ExclusiveGateway" ||
 							e.element.type === "bpmn:StartEvent" || e.element.type === "bpmn:EndEvent"){
 						createElementoBpmn(e.element.id, e.element.id, e.element.type, proceso.idProceso);
-						if(e.element.type === "bpmn:Task"){
-							e.element.businessObject.name = e.element.id;
-						}
+						e.element.businessObject.name = e.element.id;
 					}
 					if(e.element.type === "bpmn:Lane"){
 						e.element.businessObject.name = e.element.id;
@@ -446,68 +477,77 @@
 					"esEscritura": esEscritura}, 
 					function(data, status){
 					console.log("Estado: " + status);
-					console.log(data);
 					$('#varsForm').trigger("reset");
 					inicializarVariables(elementoBpmnId);
 				});
 			}
-
+			
 			function inicializarVariables(elementoBpmnId, elementoBpmnType){
+				
 				$.get("/api/obtener-variables-elemento/" + proceso.idProceso + "/" + elementoBpmnId,
 				function(data, status){
 					console.log("Estado: " + status);
-					console.log(data);
 
 					var htmlVariablesSelect = '<option value="">Seleccione una opción</option>';
 					if(variables != null){
+						var countVars = 0;
 						for (var i = 0; i < variables.length; ++i) {
 							var agregado = false;
 							
 							if(data){
 								for(var j = 0; j < data.length; j++){
-									if(variables[i].idVariable == data[j].idVariable){
+									if(variables[i].idVariable == data[j].variable.idVariable){
 										agregado = true;
 									}
 								}
 							}
 
 							if(! agregado){
+								countVars++;
 								htmlVariablesSelect += `<option value=${variables[i].idVariable}>${variables[i].variableNombre}</option>`;
 							}
 						}
+						if(countVars == 0)
+							$("#textNoVars").removeClass('d-none');
+						
 						$("#idVariables").html(htmlVariablesSelect);
 					}
 
 					var htmlVariablesTable = '';
 					if(data.length > 0){
-						if(elementoBpmnType == "bpmn:ExclusiveGateway"){
+						var countVarsShow = 0;
+						for (var i = 0; i < data.length; ++i) {
+							if(data[i].mostrar){
+								countVarsShow++;
+								var badge_class = "primary";
+								
+								if(data[i].variable.tipoDato.tipoDatoNombre == "String" || data[i].variable.tipoDato.tipoDatoNombre == "Date"){
+									badge_class = "danger";
+								}else if(data[i].variable.tipoDato.tipoDatoNombre == "Boolean"){
+									badge_class = "secondary";
+								}
+
+								var row = "<tr>"; 
+								row += "<td>" + (i+1) + ".</td>";
+								row += "<td>" + data[i].variable.variableNombre + "</td>";
+	                      		row += `<td><span class="badge bg-${badge_class}">` + data[i].variable.tipoDato.tipoDatoNombre + '</span></td>';
+								if(data[i].esEscritura){  
+	                      			row += '<td style="vertical-align:middle; text-align:center"><span title="Escritura"><i class="fas fa-user-edit"></i></span></td>';	
+								}else{
+									row += '<td style="vertical-align:middle; text-align:center"><span title="Lectura"><i class="fas fa-eye"></i></span></td>';
+								}
+								row += `<td style="vertical-align:middle; text-align:center"><button class="btn btn-sm btn-danger" onclick="eliminarVariable(event, ${data[i].variable.idVariable}, '${elementoBpmnId}');"><i class="fas fa-trash"></i></button></td>`;
+								row += "</tr>";
+
+								htmlVariablesTable += row;	
+							}
+						}
+						
+						if(elementoBpmnType == "bpmn:ExclusiveGateway" && countVarsShow > 0){
 							$("#esDivergente").prop("checked", true);
 							$("#divVariables").removeClass('d-none');
 						}
-						for (var i = 0; i < data.length; ++i) {
-							
-							var badge_class = "primary";
-							
-							if(data[i].tipoDato.tipoDatoNombre == "String" || data[i].tipoDato.tipoDatoNombre == "Date"){
-								badge_class = "danger";
-							}else if(data[i].tipoDato.tipoDatoNombre == "Boolean"){
-								badge_class = "secondary";
-							}
-
-							var row = "<tr>"; 
-							row += "<td>" + (i+1) + ".</td>";
-							row += "<td>" + data[i].variableNombre + "</td>";
-                      		row += `<td><span class="badge bg-${badge_class}">` + data[i].tipoDato.tipoDatoNombre + '</span></td>';
-							if(data[i].esEscritura){  
-                      			row += '<td style="vertical-align:middle; text-align:center"><span title="Escritura"><i class="fas fa-user-edit"></i></span></td>';	
-							}else{
-								row += '<td style="vertical-align:middle; text-align:center"><span title="Lectura"><i class="fas fa-eye"></i></span></td>';
-							}
-							row += `<td style="vertical-align:middle; text-align:center"><button class="btn btn-sm btn-danger" onclick="eliminarVariable(event, ${data[i].idVariable}, '${elementoBpmnId}');"><i class="fas fa-trash"></i></button></td>`;
-							row += "</tr>";
-
-							htmlVariablesTable += row;
-						}
+						
 						$("#variablesBodyTable").html(htmlVariablesTable);
 					}else{
 						$("#variablesBodyTable").html("");
@@ -549,7 +589,7 @@
 							}
 							
 							//poseer nombre
-							if(!elemento.businessObject.name){
+							if(!elemento.businessObject.name && elemento.type != "bpmn:StartEvent" ){
 								resultados.push(`El elemento ${elemento.id} debe poseer nombre`);
 							}
 							
@@ -560,6 +600,12 @@
 									resultados.push(`El elemento ${elemento.id} debe poseer al menos una variable asignada`);
 								}
 							}
+							
+							if(elemento.type === "bpmn:EndEvent")
+								cantElelementosEventEnd++;
+							
+							if(elemento.type === "bpmn:StartEvent")
+								cantElelementosEventStart++;
 						}
 						
 						//Verificar que se tenga particapante seleccionado
@@ -575,12 +621,6 @@
 								resultados.push(`No se ha seleccionado participante para el elemento Lane: ${elemento.businessObject.name}`);
 							}
 						}
-						
-						if(elemento.type === "bpmn:EndEvent")
-							cantElelementosEventEnd++;
-						
-						if(elemento.type === "bpmn:StartEvent")
-							cantElelementosEventStart++;
 					}
 				}
 				
@@ -706,6 +746,46 @@
 				}else{
 					$("#divVariables").addClass('d-none');
 				}
+			}
+			
+			function agregarVariableProceso(e){
+				e.preventDefault();
+				var varNombreVal = $("#varNombre").val();
+				var varTDVal = $("#varTD").val();
+				var valid = true;
+				
+				if(varNombreVal == ""){
+					valid = false;
+					$("#noNombre").removeClass("d-none");
+				}
+				
+				if(varTDVal == 0){
+					valid = false;
+					$("#noTipoDato").removeClass("d-none");
+				}
+				
+				if(!valid){
+					return;
+				}
+				
+				$("#exampleModal").modal('hide');
+				
+				$.post("/api/agregar-variable", {
+					"procesoId" : proceso.idProceso,
+					"nombre": varNombreVal,
+					"tipoDatoId": varTDVal
+					}, 
+					function(data, status){
+						console.log(data);
+						toastr.success("La variable se creo exitosamente"); 
+						$("#varNombre").val("");
+						$("#varTD").val(0);
+						variables.push(data);
+		    	})
+		    	.fail(function() {
+		    		toastr.error("Hubo un error al intentar guardar variable");
+				  });
+					
 			}
 		</script>
     	<svg id="helper-svg" width="0" height="0" style="visibility: hidden; position: fixed"></svg>

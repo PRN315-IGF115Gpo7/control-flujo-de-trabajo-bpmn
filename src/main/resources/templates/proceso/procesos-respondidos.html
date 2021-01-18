@@ -44,7 +44,7 @@
                                         <td class="descripcion" th:text="${instanciaProceso.proceso.procesoDescripcion}"></td>
                                         <td th:text="${instanciaProceso.usuario.nombreCompleto}"></td>
                                         <td>
-                                            <a class="btn btn-sm btn-secondary" title="Ver respuestas" href="#"><i class="fas fa-eye"></i></a>
+                                            <a class="btn btn-sm btn-secondary" title="Ver respuestas" th:href="@{/proceso/instancia/{id}/resultados(id=${instanciaProceso.instanciaProcesoId})}"><i class="fas fa-eye"></i></a>
                                         </td>
                                     </tr>
                                 </tbody>

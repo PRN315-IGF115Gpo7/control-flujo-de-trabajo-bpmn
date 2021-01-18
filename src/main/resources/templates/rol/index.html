@@ -47,11 +47,6 @@
             <div th:if="${mensaje}">
               <div class="alert alert-danger" th:text="${mensaje}"></div>
             </div>
-            <div th:if="${delete_success}">
-              <div class="alert alert-success">
-                Rol eliminado con éxito!
-              </div>
-            </div>
 
             <table id="example1" class="table table-bordered table-striped">
               <div class="text-center" th:if="${#lists.isEmpty(roles)}">No hay roles registrados en el sistema.</div>

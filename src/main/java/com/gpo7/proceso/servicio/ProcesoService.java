@@ -11,6 +11,8 @@ public interface ProcesoService {
 	public Proceso store(Proceso proceso);
 	public Proceso update(Proceso proceso);
 	public void destroy(Proceso proceso);
+	public void deleteById(int procesoId);
 	public Proceso findById(int proceso_id);
 	public abstract List<Proceso> procesosActivos(Boolean activo, Integer cargo_id);
+	public abstract int cantidadRespuestas(int procesoId);
 }

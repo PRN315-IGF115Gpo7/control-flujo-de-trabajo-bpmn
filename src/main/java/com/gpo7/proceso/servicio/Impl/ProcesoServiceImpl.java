@@ -53,5 +53,17 @@ public class ProcesoServiceImpl implements ProcesoService{
 		// TODO Auto-generated method stub
 		return procesoJpaRepository.procesosActivos(activo, cargo_id);
 	}
+
+	@Override
+	public int cantidadRespuestas(int procesoId) {
+		// TODO Auto-generated method stub
+		return this.procesoJpaRepository.cantidadRespuestas(procesoId);
+	}
+
+	@Override
+	public void deleteById(int procesoId) {
+		procesoJpaRepository.deleteById(procesoId);
+		
+	}
 	
 }

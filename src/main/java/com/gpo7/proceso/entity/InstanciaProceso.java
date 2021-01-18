@@ -3,6 +3,7 @@ package com.gpo7.proceso.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,11 +34,11 @@ public class InstanciaProceso {
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "proceso_id")
 	private Proceso proceso;
 	
-	@OneToMany(mappedBy = "instanciaProceso", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "instanciaProceso", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<InstanciaActividad> instanciasActividad = new ArrayList();
 	

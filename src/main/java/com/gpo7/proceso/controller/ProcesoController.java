@@ -47,6 +47,8 @@ import com.gpo7.proceso.servicio.TipoDatoService;
 import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
 
+import objects.ProcesoStruct;
+
 @Controller
 @RequestMapping("/proceso")
 public class ProcesoController {
@@ -126,15 +128,27 @@ public class ProcesoController {
 
 	@PreAuthorize("hasAuthority('PROCESO_INDEX')")
 	@GetMapping({ "/index", "" })
-	public ModelAndView index() {
+	public ModelAndView index(@RequestParam(name="delete_success", required=false) String delete_success) {
 		ModelAndView mav = new ModelAndView(INDEX_VIEW);
 
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 
-		mav.addObject("procesos", procesoService.getAll());
+		List<ProcesoStruct> procesosStructs = new ArrayList<ProcesoStruct>();
+		
+		for(Proceso proceso : procesoService.getAll()) {
+			boolean eliminar = true;
+			if(procesoService.cantidadRespuestas(proceso.getIdProceso()) > 0) {
+				eliminar = false;
+			}
+			procesosStructs.add(new ProcesoStruct(proceso, eliminar));
+		}
+		
+		mav.addObject("procesos", procesosStructs);
 		mav.addObject("proceso", new Proceso());
 		mav.addObject("usuarios", usuario);
+		mav.addObject("delete_success", delete_success);
+		
 		return mav;
 	}
 
@@ -175,22 +189,20 @@ public class ProcesoController {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Usuario usuario = usuarioService.findByUsername(user.getUsername());
 
-		//Variables almacenadas
-		List<Variable> variablesStored = new ArrayList<Variable>();
-			
-		//proceso.setVariables(variablesStored);
 		proceso.setUsuario(usuario);
 		proceso.setEsAutomatizado(true);
 		proceso.setProcesoActivo(true);
 		procesoService.store(proceso);
 		
 		for (Variable variable : variables) {
+			variable.setIdVariable(null);
+			
 			variable.setProceso(proceso);
-			Variable variableStored = variableService.store(variable);
-			variablesStored.add(variableStored);
+			
+			Variable newVar = variableService.store(variable);
 			
 			// Funcion para Crear Elemento_Formulario
-			crearElementoFormulario(variableStored);
+			crearElementoFormulario(newVar);
 		}
 
 		return "redirect:/proceso/diagram/" + proceso.getIdProceso();
@@ -224,6 +236,7 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(DIAGRAM_VIEW);
 		mav.addObject("proceso", procesoService.findById(procesoId));
 		mav.addObject("cargos", cargoService.getAll());
+		mav.addObject("tiposDatos", this.tipoDatoService.getAll());
 		return mav;
 	}
 
@@ -560,11 +573,18 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(RESULTADOS_VIEW);
 
 		InstanciaProceso instanciaProceso = this.instanciaProcesoService.findById(instanciaProcesoId);
-		List<InstanciaActividad> instanciasActividades = this.instanciaActividadService.findByInstanciaProceso(instanciaProceso);
+		List<InstanciaActividad> instanciasActividadesAll = this.instanciaActividadService.findByInstanciaProceso(instanciaProceso);
+		List<InstanciaActividad> instanciasActividades = new ArrayList<InstanciaActividad>();
+		
+		for(InstanciaActividad ia: instanciasActividadesAll) {
+			if(ia.getElementoBpmn().getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:Task") && this.respuestaService.findByInstanciaActividad(ia).size() == 0) {
+				continue;
+			}
+			instanciasActividades.add(ia);
+		}
 		
 		mav.addObject("usuario", instanciaProceso.getUsuario());
 		mav.addObject("proceso", instanciaProceso.getProceso());
-		//mav.addObject("xml", instanciaProceso.getProceso().getProceoXml());
 		mav.addObject("instanciasActividades", instanciasActividades);
 		return mav;
 	}
@@ -573,9 +593,37 @@ public class ProcesoController {
 	public ModelAndView verRespuestas(@PathVariable("id") Integer instanciaActividadId) {
 		ModelAndView mav = new ModelAndView(RESPUESTAS_VIEW);
 
-		InstanciaActividad instanciaActividad = this.instanciaActividadService.findById(instanciaActividadId);
-		List<Respuesta> respuestas = this.respuestaService.findByInstanciaActividad(instanciaActividad);
-		mav.addObject("respuestas", respuestas);
+		InstanciaActividad currActivity = this.instanciaActividadService.findById(instanciaActividadId);
+		ElementoBpmn elementoBpmnNext = null;
+		ElementoBpmn elementoBpmn = currActivity.getElementoBpmn();
+		for (ElementoBpmnFormulario ebf : elementoBpmn.getElementoBpmnFormularios()) {
+
+			ElementoBpmnFormulario ebfEscritura = elementoBpmnFormularioService
+					.findByElementoFormularioAndPermitirEscritura(ebf.getElementoFormulario(), true).get(0);
+			InstanciaActividad prevActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(
+					ebfEscritura.getElementoBpmn(), currActivity.getInstanciaProceso());
+			Respuesta respuesta = respuestaService.findByInstanciaActividadAndElementoBpmnFormulario(prevActivity,
+					ebfEscritura);
+			ebf.setRespuesta(respuesta.getRespuesta());
+			
+		}
+		
+		if(elementoBpmn.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:ExclusiveGateway")) {
+			List<ElementoBpmn> ebsNext = elementoBpmn.getReference_next();
+			//Buscamos la InstanciaActividad del usuario
+			//findByElementoBpmnAndInstanciaProceso
+			for(ElementoBpmn ebNext: ebsNext) {
+				if(this.respuestaService.findByInstanciaActividad(this.instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebNext, currActivity.getInstanciaProceso())).size() > 0) {
+					elementoBpmnNext = ebNext;
+					break;
+				}
+			}
+		}
+
+		mav.addObject("currActivity", currActivity);
+		mav.addObject("currElement", currActivity.getElementoBpmn().getIdElementoDiagramaBpmn());
+		mav.addObject("activityElements", elementoBpmn);
+		mav.addObject("elementoBpmnNext", elementoBpmnNext);
 		
 		return mav;
 	}
@@ -585,6 +633,13 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(FREE_DIAGRAM_VIEW);
 		
 		return mav;
+	}
+	
+	@PostMapping("/eliminar")
+	public String eliminarProceso(@RequestParam("procesoId") int procesoId){
+		this.procesoService.deleteById(procesoId);
+		
+		return "redirect:/proceso/index?delete_success";
 	}
 
 }

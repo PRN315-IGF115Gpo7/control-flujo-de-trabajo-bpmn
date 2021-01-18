@@ -47,33 +47,36 @@
             </div>
 
             <table id="example1" class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>Privilegio</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-
-                <tr th:each="privilegio : ${privilegios}">
-                  <td class="privilegio" th:text="${privilegio.privilegio}"></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" th:attr="data-editar=${privilegio.idPrivilegio}">
-                      <i class="fas fa-pencil-alt"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${privilegio.idPrivilegio}">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th>Privilegio</th>
-                  <th>Acciones</th>
-                </tr>
-              </tfoot>
+              <div class="text-center" th:if="${#lists.isEmpty(privilegios)}">No hay privilegios registrados en el sistema.</div>
+              <div th:if="${!#lists.isEmpty(privilegios)}">
+                <thead>
+                  <tr>
+                    <th>Privilegio</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+  
+                  <tr th:each="privilegio : ${privilegios}">
+                    <td class="privilegio" th:text="${privilegio.privilegio}"></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary" th:attr="data-editar=${privilegio.idPrivilegio}">
+                        <i class="fas fa-pencil-alt"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" th:attr="data-eliminar=${privilegio.idPrivilegio}">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+  
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Privilegio</th>
+                    <th>Acciones</th>
+                  </tr>
+                </tfoot>
+              </div>
             </table>
           </div>
           <!-- /.card-body -->

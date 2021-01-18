@@ -7,6 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- SweetAlert2 -->
+  	<link rel="stylesheet" th:href="@{/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css}">
+	<!-- Toastr -->
+  	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
 
 </head>
 
@@ -20,9 +24,9 @@
     </ol>
 
     <div layout:fragment="content">
-
+		<input type="hidden" id="delete" th:if="${delete_success != null}" value="true">
         <div class="row ml-3 mr-3">
-            <div class="col-md-9 offset-1">
+            <div class="col-md-10 offset-1">
                 <div class="card">
                     <div class="card-body">
 
@@ -49,29 +53,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="proceso : ${procesos}">
-                                    <th:block th:if="${usuarios == proceso.usuario}">
-                                        <td class="nombre" th:text="${proceso.procesoNombre}"></td>
-                                        <td class="descripcion" th:text="${proceso.procesoDescripcion}"></td>
-                                        <th:block th:if="${proceso.procesoActivo}">
-                                            <td class="estado" th:text="Activo"></td>
+                                <tr th:each="procesoStruct : ${procesos}">
+                                    <th:block th:if="${usuarios == procesoStruct.proceso.usuario}">
+                                        <td class="nombre" th:text="${procesoStruct.proceso.procesoNombre}"></td>
+                                        <td class="descripcion" th:text="${procesoStruct.proceso.procesoDescripcion}"></td>
+                                        <th:block th:if="${procesoStruct.proceso.procesoActivo}">
+                                            <td class="estado"><span class="badge badge-success" th:text="Activo"></span></td>
                                         </th:block>
-                                        <th:block th:unless="${proceso.procesoActivo}">
-                                            <td class="estado1" th:text="Inactivo"></td>
+                                        <th:block th:unless="${procesoStruct.proceso.procesoActivo}">
+                                            <td class="estado1"><span class="badge badge-warning" th:text="Inactivo"></span></td>
                                         </th:block>
                                         <td class="respuestas"
-                                            th:text="${proceso.contadorRespuestas(proceso.getInstanciasProceso(), true)}">
+                                            th:text="${procesoStruct.proceso.contadorRespuestas(procesoStruct.proceso.getInstanciasProceso(), true)}">
                                         </td>
                                         <td>
                                             <div class="btn-group">
                                                 <button class="btn btn-sm btn-primary mx-1"
-                                                    th:attr="data-editar=${proceso.idProceso}">
+                                                    th:attr="data-editar=${procesoStruct.proceso.idProceso}" title="Editar Proceso">
                                                     <i class="fas fa-pencil-alt"> </i>
                                                 </button>
-                                                <a class="btn btn-sm btn-secondary"
-                                                    th:href="@{/proceso/{id}/procesos-respondidos (id=${proceso.idProceso})}">
+                                                <a class="btn btn-sm btn-secondary" title="Ver Listado de Respuestas"
+                                                    th:href="@{/proceso/{id}/procesos-respondidos (id=${procesoStruct.proceso.idProceso})}">
                                                     <i class="fas fa-list-ul"></i>
                                                 </a>
+                                                <button th:if="${procesoStruct.eliminar == true}" class="btn btn-sm btn-danger mx-1"
+                                                    title="Eliminar Proceso"
+                                                    th:attr="data-procesoId=${procesoStruct.proceso.idProceso}, data-procesoNombre=${procesoStruct.proceso.procesoNombre}"
+                                                    onclick="eliminarProceso(event, this)">
+                                                    <i class="fas fa-trash"> </i>
+                                                </button>
                                             </div>
                                         </td>
                                     </th:block>
@@ -124,8 +134,35 @@
                 </div>
             </div>
         </div>
+        <!-- Modal para eliminar proceso -->
+        <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Eliminar Proceso</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <form th:action="@{/proceso/eliminar}" method="post">
+		      	  <input type="hidden" id="procesoIdEliminar" name="procesoId" value="">	
+			      <div class="modal-body">
+			        <div id="msjConfirmacion"></div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			        <button type="submit" class="btn btn-danger">Eliminar</button>
+			      </div>
+		      </form>
+		    </div>
+		  </div>
+		</div>
     </div>
     <section layout:fragment="scripts">
+    	<!-- Toastr -->
+		<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+		<!-- SweetAlert2 -->
+		<script th:src="@{/plugins/sweetalert2/sweetalert2.min.js}"></script>
         <script>
             $('[data-editar]').on('click', function () {
                 $('#modalEditar').modal('show');
@@ -138,6 +175,20 @@
                 $('#nombre-p').val(nombre);
                 $('#descripcion-p').val(descripcion);
             })
+            
+            function eliminarProceso(event, element){
+            	var procesoNombre = $(element).attr("data-procesoNombre");
+            	var procesoId = $(element).attr("data-procesoId");
+            	$("#procesoIdEliminar").val(procesoId);
+            	$("#msjConfirmacion").html(`<p>¿Esta seguro que desea eliminar el proceso <b>${procesoNombre}<b/>?</p>`);
+            	$("#eliminarModal").modal('toggle');
+            }
+            $(document).ready(function(){
+            	var del = $('#delete').val();
+            	if(del === 'true'){
+   				 toastr.success("El Proceso se ha eliminado correctamente."); 
+   			  	}
+            });
         </script>
     </section>
 
