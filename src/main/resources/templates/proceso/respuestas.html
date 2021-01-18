@@ -12,10 +12,11 @@
 
 <body>
 
-	<h1 class="m-0 text-dark" layout:fragment="titulo_seccion">Respuestas de Elemento del Proceso</h1>
+	<h3 class="m-0 text-dark" layout:fragment="titulo_seccion">Respuestas de Elemento del Proceso</h3>
 
 	<ol class="breadcrumb float-sm-right" layout:fragment="breadcrumb">
         <li class="breadcrumb-item"><a th:href="@{/index}">Home</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/proceso/instancia/{id}/resultados(id=${currActivity.instanciaProceso.instanciaProcesoId})}">Resultados</a></li>
         <li class="breadcrumb-item active">Respuestas</li>
     </ol>
 
@@ -43,14 +44,15 @@
                      </div>
                      <div class="card-body">
                          <!--SI ES UNA COMPUERTA-->
-                         <th:block
-                             th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
-
+                         <th:block>
                              <!--Variables que son solo de lectura-->
                              <th:block th:each="ebf : ${activityElements.elementoBpmnFormularios}">
                                  <div class="form-group"
                                      th:unless="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
-                                     <label for="exampleInputEmail1">[[ ${ebf.elementoFormulario.label} ]]</label>
+                                     <label for="exampleInputEmail1">[[ ${ebf.elementoFormulario.label} ]]
+                                     	<span th:if="${ebf.permitirEscritura} == true" title="Fue de Escritura en esta Actividad"><i class="far fa-edit"></i></span>
+                                     	<span th:if="${ebf.permitirEscritura} == false" title="Fue de Lectura en esta Actividad"><i class="far fa-eye"></i></span>
+                                     </label>
                                      <input th:type="${ebf.elementoFormulario.elementoFormularioTipo}"
                                          class="form-control" disabled th:value="${ebf.respuesta}">
                                  </div>
@@ -61,6 +63,8 @@
                                              th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}"
                                              disabled>
                                          [[ ${ebf.elementoFormulario.label} ]]
+                                         <span th:if="${ebf.permitirEscritura} == true" title="Fue de Escritura en esta Actividad"><i class="far fa-edit"></i></span>
+                                     	<span th:if="${ebf.permitirEscritura} == false" title="Fue de Lectura en esta Actividad"><i class="far fa-eye"></i></span>
                                      </label>
                                  </div>
                              </th:block>
@@ -68,66 +72,26 @@
                              <br>
 
                              <!--Listado de actividades para elegir-->
-                             <div class="form-group">
-                                 <h5><label>[[ ${activityElements.nombreElementoBpmn} ]]</label></h5>
-                                 <div class="radio" th:each="nextElement : ${activityElements.reference_next}">
-                                     <label><input type="radio" th:name="nextActivity"
-                                             th:value="${nextElement.idElementoBpmn}" required> [[
-                                         ${nextElement.nombreElementoBpmn} ]] </label>
-                                 </div>
-                                 <small id="passwordHelpInline" class="text-muted">
-                                     En base a las variables presentadas seleccionar la siguiente actividad
-                                 </small>
-                             </div>
+                             <th:block 
+                             	th:if="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}">
+	                             <div class="form-group">
+	                                 <h5><label>[[ ${activityElements.nombreElementoBpmn} ]]</label></h5>
+	                                 <div class="radio" th:each="nextElement : ${activityElements.reference_next}">
+	                                     <label><input type="radio" th:name="nextActivity"
+	                                             th:value="${nextElement.idElementoBpmn}" disabled
+	                                             th:checked="${nextElement.idElementoBpmn} == ${elementoBpmnNext.idElementoBpmn}"> [[
+	                                         ${nextElement.nombreElementoBpmn} ]] </label>
+	                                 </div>
+	                             </div>
+                             </th:block>
                              <!-- FIN - Listado de actividades para elegir-->
 
                          </th:block>
                          <!--FIN COMPUERTA-->
 
-                         <!--SI ES TAREA-->
-                         <th:block
-                             th:unless="${activityElements.tipoElementoBpmn.nombreTipoElementoBpmn == 'bpmn:ExclusiveGateway'}"
-                             th:each="ebf : ${activityElements.elementoBpmnFormularios}">
-
-                             <!-- Si no es de tipo Checkbox -->
-                             <div class="form-group"
-                                 th:unless="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
-                                 <label>[[ ${ebf.elementoFormulario.label} ]]</label>
-                                 <input th:if="${ebf.permitirEscritura}"
-                                     th:type="${ebf.elementoFormulario.elementoFormularioTipo}" class="form-control"
-                                     th:name="${ebf.elementoFormulario.label}" required>
-                                 <input th:unless="${ebf.permitirEscritura}"
-                                     th:type="${ebf.elementoFormulario.elementoFormularioTipo}" class="form-control"
-                                     th:value="${ebf.respuesta}" disabled>
-                             </div>
-                             <!-- FIN tipo Checkbox -->
-
-                             <!-- Si es de tipo Checkbox -->
-                             <div class="form-check"
-                                 th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
-                                 <!--Se permite escritura-->
-                                 <label th:if="${ebf.permitirEscritura}" class="form-check-label">
-                                     <input type="checkbox" class="form-check-input"
-                                         th:name="${ebf.elementoFormulario.label}" required>
-                                     [[ ${ebf.elementoFormulario.label} ]]
-                                 </label>
-                                 <!--No se permite escritura-->
-                                 <label th:unless="${ebf.permitirEscritura}" class="form-check-label mb-2">
-                                     <input th:if="${ebf.respuesta == 'checked'}" type="checkbox"
-                                         class="form-check-input" th:name="${ebf.elementoFormulario.label}" checked
-                                         disabled>
-                                     <input th:unless="${ebf.respuesta == 'checked'}" type="checkbox"
-                                         class="form-check-input" th:name="${ebf.elementoFormulario.label}" disabled>
-                                     [[ ${ebf.elementoFormulario.label} ]]
-                                 </label>
-                             </div>
-                             <!-- FIN de tipo Checkbox -->
-
-                         </th:block>
-                         <!--FIN TAREA-->
                      </div>
                      <div class="card-footer text-right">
-                         <button type="submit" class="btn btn-primary">Regresar</button>
+                         <a type="submit" class="btn btn-primary" th:href="@{/proceso/instancia/{id}/resultados(id=${currActivity.instanciaProceso.instanciaProcesoId})}">Regresar</a>
                      </div>
                 </div>
             </div>

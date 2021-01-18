@@ -195,10 +195,14 @@ public class ProcesoController {
 		procesoService.store(proceso);
 		
 		for (Variable variable : variables) {
+			variable.setIdVariable(null);
+			
 			variable.setProceso(proceso);
 			
+			Variable newVar = variableService.store(variable);
+			
 			// Funcion para Crear Elemento_Formulario
-			crearElementoFormulario(variableService.store(variable));
+			crearElementoFormulario(newVar);
 		}
 
 		return "redirect:/proceso/diagram/" + proceso.getIdProceso();
@@ -570,7 +574,15 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(RESULTADOS_VIEW);
 
 		InstanciaProceso instanciaProceso = this.instanciaProcesoService.findById(instanciaProcesoId);
-		List<InstanciaActividad> instanciasActividades = this.instanciaActividadService.findByInstanciaProceso(instanciaProceso);
+		List<InstanciaActividad> instanciasActividadesAll = this.instanciaActividadService.findByInstanciaProceso(instanciaProceso);
+		List<InstanciaActividad> instanciasActividades = new ArrayList<InstanciaActividad>();
+		
+		for(InstanciaActividad ia: instanciasActividadesAll) {
+			if(ia.getElementoBpmn().getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:Task") && this.respuestaService.findByInstanciaActividad(ia).size() == 0) {
+				continue;
+			}
+			instanciasActividades.add(ia);
+		}
 		
 		mav.addObject("usuario", instanciaProceso.getUsuario());
 		mav.addObject("proceso", instanciaProceso.getProceso());
@@ -583,27 +595,36 @@ public class ProcesoController {
 		ModelAndView mav = new ModelAndView(RESPUESTAS_VIEW);
 
 		InstanciaActividad currActivity = this.instanciaActividadService.findById(instanciaActividadId);
-		List<Respuesta> respuestas = this.respuestaService.findByInstanciaActividad(currActivity);
-		
+		ElementoBpmn elementoBpmnNext = null;
 		ElementoBpmn elementoBpmn = currActivity.getElementoBpmn();
 		for (ElementoBpmnFormulario ebf : elementoBpmn.getElementoBpmnFormularios()) {
-			if (!ebf.isPermitirEscritura()) {
 
-				ElementoBpmnFormulario ebfEscritura = elementoBpmnFormularioService
-						.findByElementoFormularioAndPermitirEscritura(ebf.getElementoFormulario(), true).get(0);
-				InstanciaActividad prevActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(
-						ebfEscritura.getElementoBpmn(), currActivity.getInstanciaProceso());
-				Respuesta respuesta = respuestaService.findByInstanciaActividadAndElementoBpmnFormulario(prevActivity,
-						ebfEscritura);
-				ebf.setRespuesta(respuesta.getRespuesta());
+			ElementoBpmnFormulario ebfEscritura = elementoBpmnFormularioService
+					.findByElementoFormularioAndPermitirEscritura(ebf.getElementoFormulario(), true).get(0);
+			InstanciaActividad prevActivity = instanciaActividadService.findByElementoBpmnAndInstanciaProceso(
+					ebfEscritura.getElementoBpmn(), currActivity.getInstanciaProceso());
+			Respuesta respuesta = respuestaService.findByInstanciaActividadAndElementoBpmnFormulario(prevActivity,
+					ebfEscritura);
+			ebf.setRespuesta(respuesta.getRespuesta());
+			
+		}
+		
+		if(elementoBpmn.getTipoElementoBpmn().getNombreTipoElementoBpmn().equals("bpmn:ExclusiveGateway")) {
+			List<ElementoBpmn> ebsNext = elementoBpmn.getReference_next();
+			//Buscamos la InstanciaActividad del usuario
+			//findByElementoBpmnAndInstanciaProceso
+			for(ElementoBpmn ebNext: ebsNext) {
+				if(this.respuestaService.findByInstanciaActividad(this.instanciaActividadService.findByElementoBpmnAndInstanciaProceso(ebNext, currActivity.getInstanciaProceso())).size() > 0) {
+					elementoBpmnNext = ebNext;
+					break;
+				}
 			}
 		}
 
 		mav.addObject("currActivity", currActivity);
 		mav.addObject("currElement", currActivity.getElementoBpmn().getIdElementoDiagramaBpmn());
 		mav.addObject("activityElements", elementoBpmn);
-		
-		mav.addObject("respuestas", respuestas);
+		mav.addObject("elementoBpmnNext", elementoBpmnNext);
 		
 		return mav;
 	}
