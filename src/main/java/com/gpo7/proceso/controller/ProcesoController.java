@@ -558,9 +558,10 @@ public class ProcesoController {
 	}
 	
 	public void finalizarProceso(InstanciaProceso ip) {
-		for(InstanciaActividad ia : ip.getInstanciasActividad()) {
-			ia.setFinalizada(true);
-			instanciaActividadService.update(ia);
+		List<InstanciaActividad> ias = ip.getInstanciasActividad();
+		for (int i = 0; i < ias.size(); i++) {
+			ias.get(i).setFinalizada(true);
+			instanciaActividadService.update(ias.get(i));
 		}
 	}
 	

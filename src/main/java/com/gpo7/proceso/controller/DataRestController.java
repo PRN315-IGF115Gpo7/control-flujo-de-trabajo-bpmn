@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +42,6 @@ import com.gpo7.proceso.servicio.TipoElementoService;
 import com.gpo7.proceso.servicio.UsuarioService;
 import com.gpo7.proceso.servicio.VariableService;
 
-import objects.ElementoDiagrama;
 import objects.VariableStructDiagram;
 
 @RestController
@@ -318,13 +316,10 @@ public class DataRestController {
 	}
 	
 	@GetMapping("/proceso/{id}")
-	public byte[] getProceso(@PathVariable("id") int id) {
+	public String getProceso(@PathVariable("id") int id) {
 		Proceso proceso = procesoService.findById(id);
-		proceso.setVariables(null);
-		 
-		byte[] bytesEncoded = Base64.encodeBase64(proceso.getProceoXml().getBytes());
 		
-		return bytesEncoded;
+		return proceso.getProceoXml();
 	}
 	
 	@GetMapping("/proceso/{idProc}/elementos")
