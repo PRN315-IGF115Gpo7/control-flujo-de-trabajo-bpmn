@@ -316,13 +316,10 @@ public class DataRestController {
 	}
 	
 	@GetMapping("/proceso/{id}")
-	public byte[] getProceso(@PathVariable("id") int id) {
+	public String getProceso(@PathVariable("id") int id) {
 		Proceso proceso = procesoService.findById(id);
-		proceso.setVariables(null);
-		 
-		byte[] bytesEncoded = Base64.encodeBase64(proceso.getProceoXml().getBytes());
 		
-		return bytesEncoded;
+		return proceso.getProceoXml();
 	}
 	
 	@GetMapping("/proceso/{idProc}/elementos")

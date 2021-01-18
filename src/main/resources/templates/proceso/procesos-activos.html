@@ -186,7 +186,7 @@
                 })
 
                 $.get('/api/proceso/' + procesoId, function (data) {
-                    var xml = atob(data);
+                    var xml = data;
 
                     // load external diagram file via AJAX and open it
                     $.get(diagramUrl, openDiagram(xml), 'text');
