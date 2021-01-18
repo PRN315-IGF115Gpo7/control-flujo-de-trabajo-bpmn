@@ -284,7 +284,6 @@
 					if(e.element.type === "bpmn:Task" || e.element.type === "bpmn:ExclusiveGateway" ||
 							e.element.type === "bpmn:StartEvent" || e.element.type === "bpmn:EndEvent"){
 						createElementoBpmn(e.element.id, e.element.id, e.element.type, proceso.idProceso);
-						e.element.businessObject.name = e.element.id;
 					}
 					if(e.element.type === "bpmn:Lane"){
 						e.element.businessObject.name = e.element.id;
@@ -294,13 +293,18 @@
 				});
 				
 				canvas._eventBus.on("element.changed", function(e){
-					console.log("cambio");
-					var name = e.element.businessObject.name;
-					if(name != ""){
-						createElementoBpmn(e.element.id, name, e.element.type, proceso.idProceso);
-						setProcesoXml();
-					}else{
-						toastr.warning("Es necesario identificar con un nombre a la actividad"); 
+					if(e.element.type === "bpmn:Task" || e.element.type === "bpmn:ExclusiveGateway" ||
+							e.element.type === "bpmn:StartEvent" || e.element.type === "bpmn:EndEvent"){
+						var name = e.element.businessObject.name;
+						if(name != undefined){
+							if(name != ""){
+								console.log("cambio");
+								createElementoBpmn(e.element.id, name, e.element.type, proceso.idProceso);
+								setProcesoXml();
+							}else{
+								toastr.warning("Es necesario identificar con un nombre a la actividad"); 
+							}
+						}
 					}
 				});
 				
@@ -372,11 +376,12 @@
 			
 			$("#btn-automatizar").click(function(){
 				$("#btn-automatizar").append(`<span class="spinner-border spinner-border-sm ml-1" role="status" aria-hidden="true"></span>`);
+				automatizarProceso();
 				setProcesoXml();
 				setTimeout(function() { 
 					finalizarProceso();
 					toastr.success("Proceso Finalizado");
-			    }, 2000);
+			    }, 4000);
 			})
 		       
 			
@@ -413,8 +418,16 @@
 				};
 		
 				$.post("/api/elemento-bpmn/create", elemento, function(data, status){
-					console.log("Estado: " + status);
-					console.log(data);
+					console.log("Estadosss: " + status);
+					console.log("ID: " + data.idElementoDiagramaBpmn);
+					var canvas = bpmnModeler.get('canvas');
+					var modeling = bpmnModeler.get('modeling');
+					var newElement = canvas._elementRegistry.get(data.idElementoDiagramaBpmn);
+					if(newElement.businessObject.name != data.nombreElementoBpmn){
+						modeling.updateProperties(newElement,{
+							"name": data.nombreElementoBpmn
+						});
+					}
 				});
 			}
 			
@@ -588,10 +601,11 @@
 								resultados.push(`El elemento ${elemento.businessObject.name} debe poseer un elemento siguiente`);
 							}
 							
+							/*
 							//poseer nombre
 							if(!elemento.businessObject.name && elemento.type != "bpmn:StartEvent" ){
 								resultados.push(`El elemento ${elemento.id} debe poseer nombre`);
-							}
+							}*/
 							
 							//validar que las actividades tengan al menos una variable
 							if(elemento.type === "bpmn:Task"){
