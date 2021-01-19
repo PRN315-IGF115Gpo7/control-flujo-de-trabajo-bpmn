@@ -58,14 +58,14 @@
                                  </div>
                                  <div class="form-check"
                                      th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
-                                     <label class="form-check-label">
-                                         <input type="checkbox" class="form-check-input"
-                                             th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}"
-                                             disabled>
-                                         [[ ${ebf.elementoFormulario.label} ]]
-                                         <span th:if="${ebf.permitirEscritura} == true" title="Fue de Escritura en esta Actividad"><i class="far fa-edit"></i></span>
+                                        <input th:if="${ebf.respuesta == 'checked'}" type="checkbox"
+                                            class="form-check-input" th:name="${ebf.elementoFormulario.label}" checked
+                                            disabled>
+                                        <input th:unless="${ebf.respuesta == 'checked'}" type="checkbox"
+                                            class="form-check-input" th:name="${ebf.elementoFormulario.label}" disabled>
+                                        [[ ${ebf.elementoFormulario.label} ]]
+                                        <span th:if="${ebf.permitirEscritura} == true" title="Fue de Escritura en esta Actividad"><i class="far fa-edit"></i></span>
                                      	<span th:if="${ebf.permitirEscritura} == false" title="Fue de Lectura en esta Actividad"><i class="far fa-eye"></i></span>
-                                     </label>
                                  </div>
                              </th:block>
                              <!-- FIN - Variables que son solo de lectura-->

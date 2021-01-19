@@ -83,12 +83,13 @@
                                     </div>
                                     <div class="form-check"
                                         th:if="${ebf.elementoFormulario.elementoFormularioTipo == 'checkbox'}">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input"
-                                                th:name="${ebf.elementoFormulario.label}" th:attr="${ebf.respuesta}"
-                                                disabled>
-                                            [[ ${ebf.elementoFormulario.label} ]]
-                                        </label>
+                                        <input th:if="${ebf.respuesta == 'checked'}" type="checkbox"
+                                            class="form-check-input" th:name="${ebf.elementoFormulario.label}" checked
+                                            disabled>
+                                        <input th:unless="${ebf.respuesta == 'checked'}" type="checkbox"
+                                            class="form-check-input" th:name="${ebf.elementoFormulario.label}" disabled>
+                                        [[ ${ebf.elementoFormulario.label} ]]
+                                        
                                     </div>
                                 </th:block>
                                 <!-- FIN - Variables que son solo de lectura-->
